@@ -1,0 +1,78 @@
+#set working directory
+if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
+  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
+}else{
+  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
+}
+
+#load in helper functions
+source("Code/PR/env_functions.R")
+source("Code/PR/Main Analysis/watershed_functions.R")
+
+#load necessary packages
+load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
+             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, units)
+options(modelsummary_format_numeric_latex = "mathmode")
+
+#set up environment
+meters = 5000
+wind_dist= dist_allow = 10000
+ppt = 1000
+run_cleaning = FALSE
+match_wells = FALSE
+old_wells = FALSE
+domestic = FALSE
+system = FALSE
+drop_dups = TRUE
+drop_far_down = TRUE
+drop_far_up = FALSE
+well_fd = test_fd = FALSE #flow line distance?
+IV = TRUE
+rerun_fs_clean = FALSE
+fa_resid = TRUE
+soil_well = TRUE
+drop_states = FALSE
+relaxed_up = FALSE
+GIS_create = FALSE
+create_figures = FALSE
+interactive_table = TRUE
+nat_run_cont_ws = FALSE
+nat_reassn = FALSE
+nat_redo_soil = FALSE
+oster_robust = FALSE
+false_test = FALSE
+rerun_placebos = FALSE
+
+if (GIS_create == TRUE){
+  source("Code/PR/GIS/gis_head.R")
+}
+
+#data cleaning
+source("Code/PR/Data/data_head.R")
+
+#main analysis
+source("Code/PR/Main Analysis/main_analy_head.R")
+
+#Tables
+source("Code/PR/Tables/tables.R")
+
+#Oster Coefficient of Proportionality (Table S4)
+if (oster_robust == TRUE){
+  source("Code/PR/Robustness/oster_selection.R")
+}
+
+#bootstrap standard errors for all results using first stage - Table 2, Figure 4, Figure S3, Table S9, Figure S5
+source("Code/PR/Main Analysis/bootstrap_iv.R")
+
+#figures
+source("Code/PR/Figures/figures_head.R")
+
+#national costs
+source("Code/PR/National Costs/national_costs_head.R")
+
+#Falsification Test
+if (false_test == TRUE){
+  source("Code/PR/Robustness/Placebo/placebo_head.R") 
+}
+
