@@ -1,12 +1,3 @@
-#fill sinks
-wbt_breach_depressions("/Users/robert/Library/CloudStorage/Box-Box/New Hampshire/Data/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff", "New Hampshire/Data/QGIS/filled_dem.tiff")
-
-#flow accumulation
-wbt_d8_flow_accumulation("New Hampshire/Data/QGIS/filled_dem.tif", "New Hampshire/Data/QGIS/flow_acc.tiff")
-
-#flow direction
-wbt_d8_pointer("New Hampshire/Data/QGIS/filled_dem.tif", "New Hampshire/Data/QGIS/flow_dir.tiff")
-
 #subset df to only those used in estimation
 df = df %>% 
   tidyr::drop_na(gestation, 

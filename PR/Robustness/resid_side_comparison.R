@@ -1,18 +1,14 @@
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets)
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox)
 options(modelsummary_format_numeric_latex = "mathmode")
 
 #set up environment
@@ -32,22 +28,17 @@ IV = TRUE
 fa_resid = TRUE
 drop_sites = FALSE
 drop_states = FALSE
+GIS_create = FALSE
 
-#obtain theta info for Northeastern contamination data
-source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/groundwater_algorithm.R")
+#data cleaning
+source("PFAS-Code/PR/Data/data_head.R")
 
-#well location and service area data (NHDES)
-source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/source_service_cleaning.R")
-
-#set up wind
-source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/wind.R")
-
-
-#read in natality dataset with binary, flow accumulation, and catchment areas 
-load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] natality_ws.RData")
-
-#calculate residence side, down and up
-
+if (GIS_create == TRUE){
+  source("Code/PR/GIS/df_watershed.R") #mothers residence - NOTE: This takes a long time to run 
+}else{
+  #read in natality dataset with binary, flow accumulation, and catchment areas 
+  load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] natality_ws.RData") 
+}
 
 #read in and set cont site watersheds 
 load("New Hampshire/Data/RData/cont_watershed.RData")
