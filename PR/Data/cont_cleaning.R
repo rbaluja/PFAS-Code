@@ -1,4 +1,4 @@
-fs_cont = fread("New Hampshire/Data/Contamination/NH_tests.csv") 
+fs_cont = fread("Data_Verify/Contamination/NH_tests.csv") 
 
 #translate all results to ppt
 fs_cont[fs_cont$DETLIMU == "UG/KG" | fs_cont$DETLIMU == "UG/KG DRY", ]$NUMRESULT1 = 1000 * fs_cont[fs_cont$DETLIMU == "UG/KG" | fs_cont$DETLIMU == "UG/KG DRY", ]$NUMRESULT1
@@ -19,10 +19,10 @@ fs_cont[fs_cont$DETLIMU == "MG/KG" | fs_cont$DETLIMU == "MG/KG DRY", ]$DETLIM = 
 fs_cont[fs_cont$DETLIMU == "MG/L" | fs_cont$DETLIMU == "MG/L DRY", ]$NUMRESULT1 = 1000000 * fs_cont[fs_cont$DETLIMU == "MG/L" | fs_cont$DETLIMU == "MG/L DRY", ]$NUMRESULT1
 fs_cont[fs_cont$DETLIMU == "MG/L" | fs_cont$DETLIMU == "MG/L DRY", ]$DETLIM = 1000000 * fs_cont[fs_cont$DETLIMU == "MG/L" | fs_cont$DETLIMU == "MG/L DRY", ]$DETLIM
 
-#put any tests with a result that was lower than the detection limit to the detection limit/sqrt(2). Based on my reading, this detection limit it that which has α = 0.01
+#put any tests with a result that was lower than the detection limit to the detection as limit/sqrt(2). Based on my reading, this detection limit it that which has α = 0.01
 #where α is in relation to a test for a value strictly positive. 
 fs_cont[fs_cont$QUALIFIER == "<", ]$NUMRESULT1 = fs_cont[fs_cont$QUALIFIER == "<", ]$DETLIM/sqrt(2)
-#for remaining values, NA is either because there is no detection limit recorded (and it was less than the true one), or it was a non detect
+#for remaining values, NA is either because there is no detection limit recorded (and it was less than the true one), it was a non detect, or it was just left blank
 fs_cont[is.na(fs_cont$NUMRESULT1), ]$NUMRESULT1 = 0 
 
 
@@ -79,12 +79,13 @@ fs_cont = fs_cont %>%
 ##Demographics
 
 #bring in geoid
-load("/Users/robert/Library/CloudStorage/Box-Box/NH Supplemental Data/cbg_tigris.RData")
+cbg_shape = tigris::block_groups("NH")
 
 #change cbg and df projections to planar for intersection 
 cbg_shape = cbg_shape %>%
   st_transform(32110)
 
+#turn fs_cont spatial
 fs_cont = fs_cont %>% 
   st_as_sf(coords = c("well_lng", "well_lat"), remove = FALSE, crs = 4326) %>%
   st_transform(32110)
@@ -92,40 +93,40 @@ fs_cont = fs_cont %>%
 #assign cbg to fs_cont
 fs_cont = fs_cont %>% 
   st_join(cbg_shape, join = st_within, largest = T)
+fs_cont$cbg = str_sub(fs_cont$GEOID, 1, 12)
 
-save(fs_cont, file = "Data/Contamination/cont_well_geo.RData")
 
 #read in weather and pm25 data at cbg level
-w = fread("Data/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
+w = fread("Data_Verify/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
   dplyr::rename(geoid = location)
 w$year = as.numeric(str_sub(w$date, 1, 4))
 
+#take mean annual temp as average over daily mean temperatures
 w = w %>% 
-  group_by(geoid, year) %>% 
   dplyr::mutate(temp = (as.numeric(tmin) + as.numeric(tmax))/2) %>% 
+  group_by(geoid, year) %>% 
   dplyr::summarize(temp = mean(temp, na.rm = T))
-
+#summarize temperature to a constant average, by geoid (average over years)
 w = w %>% 
-  group_by(geoid) %>% 
+  dplyr::group_by(geoid) %>% 
   dplyr::summarise(temp = mean(temp, na.rm = T))
 
 
 #read in and bind pollution data
-pm = fread("Data/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
+pm = fread("Data_Verify/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
+#summarize pm25 to a constant average, by geoid (average over years)
 pm = pm %>% 
-  group_by(geoid) %>% 
+  dplyr::group_by(geoid) %>% 
   dplyr::summarise(pm25 = mean(pm25, na.rm = T))
 
 env = left_join(w, pm)
-
-fs_cont$cbg = str_sub(fs_cont$GEOID, 1, 12)
+#join fs_cont and environmental covariates
 fs_cont = fs_cont %>%
   left_join(env, by = c("cbg" = "geoid"))
 
 
 #read in census vars
-library(tidycensus)
-census_api_key("9f59b9fec9cffa85b5740734df3d81e7b617cf82") #probably shouldn't share this...
+census_api_key(census_key)
 
 tract_vars = c(manufacturing = "C24050_004", 
                total_pop = "C24050_001", 
@@ -163,7 +164,7 @@ fs_cont = fs_cont %>%
   left_join(td, by = c("t_geoid" = "geoid"))
 
 #bring in elevation 
-dem_elev = raster("Data/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")
+dem_elev = raster("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")
 fs_cont$row = 1:nrow(fs_cont)
 fs_cont_ll = fs_cont %>% 
   as_tibble() %>% 
@@ -175,7 +176,7 @@ fs_cont$elevation = e1
 
 
 #bringing in tri facilities
-tri = fread("Data/Supplemental/tri_nh.csv") %>% 
+tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>% 
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
@@ -197,4 +198,4 @@ fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), t_dist, cl = 4))
 
 fwrite(fs_cont %>% 
          as_tibble() %>% 
-         dplyr::select(!geometry), "Data/Contamination/cleaned_contwell_122023.csv")
+         dplyr::select(!geometry), "Data_Verify/Contamination/cleaned_contwell.csv")

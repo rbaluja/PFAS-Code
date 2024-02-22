@@ -1,5 +1,5 @@
 #read in birth data
-path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] VR2210_Deliverable/dr_6264_deliverable.xlsx"
+path = paste0(natality_path, "[UA Box Health] VR2210_Deliverable/dr_6264_deliverable.xlsx")
 df = read_excel(path, sheet = 2)
 rm(path)
 
@@ -52,10 +52,13 @@ df$max_educ = ifelse((!is.na(df$m_educ) & !is.na(df$f_educ) & df$m_educ >= df$f_
 df = df %>% 
   dplyr::rename_all(tolower)
 
+#Fill NAs in natality data
 df[which(df$mthr_wgt_dlv == 999), ]$mthr_wgt_dlv = NA
 df[which(df$mthr_pre_preg_wgt == 999), ]$mthr_pre_preg_wgt = NA
-df$m_height = 12*df$mthr_hght_ft + df$mthr_hght_in
 df[which(df$n_prenatal == 99), ]$n_prenatal = NA
+
+#get height in inches
+df$m_height = 12*df$mthr_hght_ft + df$mthr_hght_in
 
 df$lbweight = ifelse(df$bweight < 2500, 1, 0)
 df$preterm = ifelse(df$gestation <= 36, 1, 0)

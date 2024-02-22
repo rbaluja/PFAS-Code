@@ -8,37 +8,32 @@ source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, units)
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus)
 options(modelsummary_format_numeric_latex = "mathmode")
 
 #set up environment
-meters = 5000
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
+meters = 5000 #buffer for base spec
+wind_dist= dist_allow = 10000 #wind distance cutoff
+ppt = 1000 #cutoff for primary contamination site
+run_cleaning = TRUE #clean natality data?
+match_wells = TRUE #Re match natality data to wells?
+domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
-IV = TRUE
-rerun_fs_clean = FALSE
-fa_resid = TRUE
-soil_well = TRUE
-drop_states = FALSE
-relaxed_up = FALSE
-GIS_create = FALSE
-create_figures = FALSE
-interactive_table = TRUE
-nat_run_cont_ws = FALSE
-nat_reassn = FALSE
-nat_redo_soil = FALSE
-oster_robust = FALSE
-false_test = FALSE
-rerun_placebos = FALSE
+IV = TRUE #Run IV spec?
+rerun_fs_clean = TRUE #clean first stage data?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+GIS_create = FALSE #recreate watershed shapes?
+create_figures = FALSE #output figures?
+nat_run_cont_ws = FALSE#recreate national watershed shapes?
+nat_reassn = FALSE #reassign national CBGs to release sites?
+nat_redo_soil = FALSE #recalculate soil stats for national data?
+oster_robust = FALSE #run Oster (2019) selection on unobservables?
+false_test = FALSE #run falsification test?
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
 if (GIS_create == TRUE){
   source("PFAS-Code/PR/GIS/gis_head.R")

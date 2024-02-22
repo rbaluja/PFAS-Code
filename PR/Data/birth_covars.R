@@ -1,56 +1,49 @@
 #first read in and aggregate weather data
-w = fread("New Hampshire/Data/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
+w = fread("Data_Verify/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
   dplyr::rename(geoid = location)
 w$year = as.numeric(str_sub(w$date, 1, 4))
-
+#calculate mean temp and average over daily average temps
 w = w %>% 
-  group_by(geoid, year) %>% 
   dplyr::mutate(temp = (as.numeric(tmin) + as.numeric(tmax))/2) %>% 
+  group_by(geoid, year) %>% 
   dplyr::summarize(temp = mean(temp, na.rm = T))
 
 
 #read in and bind pollution data
-pm = fread("New Hampshire/Data/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
+pm = fread("Data_Verify/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
 
 env = left_join(w, pm)
 
 #read in census vars (at tract level)
-dem_vars = fread("New Hampshire/Data/Supplemental/tract_stats.csv", colClasses = c("tract" = "character"))
+dem_vars = fread("Data_Verify/Supplemental/tract_stats.csv", colClasses = c("tract" = "character"))
 dem_vars = dem_vars %>% 
-  dplyr::mutate(tract = as.character(tract)) %>%
-  dplyr::mutate(county = dplyr::case_when(
-    county < 10 ~ paste0("00", county), 
-    county >= 10 ~ paste0("0", county)), 
-    tract = dplyr::case_when(
-      nchar(as.character(tract)) == 3 ~ paste0("000", tract), 
-      nchar(as.character(tract)) == 4 ~ paste0("00", tract), 
-      nchar(as.character(tract)) == 5 ~ paste0("0", tract), 
-      nchar(as.character(tract)) == 6 ~ tract
-    )) %>% 
-  dplyr::mutate(geoid = paste0("33", county, tract))
-
-#join environmental and demographic data
+  dplyr::mutate(county = stringr::str_pad(county, 3, "left", "0"), #county and tract were read in as numeric, fix that
+                tract = stringr::str_pad(tract, 6, "left", "0")) %>%
+  dplyr::mutate(geoid = paste0("33", county, tract)) #create census geoid
+#get tract-level geoid
 env$t_geoid = str_sub(env$geoid, 1, 11)
-
+#join environmental and demographic data
 dem_vars = env %>% 
   left_join(dem_vars, by = c("t_geoid" = "geoid"))
 
 df = df %>% 
-  left_join(dem_vars %>% dplyr::mutate(year = as.character(year), 
+  left_join(dem_vars %>% 
+              dplyr::mutate(year = as.character(year), 
                                 geoid = as.character(geoid)))
 
 df$county = paste0("33", df$COUNTYFP)
 
 #bringing in tri facilities
-tri = fread("New Hampshire/Data/Supplemental/tri_nh.csv") %>% 
+tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>% 
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
-
+#get distance from each row in df and tri
 tri_dists = distm(df %>% 
                     as_tibble() %>% 
                     dplyr::select(lng, lat), tri %>% 
                     dplyr::select(tri_lng, tri_lat))
+#iterates over rows of df
 t_dist = function(i){
   d = df[i, ]
   dists = tri_dists[i, ]
@@ -60,10 +53,10 @@ t_dist = function(i){
   return(d)
   
 }
+#apply above function to each row of df, then combine list of one row dataframes into a single dataframe
 df = dplyr::bind_rows(pblapply(1:nrow(df), t_dist, cl = 4))
 
-#distance to nearest site
-#get distance from each mother's residence and the nearest cont site
+#distance from each mother's residence and the nearest cont site
 cont_dists = distm(df %>% 
                      as_tibble() %>% 
                      dplyr::select(lng, lat), cont_sites %>% 
@@ -78,4 +71,4 @@ dc_dist = function(i){
 }
 df = dplyr::bind_rows(pblapply(1:nrow(df), dc_dist, cl = 4))
 
-#save(df, file= "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_wdem122023.RData")
+save(df, file= paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
