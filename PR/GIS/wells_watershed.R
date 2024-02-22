@@ -10,11 +10,13 @@ source("PFAS-Code/PR/Data/NHDES_PWS.R")
 wells$index = 1:nrow(wells)
 #get spatial dataframe for wells
 wells_ll = wells %>% as_tibble() %>% st_as_sf(coords = c("lng", "lat"), crs = 4326) 
+#write this mapping to memory so we can know which wells correspond to which indices
+fwrite(wells_ll %>% as_tibble() %>% dplyr::select(sys_id, source, index), "Data_Verify/GIS/wells_ll_ws.csv")
 
 wells_watershed = function(i){
   
   #get location of test well i
-  point_sf = fs_cont[i, "geometry"]
+  point_sf = wells_ll[i, "geometry"]
   temp_point_path = tempfile(fileext = ".shp")
   st_write(point_sf, temp_point_path, quiet = TRUE)
   
@@ -27,6 +29,7 @@ wells_watershed = function(i){
   wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
                 pour_pts = paste0("Data_Verify/GIS/wells/wells_pp/pp_site_", i, ".shp"), 
                 output = paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff"))
+  
   #read in watershed
   ws = terra::rast(paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff"))
   

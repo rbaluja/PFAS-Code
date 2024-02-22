@@ -28,6 +28,8 @@ cont_sites = cont_sites[which(!cont_sites$site %in% c("Former Aerotronic Site", 
 
 #set index to keep track of which site is which
 cont_sites$index = 1:nrow(cont_sites)
+#write this mapping to memory so we can know which wells correspond to which indices
+fwrite(cont_sites %>% as_tibble() %>% dplyr::select(site, lng, lat, pfas = sum_pfoa_pfos, index), "Data_Verify/GIS/rs_ll_ws.csv")
  
 #this function iterates over each site, returning a shape of its watershed
 cont_watershed = function(i){

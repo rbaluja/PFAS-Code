@@ -1,10 +1,14 @@
-load("New Hampshire/Data/RData/fs_test_watershed.RData")
-fs_cont = fread("New Hampshire/Data/Contamination/cleaned_contwell_122023.csv")
+#read in watersheds for test wells
+load("Data_Verify/GIS/fs_test_watershed.RData")
+fs_cont = fread("Data_Verify/Contamination/cleaned_contwell.csv")
 
-fs_cont$index = 1:nrow(fs_cont)
-
+#This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
+#it instead looks at test wells. For any questions on code, see relevant comments in binary.R
 #a well is downgradient if there is a site in its watershed
-down_wells = st_intersection(cont_sites %>% st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(3437), test_ws %>% st_transform(3437))
+down_wells = st_intersection(cont_sites %>% 
+                               dplyr::select(-any_of("index")) %>%
+                               st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(3437), 
+                             test_ws %>% st_transform(3437))
 down_wells = down_wells %>% as_tibble() %>% dplyr::select(index, site, pfas = sum_pfoa_pfos) 
 down_wells$test_n = down_wells %>% 
   dplyr::group_by(index) %>%
@@ -32,7 +36,7 @@ down_well_dist = function(w){
   nearest_site = rsdw_site[ind_nearest]
   
   dw$n_sites_down5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  dw = dw[which(dw$site == nearest_site$site), ]
   dw$dist_down = ds[ind_nearest]
   
   dw = dw %>% 
@@ -45,15 +49,16 @@ down_well_dist = function(w){
 
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = 3))
 
-if (test_fd == TRUE){
-  source("Code/Primary/Watersheds/first_stage_fd.R")
-}
-
-
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
 up_wells = st_intersection(fs_cont %>% 
                              st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
-                             st_transform(3437), cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, pfas = sum_pfoa_pfos)) %>% st_transform(3437) %>% dplyr::select(!index))
+                             st_transform(3437), 
+                           cont_ws %>% 
+                             left_join(cont_sites %>% 
+                                         as_tibble() %>% 
+                                         dplyr::select(site, pfas = sum_pfoa_pfos)) %>% 
+                                         st_transform(3437) %>% 
+                                         dplyr::select(!index))
 
 up_wells = up_wells %>% as_tibble() %>% dplyr::select(index, site, pfas) 
 up_wells$test_n = up_wells %>% 
@@ -66,6 +71,7 @@ uwells = unique(up_wells$test_n)
 #if 0, then we do not include them
 up_well_dist = function(w){
   dw = up_wells[which(up_wells$test_n == w), ]
+  
   dw_ll = fs_cont %>% 
     as_tibble() %>%
     dplyr::filter(index== dw$index[1]) %>% 
@@ -82,7 +88,7 @@ up_well_dist = function(w){
   nearest_site = rsdw_site[ind_nearest]
   
   dw$n_sites_up5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  dw = dw[which(dw$site == nearest_site$site), ]
   dw$dist_up = ds[ind_nearest]
   
   dw = dw %>% 
@@ -110,7 +116,7 @@ fs_cont[which(fs_cont$up == 1 & fs_cont$down == 1), ]$up = 0
 #get wind exposure
 fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
 
-#for wells that arent down or up, find nearest site and use that 
+#find nearest site and its chars
 fs_cont_dist = function(i){
   w = fs_cont[i, ]
   
@@ -201,72 +207,32 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
 
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up))
 
-if (soil_well == TRUE){
-  #soil porosity
-  fs_cont_fa= fs_cont %>% 
-    st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
-    st_transform(32110) %>% 
-    st_buffer(10) %>% 
-    st_transform(4326)
-  
-  sp = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/por_gNATSGO/por_gNATSGO_US.tif")
-  
-  fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
-  
-  fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp"))
-  
-  #available water capacity
-  fs_cont_fa= fs_cont %>% 
-    st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
-    st_transform(32110) %>% 
-    st_buffer(10) %>% 
-    st_transform(4326)
-  
-  awc = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
-  
-  fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
-  
-  fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc"))
-  
-  
-  #field content
-  fs_cont_fa= fs_cont %>% 
-    st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
-    st_transform(32110) %>% 
-    st_buffer(10) %>% 
-    st_transform(4326)
-  
-  fc = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/fc_gNATSGO/fc_gNATSGO_US.tif")
-  
-  fs_fc = exactextractr::exact_extract(fc, fs_cont_fa)
-  
-  fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_fc, fs_cont, "fc"))
-}else{#getting soil chars at release site
-  
-  #soil porosity
-  rs_fa= cont_sites %>% 
-    st_transform(32110) %>% 
-    st_buffer(10) %>% 
-    st_transform(4326)
-  
-  sp = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/por_gNATSGO/por_gNATSGO_US.tif")
-  
-  rs_sp = exactextractr::exact_extract(sp, rs_fa)
-  
-  cont_sites = dplyr::bind_rows(pblapply(1:nrow(rs_fa), flowacc, rs_sp, rs_fa, "sp"))
-  
-  #available water capacity
-  awc = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
-  
-  rs_awc = exactextractr::exact_extract(sp, cont_sites)
-  
-  cont_sites = dplyr::bind_rows(pblapply(1:nrow(rs_fa), flowacc, rs_awc, cont_sites, "awc"))
-  fs_cont = fs_cont %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(awc, sp, site))
-}
+######
+###Soil variables at the test well
+
+#soil porosity
+fs_cont_fa= fs_cont %>% 
+  st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
+  st_transform(32110) %>% 
+  st_buffer(10) %>% 
+  st_transform(4326)
+
+sp = terra::rast("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif")
+
+fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
+
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp"))
+
+#available water capacity
+awc = terra::rast("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
+
+fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
+
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc"))
 
 
-
-#run regressions
+###############
+###run regressions
 fs_cont$wellpfas = fs_cont$pfos + fs_cont$pfoa
 fs_cont$domestic = ifelse(fs_cont$watervapusage == "DOMESTIC", 1, 0)
 fs_cont$t = fs_cont$year - 2010
@@ -282,35 +248,27 @@ w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down 
                             updown, data = fs_cont) 
 
 
-if (soil_well == TRUE){
-  #get soil characterists at drinking wells
-  #soil porosity
-  wells_fa= wells %>%
-    st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
-    st_transform(32110) %>% 
-    st_buffer(10) %>% 
-    st_transform(4326)
-  
-  sp = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/por_gNATSGO/por_gNATSGO_US.tif")
-  
-  wells_sp = exactextractr::exact_extract(sp, wells_fa)
-  
-  wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp"))
-  
-  #available water capacity
-  awc = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
-  
-  wells_awc = exactextractr::exact_extract(sp, wells_fa)
-  
-  wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc"))
-  
-  df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc)) 
-}else{
-  df = df %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(awc, sp, site))
-}
+#get soil characteristics at drinking wells
+#soil porosity
+wells_fa= wells %>%
+  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
+  st_transform(32110) %>% 
+  st_buffer(10) %>% 
+  st_transform(4326)
+
+wells_sp = exactextractr::exact_extract(sp, wells_fa)
+
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp"))
+
+#available water capacity
+wells_awc = exactextractr::exact_extract(sp, wells_fa)
+
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc"))
+
+df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc)) 
 
 
-
+#impute predicted pfas from w_reg
 df$domestic = 0
 df$elevation = df$well_elev
 df$t = as.numeric(df$year) - 2010

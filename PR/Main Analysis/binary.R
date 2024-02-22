@@ -1,55 +1,72 @@
 # #read in and set well watersheds
-load("New Hampshire/Data/RData/wells_watershed.RData")
+load("Data_Verify/GIS/wells_watershed.RData")
 
 #read in well_ll to get appropriate sys and well ids
-well_ll = fread("New Hampshire/Data/well_ll.csv")
-well_ll$index = 1:nrow(well_ll)
-wells_ws = wells_ws %>% left_join(well_ll %>% dplyr::select(sys_id, source, index))
-
+well_ll = fread("Data_Verify/GIS/wells_ll_ws.csv")
+wells_ws = wells_ws %>% left_join(well_ll)
 
 #read in and set cont site watersheds 
-load("New Hampshire/Data/RData/cont_watershed.RData")
+load("Data_Verify/GIS/cont_watershed.RData")
 
 #read in sites_ll to get right site number
-rs_ll = fread("New Hampshire/Data/rs_ll.csv")
-rs_ll$index = 1:nrow(rs_ll)
+rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
 
 cont_ws = cont_ws %>% 
-  left_join(rs_ll %>% dplyr::select(site, index))
+  left_join(rs_ll)
 
+
+######################
+##### Downgradient matching
 
 #a well is downgradient if there is a site in its watershed
+#form intersection of cont sites with the watersheds of each well
+#if a well is in the watershed of multiple sites, this returns multiple rows for that well
+#if a well is in the watershed of no sites, then it doesnt show up in this 
 down_wells = st_intersection(cont_sites %>% st_transform(3437), wells_ws %>% st_transform(3437))
+#select well identifiers (sys_id, source) and site info (site, pfas)
 down_wells = down_wells %>% as_tibble() %>% dplyr::select(sys_id, source, site, pfas = sum_pfoa_pfos) 
 down_wells$sys_id = str_pad(as.character(down_wells$sys_id), 7, "left", "0")
 down_wells$source = str_pad(as.character(down_wells$source), 3, "left", "0")
+#set well as grouped indice across sys_id and source to iterate over
 down_wells$well = down_wells %>% 
   dplyr::group_by(sys_id, source) %>%
   dplyr::group_indices(sys_id, source)
+#grab unique wells with a cont site in its watershed
 dwells = unique(down_wells$well)
 
 #only close down determines whether we include individuals on down wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
+#this function takes as input a well identifier and returns dataframe with that well, 
+#its matched site, the number of down sites within 5km, the distance to the nearest down site,
+#and the pfas level at its matched site
 down_well_dist = function(w){
+  #select all observations in down_well for well w
   dw = down_wells[which(down_wells$well == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
   dw_ll = wells %>% 
     as_tibble() %>%
     dplyr::filter(source == dw$source[1] & sys_id == dw$sys_id[1]) %>% 
     dplyr::select(c("lng", "lat"))
   
+  #get the lat longs for all sites in w's watershed
   rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
   
+  #get distance matrix for the well to each relevant release site 
   ds = distm(dw_ll, rsdw_ll)
   
+  #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
   
+  #get the site name for the nearest relevant release site
   rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), "site"]
-  
   nearest_site = rsdw_site[ind_nearest]
   
+  #how many down sites are within 'meters' of the well?
   dw$n_sites_down5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  #subset dw to only the nearest down site
+  dw = dw[which(dw$site == nearest_site$site), ]
+  #append distance to nearest site to dw
   dw$dist_down = ds[ind_nearest]
   
   dw = dw %>% 
@@ -60,19 +77,22 @@ down_well_dist = function(w){
   return(dw)
 }
 
+#apply down_well_dist (well to site matching, for down) to all wells with a cont site in its watershed
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist))
 
-if (well_fd == TRUE){
-  source("Code/Primary/Watersheds/wells_fd.R")
-}
-
+######################
+##### Upgradient matching
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
 up_wells = st_intersection(wells %>% 
                              as_tibble() %>% 
                              dplyr::select(!geometry) %>% 
                              st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
-                             st_transform(3437), cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, pfas = sum_pfoa_pfos)) %>% st_transform(3437))
+                             st_transform(3437), 
+                           cont_ws %>% 
+                             left_join(cont_sites %>% as_tibble() %>% 
+                                         dplyr::select(site, pfas = sum_pfoa_pfos)) %>% 
+                             st_transform(3437))
 
 up_wells = up_wells %>% as_tibble() %>% dplyr::select(sys_id, source, site, pfas) 
 up_wells$sys_id = str_pad(as.character(up_wells$sys_id), 7, "left", "0")
@@ -86,41 +106,51 @@ uwells = unique(up_wells$well)
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
-  dw = up_wells[which(up_wells$well == w), ]
-  dw_ll = wells %>% 
+  #select all observations in up_well for well w
+  uw = up_wells[which(up_wells$well == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
+  uw_ll = wells %>% 
     as_tibble() %>%
-    dplyr::filter(source == dw$source[1] & sys_id == dw$sys_id[1]) %>% 
+    dplyr::filter(source == uw$source[1] & sys_id == uw$sys_id[1]) %>% 
     dplyr::select(c("lng", "lat"))
   
-  rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
+  #get the lat longs for all sites for which w is in their watershed
+  rsuw_ll = rs_ll[which(rs_ll$site %in% uw$site), c("lng", "lat")]
   
-  ds = distm(dw_ll, rsdw_ll)
+  #get distance matrix for the well to each relevant release site 
+  ds = distm(uw_ll, rsuw_ll)
   
+  #get distance matrix for the well to each relevant release site 
   ind_nearest = which.min(ds)
   
-  rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), c("site", "pfas")]
+  #get the site name for the nearest relevant release site
+  rsuw_site = rs_ll[which(rs_ll$site %in% uw$site), c("site", "pfas")]
+  nearest_site = rsuw_site[ind_nearest]
   
-  nearest_site = rsdw_site[ind_nearest]
+  #how many up sites are within 'meters' of the well?
+  uw$n_sites_up5 = length(which(ds <= meters))
+  #subset uw to only the nearest down site
+  uw = uw[which(uw$site == nearest_site$site), ]
+  #append distance to nearest site to uw
+  uw$dist_up = ds[ind_nearest]
   
-  dw$n_sites_up5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
-  
-  dw$dist_up = ds[ind_nearest]
-  
-  dw = dw %>% 
+  uw = uw %>% 
     dplyr::rename(pfas_up = pfas, site_up = site)
   
-  dw$up = 1
+  uw$up = 1
   
-  return(dw)
+  return(uw)
 }
-
+#apply up_well_dist (well to site matching, for up) to all wells which are in the watershed of a cont site
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist))
 
+#bind wells with down_wells and up_wells to obtain the relevant up/down variables
 wells = wells %>% 
   left_join(down_wells %>% dplyr::select(!well), by = c("sys_id", "source")) %>% 
   left_join(up_wells %>% dplyr::select(!well), by = c("sys_id", "source"))
 
+#when NA, that means that they had no cont sites in their watershed (down) or 
+#they were not in the watershed of any sites (up)
 wells[is.na(wells$down), ]$down = 0
 wells[is.na(wells$up), ]$up = 0
 wells[is.na(wells$n_sites_down5), ]$n_sites_down5 = 0
@@ -132,7 +162,7 @@ wells[which(wells$up == 1 & wells$down == 1), ]$up = 0
 #get wind exposure
 wells$wind_exposure = pbmapply(wind_function, wells$lng, wells$lat, rep(dist_allow, nrow(wells)))
 
-#for wells that arent down or up, find nearest site and use that 
+#Find nearest release site for each well
 well_dist = function(i){
   w = wells[i, ]
   
@@ -140,9 +170,9 @@ well_dist = function(i){
   
   ind = which.min(dists)
   
-  #if neither down, nor up, set distance as that to the nearest site
+  #set distance as that to the nearest site
   w$dist_near = dists[ind]
-  #if neither down, nor up, set pfas as that at the nearest site
+  #set pfas as that at the nearest site
   w$pfas_near = rs_ll$pfas[ind]
   #get number of nearby sites
   w$n_sites_meters = length(which(dists <= meters))
@@ -154,6 +184,7 @@ well_dist = function(i){
   
 }
 wells1 = dplyr::bind_rows(pblapply(1:nrow(wells), well_dist))
+
 
 #fill in down, up, side variables
 well_assgn = function(i, drop_far_down, drop_far_up){
@@ -175,7 +206,7 @@ well_assgn = function(i, drop_far_down, drop_far_up){
       w$dist = NA
       w$down = NA
       return(w)
-    }else{ #otherwise, d > meters and we reclassify. Set down_far to 1, so that we dont include in 
+    }else{ #otherwise, d > meters and we reclassify. Set down_far to 1
       w$down = 0
       down_far = 1
     }
@@ -223,17 +254,9 @@ well_assgn = function(i, drop_far_down, drop_far_up){
 
 wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, drop_far_up))
 
-if (well_fd == TRUE){
-  wells2[is.na(wells2$well_fd), ]$well_fd = 0 
-  df = df %>% 
-    left_join(wells2 %>% 
-                as_tibble() %>% 
-                dplyr::select(sys_id, source, pfas, dist,  wind_exposure, site, up, down, n_sites = n_sites_meters, dist_down, dist_up, well_fd))  
-}else{
-  df = df %>% 
-    left_join(wells2 %>% 
-                as_tibble() %>% 
-                dplyr::select(sys_id, source, pfas, dist,  wind_exposure, site, up, down, n_sites = n_sites_meters, dist_down, dist_up)) 
-}
+df = df %>% 
+  left_join(wells2 %>% 
+              as_tibble() %>% 
+              dplyr::select(sys_id, source, pfas, dist,  wind_exposure, site, up, down, n_sites = n_sites_meters, dist_down, dist_up)) 
 
 df$updown = ifelse(df$down == 1 | df$up == 1, 1, 0)
