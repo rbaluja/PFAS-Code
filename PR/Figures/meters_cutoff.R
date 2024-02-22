@@ -4,15 +4,11 @@ rm(list = ls())
 .rs.restartR()
 
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 flowacc = function(i, d, w, option){
   d2 = d[[i]]
   w2 = w[i, ]
@@ -54,12 +50,13 @@ IV = TRUE
 fa_resid = FALSE
 drop_states = FALSE
 relaxed_up = FALSE
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
 index = 1
-load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_matched122023.RData") 
+load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
 #get flow accumulation at residence
 # #read in flow accumulation raster
-cont_fa = terra::rast("New Hampshire/Data/QGIS/cont_fa/cont_fa_sum_buffed.tiff")
+cont_fa = terra::rast("Data_Verify/GIS/cont_fa_sum_buffed.tiff")
 df_inter_fa= df %>% as_tibble() %>%  
   dplyr::select(!geometry) %>% 
   st_as_sf(coords = c("lng", "lat"), crs = 4326, remove = F) %>% 
@@ -97,16 +94,16 @@ for (meters in 3:10 * 1000){
   df = dfs
   
   #obtain theta info for Northeastern contamination data
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/groundwater_algorithm.R")
+  source("PFAS-Code/PR/Data/pfas_lab_sites.R")
   
   #well location and service area data (NHDES)
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/source_service_cleaning.R")
+  source("PFAS-Code/PR/Data/NHDES_PWS.R")
   
   #set up wind
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/wind.R")
+  source("PFAS-Code/PR/Data/wind.R")
   
   #binary setup
-  source("Code/Primary/Watersheds/binary.R")
+  source("PFAS-Code/PR/Main Analysis/binary.R")
   
   preterm_any = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -464,6 +461,7 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   scale_x_continuous(breaks = 1:10) + ylim(c(-0.02, 0.12))
 
 
-wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
+plot = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
 
+ggsave("Figures/Robustness/cutoff_figure.png", plot)
 

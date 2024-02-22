@@ -17,13 +17,13 @@ natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Econ
 meters = 5000 #buffer for base spec
 wind_dist= dist_allow = 10000 #wind distance cutoff
 ppt = 1000 #cutoff for primary contamination site
-run_cleaning = TRUE #clean natality data?
-match_wells = TRUE #Re match natality data to wells?
+run_cleaning = FALSE #clean natality data?
+match_wells = FALSE #Re match natality data to wells?
 domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
-rerun_fs_clean = TRUE #clean first stage data?
+rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
 GIS_create = FALSE #recreate watershed shapes?
