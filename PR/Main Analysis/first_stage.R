@@ -10,33 +10,38 @@ down_wells = st_intersection(cont_sites %>%
                                st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(3437), 
                              test_ws %>% st_transform(3437))
 down_wells = down_wells %>% as_tibble() %>% dplyr::select(index, site, pfas = sum_pfoa_pfos) 
-down_wells$test_n = down_wells %>% 
-  dplyr::group_by(index) %>%
-  dplyr::group_indices(index)
-dwells = unique(down_wells$test_n)
+dwells = unique(down_wells$index)
 
 #only close down determines whether we include individuals on down wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 down_well_dist = function(w){
-  dw = down_wells[which(down_wells$test_n == w), ]
+  #select all observations in down_well for well w
+  dw = down_wells[which(down_wells$index == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
   dw_ll = fs_cont %>% 
     as_tibble() %>%
-    dplyr::filter(index== dw$index[1]) %>% 
+    dplyr::filter(index == dw$index[1]) %>% 
     dplyr::select(c("well_lng", "well_lat"))
   
+  #get the lat longs for all sites in w's watershed
   rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
   
+  #get distance matrix for the well to each relevant release site 
   ds = distm(dw_ll, rsdw_ll)
   
+  #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
   
+  #get the site name for the nearest relevant release site
   rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), "site"]
+  nearest_site = as.character(rsdw_site[ind_nearest])
   
-  nearest_site = rsdw_site[ind_nearest]
-  
+  #how many down sites are within 'meters' of the well?
   dw$n_sites_down5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site$site), ]
+  #subset dw to only the nearest down site
+  dw = dw[which(dw$site == nearest_site), ]
+  #append distance to nearest site to dw
   dw$dist_down = ds[ind_nearest]
   
   dw = dw %>% 
@@ -61,42 +66,46 @@ up_wells = st_intersection(fs_cont %>%
                                          dplyr::select(!index))
 
 up_wells = up_wells %>% as_tibble() %>% dplyr::select(index, site, pfas) 
-up_wells$test_n = up_wells %>% 
-  dplyr::group_by(index) %>%
-  dplyr::group_indices(index)
-uwells = unique(up_wells$test_n)
+uwells = unique(up_wells$index)
 
 #only close up determines whether we include individuals on up wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
-  dw = up_wells[which(up_wells$test_n == w), ]
-  
-  dw_ll = fs_cont %>% 
+  #select all observations in up_well for well w
+  uw = up_wells[which(up_wells$index == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
+  uw_ll = fs_cont %>% 
     as_tibble() %>%
-    dplyr::filter(index== dw$index[1]) %>% 
+    dplyr::filter(index == uw$index[1]) %>% 
     dplyr::select(c("well_lng", "well_lat"))
   
-  rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
+  #get the lat longs for all sites for which w is in their watershed
+  rsuw_ll = rs_ll[which(rs_ll$site %in% uw$site), c("lng", "lat")]
   
-  ds = distm(dw_ll, rsdw_ll)
+  #get distance matrix for the well to each relevant release site 
+  ds = distm(uw_ll, rsuw_ll)
   
+  #get distance matrix for the well to each relevant release site 
   ind_nearest = which.min(ds)
   
-  rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), "site"]
+  #get the site name for the nearest relevant release site
+  rsuw_site = rs_ll[which(rs_ll$site %in% uw$site), c("site")]
+  nearest_site = as.character(rsuw_site[ind_nearest])
   
-  nearest_site = rsdw_site[ind_nearest]
+  #how many up sites are within 'meters' of the well?
+  uw$n_sites_up5 = length(which(ds <= meters))
+  #subset uw to only the nearest down site
+  uw = uw[which(uw$site == nearest_site), ]
+  #append distance to nearest site to uw
+  uw$dist_up = ds[ind_nearest]
   
-  dw$n_sites_up5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site$site), ]
-  dw$dist_up = ds[ind_nearest]
-  
-  dw = dw %>% 
+  uw = uw %>% 
     dplyr::rename(pfas_up = pfas, site_up = site)
   
-  dw$up = 1
+  uw$up = 1
   
-  return(dw)
+  return(uw)
 }     
 
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = 3))
@@ -105,13 +114,12 @@ fs_cont = fs_cont %>%
   left_join(down_wells, by = c("index")) %>% 
   left_join(up_wells, by = c("index"))
 
+#when NA, that means that they had no cont sites in their watershed (down) or 
+#they were not in the watershed of any sites (up)
 fs_cont[is.na(fs_cont$down), ]$down = 0
 fs_cont[is.na(fs_cont$up), ]$up = 0
 fs_cont[is.na(fs_cont$n_sites_down5), ]$n_sites_down5 = 0
 fs_cont[is.na(fs_cont$n_sites_up5), ]$n_sites_up5 = 0
-
-#if both up and down, change up to 0
-fs_cont[which(fs_cont$up == 1 & fs_cont$down == 1), ]$up = 0
 
 #get wind exposure
 fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
@@ -159,7 +167,7 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
       w$dist = NA
       w$down = NA
       return(w)
-    }else{ #otherwise, d > meters and we reclassify. Set down_far to 1, so that we dont include in 
+    }else{ #otherwise, d > meters and we reclassify. Set down_far to 1
       w$down = 0
       down_far = 1
     }
@@ -170,8 +178,8 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   
   #set up variables
   d_up = w$dist_up
-  if (!is.na(d_up) & down_far == 0){ #if there is an up site (and no down sites)
-    if (d_up < meters & w$n_sites_up5 == w$n_sites_meters){ #if the up site is within the buffer, assign its values to the well
+  if (!is.na(d_up) & down_far == 0 & relaxed_up == FALSE){ #if there is an up site (and no down sites)
+    if (d_up < meters & (w$n_sites_up5 == w$n_sites_meters)){ #if the up site is within the buffer, and all nearby sites are up, assign its values to the well
       w$pfas = w$pfas_up
       w$site = w$site_up
       w$dist = w$dist_up

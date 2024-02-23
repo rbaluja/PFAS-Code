@@ -5,7 +5,7 @@ dir.create("Data_Verify/GIS/fs_test/fs_test_watershed")
 dir.create("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes")
 
 #read in test wells
-fs_cont = fread("Data_Verify/Contamination/cleaned_contwell_122023.csv")%>% 
+fs_cont = fread("Data_Verify/Contamination/cleaned_contwell.csv")%>% 
   st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326)
 #set index to keep track of which well is which
 fs_cont$index = 1:nrow(fs_cont)

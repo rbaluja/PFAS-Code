@@ -60,12 +60,12 @@ down_well_dist = function(w){
   
   #get the site name for the nearest relevant release site
   rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), "site"]
-  nearest_site = rsdw_site[ind_nearest]
+  nearest_site = as.character(rsdw_site[ind_nearest])
   
   #how many down sites are within 'meters' of the well?
   dw$n_sites_down5 = length(which(ds <= meters))
   #subset dw to only the nearest down site
-  dw = dw[which(dw$site == nearest_site$site), ]
+  dw = dw[which(dw$site == nearest_site), ]
   #append distance to nearest site to dw
   dw$dist_down = ds[ind_nearest]
   
@@ -124,13 +124,13 @@ up_well_dist = function(w){
   ind_nearest = which.min(ds)
   
   #get the site name for the nearest relevant release site
-  rsuw_site = rs_ll[which(rs_ll$site %in% uw$site), c("site", "pfas")]
-  nearest_site = rsuw_site[ind_nearest]
+  rsuw_site = rs_ll[which(rs_ll$site %in% uw$site), c("site")]
+  nearest_site = as.character(rsuw_site[ind_nearest])
   
   #how many up sites are within 'meters' of the well?
   uw$n_sites_up5 = length(which(ds <= meters))
   #subset uw to only the nearest down site
-  uw = uw[which(uw$site == nearest_site$site), ]
+  uw = uw[which(uw$site == nearest_site), ]
   #append distance to nearest site to uw
   uw$dist_up = ds[ind_nearest]
   
@@ -155,9 +155,6 @@ wells[is.na(wells$down), ]$down = 0
 wells[is.na(wells$up), ]$up = 0
 wells[is.na(wells$n_sites_down5), ]$n_sites_down5 = 0
 wells[is.na(wells$n_sites_up5), ]$n_sites_up5 = 0
-
-#if both up and down, change up to 0
-wells[which(wells$up == 1 & wells$down == 1), ]$up = 0
 
 #get wind exposure
 wells$wind_exposure = pbmapply(wind_function, wells$lng, wells$lat, rep(dist_allow, nrow(wells)))
