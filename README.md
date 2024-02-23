@@ -115,6 +115,10 @@ Note: This is only run if GIS_create is true
     * This file follows the same logic as in binary.R to assign contamination sites to test wells. After completing such exercise, it then assigns soil properties to each well and runs the first stage regressions. After this, it assigns soil properties to the water wells, merges this with the natality data by well identifier, and uses this information to assign predicted pfas to each birth record. 
 
 
+With the current setup:
+- To get cutoff figure: run Fiugures/meters_cutoff.R
+- To get robustness figure: First run infant_health_head.R through main analysis with drop_states = TRUE, then run Robustness/drop_near_state.R. Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
+
 
 
 
