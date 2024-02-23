@@ -34,7 +34,6 @@ table1_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  updown + down +  I
                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-
 modelsummary::modelsummary(table1_preterm, 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
@@ -148,21 +147,21 @@ modelsummary::modelsummary(table2_preterm,
 1 - pnorm(0.0039/0.0016)
 
 #marginal effect
-table2_preterm[["Preterm"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
-(table2_preterm[["Preterm"]]$coefficients["pred_pfas"] - 1.96 * 0.008) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
-(table2_preterm[["Preterm"]]$coefficients["pred_pfas"] + 1.96 * 0.008) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+table2_preterm[["All"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["All"]]$coefficients["pred_pfas"] - 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["All"]]$coefficients["pred_pfas"] + 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_preterm[["lPreterm"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
-(table2_preterm[["lPreterm"]]$coefficients["pred_pfas"] - 1.96 * 0.006) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_preterm[["lPreterm"]]$coefficients["pred_pfas"] + 1.96 * 0.006) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_preterm[["Late"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Late"]]$coefficients["pred_pfas"] - 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Late"]]$coefficients["pred_pfas"] + 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_preterm[["mPreterm"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_preterm[["mPreterm"]]$coefficients["pred_pfas"] - 1.96 * 0.0005) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_preterm[["mPreterm"]]$coefficients["pred_pfas"] + 1.96 * 0.0005) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] - 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] + 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_preterm[["Very"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * 0.0016) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_preterm[["Very"]]$coefficients["pred_pfas"] + 1.96 * 0.0016) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_preterm[["Very"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] + 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
 
 
@@ -216,21 +215,21 @@ modelsummary::modelsummary(table2_lbw,
 1 - pnorm(0.0048/0.0023)
 
 #marginal effects
-table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.0064) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.0064) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.003) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.00094) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.00094) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.0005) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.0005) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
-table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.0023) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
-(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.0023) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))
+table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
 
 
@@ -309,6 +308,8 @@ datasummary_balance(~group,
                     output = "latex") %>% 
   kable_styling(font_size = 6, fixed_thead = T, position = "center")
 
+length(which(df2$group == 1))
+
 
 ##########################
 #####Table S-3
@@ -359,19 +360,22 @@ df2 = df2 %>%
                   !is.na(birth_race_dsc_1) & 
                   !is.na(wic))
 df2 = df2 %>% 
-  dplyr::select(`Number of Sites w/in 5km` = n_sites, 
-                `Well Distance` = dist, 
-                `Residence Distance` = csite_dist, 
-                `PFOA + PFOS at Site` = pfas, 
-                `Very Preterm` = vpre, 
+  dplyr::select(`Very Preterm` = vpre, 
                 `Moderately Preterm` = mpre, 
                 `Late Preterm` = lpre, 
                 `Very Low Birthweight` = vlbw, 
                 `Moderately Low Birthweight` = mlbw, 
                 `Low Birthweight` = llbw,
+                `Number of Sites w/in 5km` = n_sites, 
+                `Well Distance` = dist, 
+                `Residence Distance` = csite_dist, 
+                `PFOA + PFOS at Site` = pfas, 
                 group
   )
 df2 = as.data.frame(df2)
+df2$`Well Distance` = df2$`Well Distance`/1000
+df2$`Residence Distance`= df2$`Residence Distance`/1000
+df2$`PFOA + PFOS at Site` = df2$`PFOA + PFOS at Site`/1000
 
 
 datasummary_balance(~group, 
@@ -385,17 +389,17 @@ datasummary_balance(~group,
 
 
 ##########################
-#####Table S-6 (interaction with pfas)
+#####Table S-7 (interaction with distance)
 #preterm
 tables6_preterm = list() 
-tables6_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) *I(dist/100) + I(pfas/10^3)  + n_sites + 
+tables6_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                            m_height + tri5 + fa_resid + wind_exposure
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-tables6_preterm[["Late"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) *I(dist/100) + I(pfas/10^3)  + n_sites + 
+tables6_preterm[["Late"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -403,7 +407,7 @@ tables6_preterm[["Late"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~ 
                                        m_height + tri5 + fa_resid + wind_exposure
                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_preterm[["Moderately"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) *I(dist/100) + I(pfas/10^3)  + n_sites + 
+tables6_preterm[["Moderately"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -411,7 +415,7 @@ tables6_preterm[["Moderately"]] = fixest::feols(I(gestation < 32 & gestation >= 
                                                  m_height + tri5 + fa_resid + wind_exposure
                                                |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(dist/100) + I(pfas/10^3)  + n_sites + 
+tables6_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -423,7 +427,7 @@ tables6_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *
 modelsummary::modelsummary(tables6_preterm, 
                            stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
+                           coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
                            gof_map = c("nobs", "r.squared"), 
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
@@ -433,7 +437,7 @@ modelsummary::modelsummary(tables6_preterm,
 
 #low birthweight
 tables6_lbw = list() 
-tables6_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/100)  +I(pfas/10^3)  + n_sites + 
+tables6_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/1000)  +I(pfas/10^3)  + n_sites + 
                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -441,7 +445,7 @@ tables6_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(di
                                                    m_height + tri5 + fa_resid + wind_exposure
                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/100)  + I(pfas/10^3)  + n_sites + 
+tables6_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
                                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -449,7 +453,7 @@ tables6_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~   (updown + down)
                                                                m_height + tri5 + fa_resid + wind_exposure
                                                              |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_lbw[["Low"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~   (updown + down) *I(dist/100)  + I(pfas/10^3)  + n_sites + 
+tables6_lbw[["Low"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -457,7 +461,7 @@ tables6_lbw[["Low"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~   (up
                                                m_height + tri5 + fa_resid + wind_exposure
                                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_lbw[["Moderately"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~   (updown + down) *I(dist/100)  + I(pfas/10^3)  + n_sites + 
+tables6_lbw[["Moderately"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
                                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -465,7 +469,7 @@ tables6_lbw[["Moderately"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) 
                                                          m_height + tri5 + fa_resid + wind_exposure
                                                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables6_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(dist/100)  + I(pfas/10^3)  + n_sites + 
+tables6_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -478,13 +482,13 @@ tables6_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(d
 modelsummary::modelsummary(tables6_lbw, 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
+                           coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
                            gof_map = c("nobs", "r.squared"), 
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
 ##########################
-#####Table S-6 (interaction with distance)
+#####Table S-6 (interaction with PFAS)
 #preterm
 tables7_preterm = list() 
 tables7_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 

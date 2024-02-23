@@ -12,6 +12,7 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
 options(modelsummary_format_numeric_latex = "mathmode")
 
 #set up environment
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
 meters = 5000
 wind_dist= dist_allow = 10000
 ppt = 1000
@@ -24,11 +25,13 @@ drop_dups = TRUE #needs to be false if calculating se on difference in theta
 drop_far_down = TRUE
 drop_far_up = FALSE
 well_fd = test_fd = FALSE #flow line distance?
-IV = TRUE
+IV = FALSE
 fa_resid = TRUE
 drop_sites = FALSE
 drop_states = FALSE
 GIS_create = FALSE
+rerun_fs_clean = FALSE
+relaxed_up = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -37,19 +40,18 @@ if (GIS_create == TRUE){
   source("Code/PR/GIS/df_watershed.R") #mothers residence - NOTE: This takes a long time to run 
 }else{
   #read in natality dataset with binary, flow accumulation, and catchment areas 
-  load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] natality_ws.RData") 
+  load(paste0(natality_path ,"/[UA Box Health] natality_ws.RData"))
 }
 
+
 #read in and set cont site watersheds 
-load("New Hampshire/Data/RData/cont_watershed.RData")
+load("Data_Verify/GIS/cont_watershed.RData")
 
 #read in sites_ll to get right site number
-rs_ll = fread("New Hampshire/Data/rs_ll.csv")
-rs_ll$index = 1:nrow(rs_ll)
+rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
 
 cont_ws = cont_ws %>% 
-  left_join(rs_ll %>% dplyr::select(site, index))
-
+  left_join(rs_ll)
 
 #a well is downgradient if there is a site in its watershed
 down_wells = st_intersection(cont_sites %>% st_transform(3437), df %>% st_as_sf(crs = 3437) %>% st_transform(3437))
@@ -60,24 +62,32 @@ dwells = unique(down_wells$id)
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 down_well_dist = function(w){
+  #select all observations in down_well for well w
   dw = down_wells[which(down_wells$id == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
   dw_ll = df %>% 
     as_tibble() %>%
-    dplyr::filter(id == dw$id[1]) %>% 
-    dplyr::select(lng = lng, lat = lat)
+    dplyr::filter(df$id == dw$id[1]) %>% 
+    dplyr::select(c("lng", "lat"))
   
+  #get the lat longs for all sites in w's watershed
   rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
   
+  #get distance matrix for the well to each relevant release site 
   ds = distm(dw_ll, rsdw_ll)
   
+  #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
   
+  #get the site name for the nearest relevant release site
   rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), "site"]
+  nearest_site = as.character(rsdw_site[ind_nearest])
   
-  nearest_site = rsdw_site[ind_nearest]
-  
+  #how many down sites are within 'meters' of the well?
   dw$n_sites_down5_resid = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  #subset dw to only the nearest down site
+  dw = dw[which(dw$site == nearest_site), ]
+  #append distance to nearest site to dw
   dw$dist_down_resid = ds[ind_nearest]
   
   dw = dw %>% 
@@ -105,33 +115,39 @@ uwells = unique(up_wells$id)
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
-  dw = up_wells[which(up_wells$id == w), ]
-  dw_ll = df %>% 
+  #select all observations in up_well for well w
+  uw = up_wells[which(up_wells$id == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
+  uw_ll = df %>% 
     as_tibble() %>%
-    dplyr::filter(id == dw$id[1]) %>% 
+    dplyr::filter(id == uw$id[1]) %>% 
     dplyr::select(c("lng", "lat"))
   
-  rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
+  #get the lat longs for all sites for which w is in their watershed
+  rsuw_ll = rs_ll[which(rs_ll$site %in% uw$site), c("lng", "lat")]
   
-  ds = distm(dw_ll, rsdw_ll)
+  #get distance matrix for the well to each relevant release site 
+  ds = distm(uw_ll, rsuw_ll)
   
+  #get distance matrix for the well to each relevant release site 
   ind_nearest = which.min(ds)
   
-  rsdw_site = rs_ll[which(rs_ll$site %in% dw$site), c("site", "pfas")]
+  #get the site name for the nearest relevant release site
+  rsuw_site = rs_ll[which(rs_ll$site %in% uw$site), c("site")]
+  nearest_site = as.character(rsuw_site[ind_nearest])
   
-  nearest_site = rsdw_site[ind_nearest]
+  #how many up sites are within 'meters' of the well?
+  uw$n_sites_up5_resid = length(which(ds <= meters))
+  #subset uw to only the nearest down site
+  uw = uw[which(uw$site == nearest_site), ]
+  #append distance to nearest site to uw
+  uw$dist_up_resid = ds[ind_nearest]
   
-  dw$n_sites_up5_resid = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
-  
-  dw$dist_up_resid = ds[ind_nearest]
-  
-  dw = dw %>% 
+  uw = uw %>% 
     dplyr::rename(pfas_up_resid = pfas, site_up_resid = site)
   
-  dw$up_resid = 1
-  
-  return(dw)
+  uw$up_resid = 1
+  return(uw)
 }
 
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist))
@@ -145,8 +161,6 @@ df[is.na(df$up_resid), ]$up_resid = 0
 df[is.na(df$n_sites_down5_resid), ]$n_sites_down5_resid = 0
 df[is.na(df$n_sites_up5_resid), ]$n_sites_up5_resid = 0
 
-#if both up and down, change up to 0
-df[which(df$up_resid == 1 & df$down_resid == 1), ]$up_resid = 0
 
 #for wells that arent down or up, find nearest site and use that 
 well_dist = function(i){
@@ -238,7 +252,7 @@ well_assgn = function(i, drop_far_down, drop_far_up){
 }
 
 df2 = dplyr::bind_rows(pblapply(1:nrow(df1), well_assgn, drop_far_down, drop_far_up))
-length(which(df2$down == 1 & df2$down_resid == 1))/length(which(df2$down == 1))
+length(which(df2$down == 1 & df2$down_resid == 1))/length(which(df2$down == 1)) #0.557
 
 #subset to only rows which have a residence on the side or up
 df2 = df2[which(df2$down_resid == 0), ]
@@ -313,4 +327,4 @@ vlbw_rside = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + 
 
 
 save(lbw_rside, llbw_rside, mlbw_rside, vlbw_rside, pr_rside, lpr_rside, mpr_rside, vpr_rside, 
-     file = "New Hampshire/Data/RData/side_robustness.RData")
+     file = "Data_Verify/Robustness/side_robustness.RData")

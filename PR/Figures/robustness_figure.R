@@ -8,9 +8,9 @@ one_sp = function(tval, pval){
   }
 }
 #preterm
-load("New Hampshire/Data/RData/drop_nearby_state_robustness.RData")
-load("New Hampshire/Data/RData/side_robustness.RData")
-load("New Hampshire/Data/RData/relaxed_up_robust.RData")
+load("Data_Verify/Robustness/drop_nearby_state_robustness.RData")
+load("Data_Verify/Robustness/side_robustness.RData")
+load("Data_Verify/Robustness/relaxed_up_robust.RData")
 
 full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -108,7 +108,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 preterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -123,7 +123,7 @@ preterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("All Preterm") + ggtitle("Preterm") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -224,7 +224,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 # Create the plot with adjusted facet label size and/or angle
@@ -239,7 +239,7 @@ lpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title = element_text(size = 18, face = "bold")) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Late Preterm") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -388,7 +388,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 # Create the plot with adjusted facet label size and/or angle
 mpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -402,7 +402,7 @@ mpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title = element_text(size = 18, face = "bold")) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Mod. Preterm") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -552,7 +552,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 # Create the plot with adjusted facet label size and/or angle
@@ -574,7 +574,7 @@ vpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title.y = element_text(size = 16, face = "bold")
   ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very Preterm") + guides(color = "none") + ylim(c(-0.025, 0.12)) + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very Preterm") + guides(color = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -723,7 +723,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 lbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -738,7 +738,7 @@ lbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
         axis.title.y = element_text(size = 18, face = "bold") ) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("All Low Birthweight") + ggtitle("Low Birthweight") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -887,7 +887,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 llbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -902,7 +902,7 @@ llbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
         axis.title.y = element_text(size = 18, face = "bold")  ) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Low Birthweight") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -1050,7 +1050,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 mlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -1065,7 +1065,7 @@ mlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
         axis.title.y = element_text(size = 18, face = "bold") ) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Mod. Low Birthweight") + 
-  guides(color = "none", fill = "none") + ylim(c(-0.025, 0.12)) + 
+  guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -1214,7 +1214,7 @@ data$down = data$Estimate
 data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
-data$pval_label = sprintf("%.4f", data$pval)
+data$pval_label = sprintf("%.5f", data$pval)
 
 
 vlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
@@ -1236,7 +1236,7 @@ vlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
   ) +
   xlab("") +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very Low Birthweight") + 
-  scale_color_manual(values = c("Downgradient" = "blue", "Upgradient" = "red"))  + ylim(c(-0.025, 0.12)) + 
+  scale_color_manual(values = c("Downgradient" = "blue", "Upgradient" = "red"))  + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
 geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line

@@ -4,15 +4,11 @@ rm(list = ls())
 .rs.restartR()
 
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
@@ -20,46 +16,38 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets)
 options(modelsummary_format_numeric_latex = "mathmode")
 
-#set up environment
-meters = 5000
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE #needs to be false if calculating se on difference in theta
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
+meters = 5000 #buffer for base spec
+wind_dist= dist_allow = 10000 #wind distance cutoff
+ppt = 1000 #cutoff for primary contamination site
+run_cleaning = FALSE #clean natality data?
+match_wells = FALSE #Re match natality data to wells?
+domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
-IV = FALSE
-fa_resid = TRUE
-soil_well = TRUE
-drop_states = FALSE
-relaxed_up = FALSE
+IV = TRUE #Run IV spec?
+rerun_fs_clean = FALSE #clean first stage data?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+GIS_create = FALSE #recreate watershed shapes?
+create_figures = FALSE #output figures?
+nat_run_cont_ws = FALSE#recreate national watershed shapes?
+nat_reassn = FALSE #reassign national CBGs to release sites?
+nat_redo_soil = FALSE #recalculate soil stats for national data?
+oster_robust = FALSE #run Oster (2019) selection on unobservables?
+false_test = FALSE #run falsification test?
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
-#obtain theta info for Northeastern contamination data
-source("Code/PR/Data/pfas_lab_sites.R")
-
-#well location and service area data (NHDES)
-source("Code/PR/Data/NHDES_PWS.R")
-
-#set up wind
-source("Code/PR/Main Analysis/wind.R")
-
-#load natality data
-load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_matched122023.RData") 
-
+source("PFAS-Code/PR/Data/data_head.R")
 
 #main analysis
-source("Code/PR/Main Analysis/main_analy_head.R")
+source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
 
 
 #bootstrap IV
 bts = 10000
-n_boot_cont = 10000
-source("Code/PR/Main Analysis//bootstrap_setup.R")
+n_boot_cont = 9310
+source("PFAS-Code/PR/Main Analysis/bootstrap_setup.R")
 
 boot_err = function(i, df, fs_cont){
   boot_coefs = data.frame(matrix(ncol = 10, nrow = 1))
@@ -183,41 +171,41 @@ boot_err = function(i, df, fs_cont){
   return(boot_coefs)
 }
 
-boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
-#save(boot_coefs, file = "New Hampshire/Data/bootstrap29.RData")
-load("New Hampshire/Data/bootstrap29.RData")
+# boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
+# save(boot_coefs, file = "Data_Verify/RData/bootstrap.RData")
+load("Data_Verify/RData/bootstrap.RData")
 
 
-preterm_sd = sqrt(sum((boot_coefs$preterm - 0.011)^2)/9999)
-0.011/preterm_sd # significant at 5%
+preterm_sd = sqrt(sum((boot_coefs$preterm - 0.010)^2)/9999)
+0.010/preterm_sd # significant at 1%
 preterm_sd
 
-lpreterm_sd = sqrt(sum((boot_coefs$lpreterm - 0.0062)^2)/9999)
-0.0062/lpreterm_sd # significant at 5%
+lpreterm_sd = sqrt(sum((boot_coefs$lpreterm - 0.0060)^2)/9999)
+0.006/lpreterm_sd # significant at 5%
 lpreterm_sd
 
-mpreterm_sd = sqrt(sum((boot_coefs$mpreterm + 0.00142)^2)/9999)
-0.00142/mpreterm_sd # significant at 5%
+mpreterm_sd = sqrt(sum((boot_coefs$mpreterm + 0.00019)^2)/9999)
+0.00019/mpreterm_sd # significant at 5%
 mpreterm_sd
 
-vpreterm_sd = sqrt(sum((boot_coefs$vpreterm - 0.0058)^2)/9999)
-0.0058/vpreterm_sd # significant at 5%
+vpreterm_sd = sqrt(sum((boot_coefs$vpreterm - 0.0039)^2)/9999)
+0.0039/vpreterm_sd # significant at 5%
 vpreterm_sd
 
-lbw_sd = sqrt(sum((boot_coefs$lbw - 0.0109)^2)/9999)
-0.0109/lbw_sd # significant at 5%
+lbw_sd = sqrt(sum((boot_coefs$lbw - 0.0101)^2)/9999)
+0.0101/lbw_sd # significant at 5%
 lbw_sd
 
-llbw_sd = sqrt(sum((boot_coefs$llbw - 0.0042)^2)/9999)
-0.0042/llbw_sd # significant at 5%
+llbw_sd = sqrt(sum((boot_coefs$llbw - 0.0052)^2)/9999)
+0.0052/llbw_sd # significant at 5%
 llbw_sd
 
-mlbw_sd = sqrt(sum((boot_coefs$mlbw - 0.00191)^2)/9999)
-0.00191/mlbw_sd # significant at 5%
+mlbw_sd = sqrt(sum((boot_coefs$mlbw - 0.00133)^2)/9999)
+0.00133/mlbw_sd # significant at 5%
 mlbw_sd
 
-vlbw_sd = sqrt(sum((boot_coefs$vlbw - 0.0048)^2)/9999)
-0.0048/vlbw_sd # significant at 5%
+vlbw_sd = sqrt(sum((boot_coefs$vlbw - 0.0035)^2)/9999)
+0.0035/vlbw_sd # significant at 5%
 vlbw_sd
 
 
@@ -369,9 +357,9 @@ boot_err_quant = function(i, df, fs_cont){
 
   return(boot_coefs)
 }
-boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
-#save(boot_coefs, file = "New Hampshire/Data/bootstrap_quant28.RData")
-load("New Hampshire/Data/bootstrap_quant28.RData")
+# boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
+# save(boot_coefs, file = "Data_Verify/RData/bootstrap_quant.RData")
+load("New Hampshire/Data/bootstrap_quant.RData")
 
 
 p2_sd = sqrt(sum((boot_coefs$preterm2 - reg_data[2, "pre_coef"])^2)/9999)

@@ -463,5 +463,5 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
 
 plot = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
 
-ggsave("Figures/Robustness/cutoff_figure.png", plot)
+plot
 

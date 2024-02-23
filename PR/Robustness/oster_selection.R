@@ -48,7 +48,7 @@ r2_tilde = 1 - (inter_r$ssr)/(sum((df$lbw - mean(df$lbw))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(bweight < 2500) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(bweight < 2500) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (short_r$ssr)/(sum((df$lbw - mean(df$lbw))^2))
 
@@ -71,12 +71,11 @@ d_lbw = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
                     (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
                     2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
                     (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((rmax - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (rmax - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
-#we would require that unobserved are 1.8175 times more important
 
 
 #high lbw
@@ -96,7 +95,7 @@ r2_tilde = 1 - (inter_r$ssr)/(sum((df$llbw - mean(df$llbw))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (short_r$ssr)/(sum((df$llbw - mean(df$llbw))^2))
 
@@ -142,7 +141,7 @@ r2_tilde = 1 - (inter_r$ssr)/(sum((df$mlbw - mean(df$mlbw))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (short_r$ssr)/(sum((df$mlbw - mean(df$mlbw))^2))
 
@@ -187,7 +186,7 @@ r2_tilde = 1 - (inter_r$ssr)/(sum((df$vlbw - mean(df$vlbw))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(bweight < 1000) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(bweight < 1000) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (short_r$ssr)/(sum((df$vlbw - mean(df$vlbw))^2))
 
@@ -234,7 +233,7 @@ r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df$preterm - mean(df$preterm))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(gestation < 37) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(gestation < 37) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (sum(short_r$ssr))/(sum((df$preterm - mean(df$preterm))^2))
 
@@ -262,7 +261,6 @@ d_pre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
-#we would require that unobserved are 1.754 times more important
 
 #late preterm
 #intermediate regression
@@ -282,7 +280,7 @@ r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df$lpreterm - mean(df$lpreterm))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (sum(short_r$ssr))/(sum((df$lpreterm - mean(df$lpreterm))^2))
 
@@ -329,7 +327,7 @@ r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df$mpreterm - mean(df$mpreterm))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (sum(short_r$ssr))/(sum((df$mpreterm - mean(df$mpreterm))^2))
 
@@ -376,7 +374,7 @@ r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df$vpreterm - mean(df$vpreterm))^2))
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(I(gestation < 28) ~  updown + down, data = df, warn = F, notes = F)
+short_r = fixest::feols(I(gestation < 28) ~  updown + down|county + year^month, data = df, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
 short_r2 = 1 - (sum(short_r$ssr))/(sum((df$vpreterm - mean(df$vpreterm))^2))
 

@@ -1,26 +1,20 @@
-#clear memory
-rm(list = ls())
-#restart R
-.rs.restartR()
-
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets)
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus)
 options(modelsummary_format_numeric_latex = "mathmode")
 
+
 #set up environment
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
 wind_dist= dist_allow = 10000
 ppt = 1000
 run_cleaning = FALSE
@@ -31,13 +25,15 @@ system = FALSE
 drop_dups = TRUE #needs to be false if calculating se on difference in theta
 drop_far_down = TRUE
 drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
+rerun_fs_clean = FALSE #clean first stage data?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
 
 
 
 
 index = 1
-load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_matched122023.RData") 
+load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
 dfs = df
 reg_data = data.frame(matrix(ncol = 4, nrow = 0))
 colnames(reg_data) = c('meters', "total_n", "n_up", "n_down")
@@ -48,16 +44,18 @@ for (meters in seq(3000, 10000, by = 1000)){
   df = dfs
   
   #obtain theta info for Northeastern contamination data
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/groundwater_algorithm.R")
+  source("PFAS-Code/PR/Data/pfas_lab_sites.R")
   
   #well location and service area data (NHDES)
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/source_service_cleaning.R")
+  source("PFAS-Code/PR/Data/NHDES_PWS.R")
   
   #set up wind
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/wind.R")
+  source("PFAS-Code/PR/Data/wind.R")
   
   #binary setup
-  source("Code/Primary/Watersheds/binary.R")
+  source("PFAS-Code/PR/Main Analysis/binary.R")
+  
+
 
   df = df %>% 
     dplyr::filter(!is.na(gestation) & 
@@ -114,13 +112,13 @@ reg_data_long = reg_data %>%
                values_to = "Value")
 
 ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) + 
-  geom_line(size = 1.5) +
+  geom_line(size = 2) +
   ylab('Sample Size') + 
   xlab('Buffer (km)') + 
   theme_minimal() + guides(color = "none") + 
-  annotate("text", x = 4.4, y = 12000, label = "Total Sample", angle = 15, size = 5) + 
-  annotate("text", x = 4.9, y = 7200, label = "Downgradient", angle = 4, size = 5)+ 
-  annotate("text", x = 4.5, y = 1100, label = "Upgradient", angle = 3, size = 5) + 
-  theme(axis.text = element_text(size = 12, face = "bold"), 
-        axis.title = element_text(size = 12, face = "bold")) + 
+  annotate("text", x = 6, y = 13500, label = "Total Sample", angle = 20, size = 10) + 
+  annotate("text", x = 4.4, y = 7600, label = "Downgradient", angle = 2, size = 10)+ 
+  annotate("text", x = 8.5, y = 7200, label = "Upgradient", angle = 8, size = 10) + 
+  theme(axis.text = element_text(size = 20, face = "bold"), 
+        axis.title = element_text(size = 20, face = "bold")) + 
   scale_x_continuous(breaks = 1:10)

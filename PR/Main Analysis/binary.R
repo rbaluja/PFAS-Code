@@ -14,6 +14,10 @@ rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
 cont_ws = cont_ws %>% 
   left_join(rs_ll)
 
+if (drop_states == TRUE){
+  cont_ws = cont_ws[which(cont_ws$site %in% cont_sites$site), ]
+}
+
 
 ######################
 ##### Downgradient matching
