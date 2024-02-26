@@ -204,7 +204,7 @@ reg_data$vlbw_high = reg_data$vlbw_coef + 1.96 * reg_data$vlbw_se
 breaks = seq(1, 5, by = 1)
 labels = as.character(breaks)
 
-reg_data$pval_label = sprintf("%.4f", reg_data$pre_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$pre_p)
 pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=pre_low , ymax=pre_high), width=0.1, alpha = 0.5) + 
@@ -226,7 +226,7 @@ pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
   scale_x_continuous(breaks = breaks, labels = labels)  + ylim(c(-0.06, 0.09)) + 
   ggtitle("Preterm")
 
-reg_data$pval_label = sprintf("%.4f", reg_data$lpre_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$lpre_p)
 lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=lpre_low , max=lpre_high), width=0.1, alpha = 0.5) + 
@@ -248,7 +248,7 @@ lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
   xlab("") + ylab("Late Preterm") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.4f", reg_data$mpre_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$mpre_p)
 mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=mpre_low , max=mpre_high), width=0.1, alpha = 0.5) + 
@@ -270,7 +270,7 @@ mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
   xlab("") + ylab("Mod. Preterm") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.4f", reg_data$vpre_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$vpre_p)
 vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=vpre_low , ymax=vpre_high), width=0.1, alpha = 0.5) + 
@@ -296,7 +296,7 @@ pfas_hist = ggplot(df_nn, aes(x=pred_pfas_level)) +
 
 
 
-reg_data$pval_label = sprintf("%.4f", reg_data$lbw_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$lbw_p)
 lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=lbw_low, ymax=lbw_high), width=0.1, alpha = 0.5) + 
@@ -314,10 +314,10 @@ lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)
     
   ) + 
-  xlab("") + ylab("All Low Birthweight")+ ylim(c(-0.06, 0.09)) + 
+  xlab("") + ylab("All Low Birthweight")+ ylim(c(-0.06, 0.12)) + 
   ggtitle("Low Birthweight")
 
-reg_data$pval_label = sprintf("%.4f", reg_data$llbw_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$llbw_p)
 llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=llbw_low, ymax=llbw_high), width=0.1, alpha = 0.5) +
@@ -338,7 +338,7 @@ llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
   ) + 
   xlab("") + ylab("Low Birthweight") + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.4f", reg_data$mlbw_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$mlbw_p)
 mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=mlbw_low, ymax=mlbw_high), width=0.1, alpha = 0.5) + 
@@ -359,7 +359,7 @@ mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
   ) + 
   xlab("") + ylab("Mod. Low Birthweight")+ ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.4f", reg_data$vlbw_p)
+reg_data$pval_label = sprintf("%.6f", reg_data$vlbw_p)
 vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=vlbw_low, ymax=vlbw_high), width=0.1, alpha = 0.5) + 
@@ -379,3 +379,55 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
+
+#Q2 preterm
+clipr::write_clip(round(as.numeric(reg_data[2, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[2, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+
+#Q3 preterm
+clipr::write_clip(round(as.numeric(reg_data[3, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[3, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+
+#Q4 preterm
+clipr::write_clip(round(as.numeric(reg_data[4, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[4, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+
+
+#Q5 preterm
+clipr::write_clip(round(as.numeric(reg_data[5, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[5, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+
+
+#Q2 lbw
+clipr::write_clip(round(as.numeric(reg_data[2, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[2, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+
+#Q3 lbw
+clipr::write_clip(round(as.numeric(reg_data[3, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[3, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+
+#Q4 lbw
+clipr::write_clip(round(as.numeric(reg_data[4, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[4, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+
+
+#Q5 lbw
+clipr::write_clip(round(as.numeric(reg_data[5, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+clipr::write_clip(round(as.numeric(reg_data[5, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+
+#to get right stars
+for (ot in c("pre", "lpre", "mpre", "vpre", "lbw", "llbw", "mlbw", "vlbw")){
+  for (q in 2:5){
+    coef = reg_data[q, paste0(ot, "_coef")]
+    se = reg_data[q, paste0(ot, "_se")]
+    pval = 1 - pnorm(coef/se)
+    
+    if (pval < 0.01){
+      print(paste0(ot, " q", q,  " three stars"))
+    }else if(pval < 0.05){
+      print(paste0(ot, " q", q,  " two stars"))
+    }else if(pval < 0.1){
+      print(paste0(ot, " q", q,  " one star"))
+    }
+  }
+}

@@ -359,7 +359,7 @@ boot_err_quant = function(i, df, fs_cont){
 }
 # boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
 # save(boot_coefs, file = "Data_Verify/RData/bootstrap_quant.RData")
-load("New Hampshire/Data/bootstrap_quant.RData")
+load("Data_Verify/RData/bootstrap_quant.RData")
 
 
 p2_sd = sqrt(sum((boot_coefs$preterm2 - reg_data[2, "pre_coef"])^2)/9999)

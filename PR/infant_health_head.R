@@ -1,5 +1,5 @@
 #set working directory
-setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
 source("PFAS-Code/PR/env_functions.R")
@@ -33,6 +33,7 @@ nat_reassn = FALSE #reassign national CBGs to release sites?
 nat_redo_soil = FALSE #recalculate soil stats for national data?
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
+nb_cbg = FALSE #Reclean national births (county -> cbg stats)
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
 #data cleaning

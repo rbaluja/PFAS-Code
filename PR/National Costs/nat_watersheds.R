@@ -50,7 +50,6 @@ dir.create("Data_Verify/GIS/nat_cont/cont_watershed")
 dir.create("Data_Verify/GIS/nat_cont/cont_watershed/Shapes")
 
 cont_sites$index = 1:nrow(cont_sites)
-fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), "Data_Verify/GIS/National/nat_rs_ws.csv")
 
 states11 = c("Michigan", 
              "Minnesota", 
@@ -63,6 +62,11 @@ states11 = c("Michigan",
              "Florida", 
              "North Dakota", 
              "Wisconsin")
+
+cont_sites = cont_sites %>% 
+  dplyr::filter(state %in% states11)
+
+fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), "Data_Verify/GIS/National/nat_rs_ws.csv")
 
 
 cont_ws = function(state, states11){
@@ -112,7 +116,6 @@ cont_ws = function(state, states11){
 pblapply(states11, cont_ws, states11, cl = 1) 
 
 files = list.files("Data_Verify/GIS/nat_cont/cont_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
-files = files[!endsWith(files, "pp.shp")]
 
 well_ws = function(f){
   w_ws1 = st_read(f)
@@ -121,9 +124,9 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
-wells_ws = wells_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index))
-save(wells_ws, file = "New Hampshire/Data/RData/nat_cont_watershed.RData")
+n_cont_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+n_cont_ws = n_cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index))
+save(n_cont_ws, file = "Data_Verify/RData/nat_cont_watershed.RData")
 
 #delete intermediate files
 unlink("Data_Verify/GIS/nat_cont/", recursive = TRUE)
