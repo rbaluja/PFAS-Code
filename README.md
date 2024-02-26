@@ -25,6 +25,7 @@
 - nat_redo_soil: Recalculate soil statistics for national data?
 - oster_robust: Run Oster (2019) selection on unobservables stats?
 - false_test: Run falsification test?
+- nb_cbg: Reclean national births (county -> cbg stats)
 - census_key: Census API key used for fetching tract and CBG-level covariates
 
 #### Files ran within the execution file (in order):
