@@ -10,6 +10,12 @@ placebo = function(i, df, wells){
   
   psites$site = 1:nrow(psites)
   
+
+  #create directories for watershed calculation
+  dir.create("Data_Verify/GIS/placebo")
+  dir.create("Data_Verify/GIS/placebo/cont_pp")
+  dir.create("Data_Verify/GIS/placebo/cont_watershed")
+  dir.create("Data_Verify/GIS/placebo/cont_watershed/Shapes")
   #calculate watershed for each placebo site
   lapply(1:nrow(psites), placebo_ws, psites)
   
@@ -39,6 +45,9 @@ placebo = function(i, df, wells){
     return(boot_coefs)
   })
   
+  #delete intermediate files
+  unlink("Data_Verify/GIS/placebo/", recursive = TRUE)
+  
   return(regr)
   
 }
@@ -51,24 +60,24 @@ placebo_ws = function(i, psites){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = "New Hampshire/Data/QGIS/flow_acc.tiff", 
-                       output = paste0("New Hampshire/Data/QGIS/placebo_pp/pp_site_", i, ".shp"), 
+                       flow_accum = "Data_Verify/GIS/flow_acc.tiff", 
+                       output = paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp"), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
-  wbt_watershed(d8_pntr = "New Hampshire/Data/QGIS/flow_dir.tiff", 
-                pour_pts = paste0("New Hampshire/Data/QGIS/placebo_pp/pp_site_", i, ".shp"), 
-                output = paste0("New Hampshire/Data/QGIS/placebo_watershed/watershed_", i, ".tiff"))
+  wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
+                pour_pts = paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp"), 
+                output = paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff"))
   #read in watershed
-  ws = terra::rast(paste0("New Hampshire/Data/QGIS/placebo_watershed/watershed_", i, ".tiff"))
+  ws = terra::rast(paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff"))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
-  
-  writeVector(ws_poly, paste0("New Hampshire/Data/QGIS/placebo_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
+  #save shapefile of watershed
+  writeVector(ws_poly, paste0("Data_Verify/GIS/placebo/cont_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
 }
 
 combine_placebo_ws = function(){
-  files = list.files("New Hampshire/Data/QGIS/placebo_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
+  files = list.files("Data_Verify/GIS/placebo/cont_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
   files = files[!endsWith(files, ".xml")]
   
   cont_ws = function(f){
@@ -85,13 +94,12 @@ combine_placebo_ws = function(){
 
 
 bin_spec = function(df, wells, cont_ws, psites){
-  #read in and set well watersheds
-  load("New Hampshire/Data/RData/wells_watershed.RData")
+  # #read in and set well watersheds
+  load("Data_Verify/GIS/wells_watershed.RData")
   
   #read in well_ll to get appropriate sys and well ids
-  well_ll = fread("New Hampshire/Data/well_ll.csv")
-  well_ll$index = 1:nrow(well_ll)
-  wells_ws = wells_ws %>% left_join(well_ll %>% dplyr::select(sys_id, source, index))
+  well_ll = fread("Data_Verify/GIS/wells_ll_ws.csv")
+  wells_ws = wells_ws %>% left_join(well_ll)
   
   #a well is downgradient if there is a site in its watershed
   down_wells = st_intersection(psites %>% st_transform(3437), wells_ws %>% st_transform(3437))
@@ -103,7 +111,7 @@ bin_spec = function(df, wells, cont_ws, psites){
   dwells = unique(down_wells$well)
   
   
-  down_wells = dplyr::bind_rows(lapply(dwells, down_well_dist, down_wells, well_ll, psites))
+  down_wells = dplyr::bind_rows(lapply(dwells, down_well_dist, down_wells, psites, wells))
   
   
   #for calculating upgradient, first obtain set of wells in the catchment area of sites
@@ -125,14 +133,14 @@ bin_spec = function(df, wells, cont_ws, psites){
     dplyr::group_by(sys_id, source) %>%
     dplyr::group_indices(sys_id, source)
   uwells = unique(up_wells$well)
-  up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, up_wells, well_ll, psites))
+  up_wells = dplyr::bind_rows(lapply(uwells, up_well_dist, up_wells, psites, wells))
   
   
   
   wells = wells %>% 
     left_join(down_wells %>% 
                 as_tibble() %>% 
-                dplyr::select(!c(well, site, index, geometry)), by = c("sys_id", "source")) %>% 
+                dplyr::select(!c(well, index, site, geometry)), by = c("sys_id", "source")) %>% 
     left_join(up_wells %>% 
                 dplyr::select(!c(well, site, index)), by = c("sys_id", "source"))
   
@@ -141,8 +149,6 @@ bin_spec = function(df, wells, cont_ws, psites){
   wells[is.na(wells$n_sites_down5), ]$n_sites_down5 = 0
   wells[is.na(wells$n_sites_up5), ]$n_sites_up5 = 0
   
-  #if both up and down, change up to 0
-  wells[which(wells$up == 1 & wells$down == 1), ]$up = 0
   
   wells1 = dplyr::bind_rows(lapply(1:nrow(wells), well_dist, wells, psites))
   
@@ -161,28 +167,39 @@ bin_spec = function(df, wells, cont_ws, psites){
 }
 
 
-#only close down determines whether we include individuals on down wells that are further than meters in analysis
-#if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
-#if 0, then we do not include them
-down_well_dist = function(w, down_wells, well_ll, psites){
+down_well_dist = function(w, down_wells, psites, wells){
+  #select all observations in down_well for well w
   dw = down_wells[which(down_wells$well == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
+  dw_ll = wells %>% 
+    as_tibble() %>%
+    dplyr::filter(source == dw$source[1] & sys_id == dw$sys_id[1]) %>% 
+    dplyr::select(c("lng", "lat"))
   
+  #get the lat longs for all sites in w's watershed
   rsdw_site = psites[which(psites$site %in% dw$site), "site"]
   
-  ds = as.numeric(st_distance(well_ll %>% 
-                                dplyr::filter(index == dw$index[1]) %>% 
+  #get distance matrix for the well to each relevant release site 
+  ds = as.numeric(st_distance(dw_ll %>% 
                                 st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
                                 st_transform(32110), rsdw_site %>% st_transform(32110)))
   
-  
+  #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
+
+  nearest_site = rsdw_site %>% 
+    as_tibble() %>% 
+   dplyr::select(site)
+  nearest_site = as.character(nearest_site[ind_nearest, "site"])
   
-  nearest_site = rsdw_site$site[ind_nearest]
-  
+  #how many down sites are within 'meters' of the well?
   dw$n_sites_down5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  #subset dw to only the nearest down site
+  dw = dw[which(dw$site == nearest_site), ]
+  #append distance to nearest site to dw
   dw$dist_down = ds[ind_nearest]
-  dw$site_down = nearest_site
+  
+  dw$site_down = as.numeric(nearest_site)
   
   dw$down = 1
   
@@ -193,31 +210,44 @@ down_well_dist = function(w, down_wells, well_ll, psites){
 #only close up determines whether we include individuals on up wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
-up_well_dist = function(w, up_wells, well_ll, psites){
-  dw = up_wells[which(up_wells$well == w), ]
+up_well_dist = function(w, up_wells, psites, wells){
+  #select all observations in up_well for well w
+  uw = up_wells[which(up_wells$well == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
+  uw_ll = wells %>% 
+    as_tibble() %>%
+    dplyr::filter(source == uw$source[1] & sys_id == uw$sys_id[1]) %>% 
+    dplyr::select(c("lng", "lat"))
   
-  rsdw_site = psites[which(psites$site %in% dw$site), "site"]
+  #get the lat longs for all sites for which w is in their watershed
+  rsuw_ll = psites[which(psites$site %in% uw$site), ]
   
-  ds = as.numeric(st_distance(well_ll %>% 
-                                dplyr::filter(index == dw$index[1]) %>% 
+  #get distance matrix for the well to each relevant release site 
+  ds = as.numeric(st_distance(uw_ll %>% 
                                 st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
-                                st_transform(32110), rsdw_site %>% st_transform(32110)))
+                                st_transform(32110), rsuw_ll %>% st_transform(32110)))
   
-  
+  #get distance matrix for the well to each relevant release site 
   ind_nearest = which.min(ds)
   
-  nearest_site = rsdw_site$site[ind_nearest]
+  #get the site name for the nearest relevant release site
+  nearest_site = rsuw_ll %>% 
+    as_tibble() %>% 
+    dplyr::select(site)
+  nearest_site = as.character(nearest_site[ind_nearest, "site"])
   
-  dw$n_sites_up5 = length(which(ds <= meters))
-  dw = dw[which(dw$site == nearest_site[1]), ]
-  dw$dist_up = ds[ind_nearest]
-  dw$site_up = nearest_site
+  #how many up sites are within 'meters' of the well?
+  uw$n_sites_up5 = length(which(ds <= meters))
+  #subset uw to only the nearest down site
+  uw = uw[which(uw$site == nearest_site), ]
+  #append distance to nearest site to uw
+  uw$dist_up = ds[ind_nearest]
   
-  dw$up = 1
+  uw$up = 1
   
-  return(dw)
+  uw$site_up = as.numeric(nearest_site)
+  return(uw)
 }
-
 
 #for wells that arent down or up, find nearest site and use that 
 well_dist = function(i, wells, psites){
@@ -251,6 +281,7 @@ well_assgn = function(i, drop_far_down, drop_far_up, wells1){
   #if distance for down well is less than meters, classify well as down, set pfas at level of relevant site
   d = w$dist_down
   if (!is.na(d)){ #if there is a down site
+    w$up = 0
     if (d < meters){ #if the down site is within the buffer, assign its values to the well
       w$dist = w$dist_down
       w$down = 1

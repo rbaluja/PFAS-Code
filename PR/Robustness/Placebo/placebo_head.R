@@ -1,110 +1,83 @@
-#clear memory
-rm(list = ls())
-#restart R
-.rs.restartR()
-
-
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
+
+set.seed(1)
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox)
-options(modelsummary_format_numeric_latex = "mathmode")
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus)
 wbt_verbose(FALSE)
 
 #set up environment
-meters = 5000
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE #needs to be false if calculating se on difference in theta
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
+meters = 5000 #buffer for base spec
+wind_dist= dist_allow = 10000 #wind distance cutoff
+ppt = 1000 #cutoff for primary contamination site
+run_cleaning = FALSE #clean natality data?
+match_wells = FALSE #Re match natality data to wells?
+domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
-IV = TRUE
-fa_resid = TRUE
-soil_well = TRUE #get soil properties at well?
-drop_states = FALSE
-relaxed_up = FALSE
+IV = TRUE #Run IV spec?
+rerun_fs_clean = FALSE #clean first stage data?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+GIS_create = FALSE #recreate watershed shapes?
+create_figures = FALSE #output figures?
+nat_run_cont_ws = FALSE#recreate national watershed shapes?
+nat_reassn = FALSE #reassign national CBGs to release sites?
+nat_redo_soil = FALSE #recalculate soil stats for national data?
+oster_robust = FALSE #run Oster (2019) selection on unobservables?
+false_test = FALSE #run falsification test?
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+rerun_placebos = TRUE
 
-#well location and service area data (NHDES)
-source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/source_service_cleaning.R")
-
-if (run_cleaning == TRUE){
-  #read in (and clean) natality data
-  source('/Users/robert/Documents/GitHub/PFAS_IH/Primary/natality_data.R')
-  
-  #get covariates for birth records
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/birth_covars.R")
-  
-}else if (match_wells == TRUE){
-  load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_wdem122023.RData")
-  #combine the well and natality data
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/natality_wells.R")
-  
-  #get elevation at relevant well and residence
-  source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/elev_setup.R")
-}else if (old_wells == FALSE){
-  load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_matched122023.RData") 
-}else{
-  load("/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/[UA Box Health] birth_records_matched_oldwells122023.RData")
-}
-
-if (domestic == FALSE){
-  df = df[df$sys_id != "Domestic Well", ] #50874 individuals on domestic water
-}
+#data cleaning
+source("PFAS-Code/PR/Data/data_head.R")
 
 nh_shape = tigris::states() %>% 
   dplyr::filter(STUSPS == "NH") %>% 
   st_transform(32110)
 
 #read in placebo functions
-source("Code/Placebo/placebo_functions.R")
+source("PFAS-Code/PR/Robustness/Placebo/placebo_functions.R")
 
 if (rerun_placebos == TRUE){
   placebos_1 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_1, file = "New Hampshire/Data/RData/placebos_1.RData")
+  save(placebos_1, file = "Data_Verify/RData/placebos_1.RData")
   
   placebos_2 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_2, file = "New Hampshire/Data/RData/placebos_2.RData")
+  save(placebos_2, file = "Data_Verify/RData/placebos_2.RData")
   
   placebos_3 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_3, file = "New Hampshire/Data/RData/placebos_3.RData")
+  save(placebos_3, file = "Data_Verify/RData/placebos_3.RData")
   
   placebos_4 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_4, file = "New Hampshire/Data/RData/placebos_4.RData")
+  save(placebos_4, file = "Data_Verify/RData/placebos_4.RData")
   
   placebos_5 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_5, file = "New Hampshire/Data/RData/placebos_5.RData")
+  save(placebos_5, file = "Data_Verify/RData/placebos_5.RData")
   
   placebos_6 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_6, file = "New Hampshire/Data/RData/placebos_6.RData")
+  save(placebos_6, file = "Data_Verify/RData/placebos_6.RData")
   
   placebos_7 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_7, file = "New Hampshire/Data/RData/placebos_7.RData")
+  save(placebos_7, file = "Data_Verify/RData/placebos_7.RData")
   
   placebos_8 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_8, file = "New Hampshire/Data/RData/placebos_8.RData")
+  save(placebos_8, file = "Data_Verify/RData/placebos_8.RData")
   
   placebos_9 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_9, file = "New Hampshire/Data/RData/placebos_9.RData")
+  save(placebos_9, file = "Data_Verify/RData/placebos_9.RData")
   
   placebos_10 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_10, file = "New Hampshire/Data/RData/placebos_10.RData")
+  save(placebos_10, file = "Data_Verify/RData/placebos_10.RData")
   
   plac = NULL
   # Loop through the files

@@ -155,6 +155,7 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   #if distance for down well is less than meters, classify well as down, set pfas at level of relevant site
   d = w$dist_down
   if (!is.na(d)){ #if there is a down site
+    w$up = 0
     if (d < meters){ #if the down site is within the buffer, assign its values to the well
       w$pfas = w$pfas_down
       w$site = w$site_down
