@@ -24,9 +24,7 @@ births_fa = bll %>%
   st_buffer(1) %>% 
   st_transform(4326)
 
-sp = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/por_gNATSGO/por_gNATSGO_US.tif")
-# sp = terra::focal(sp, 3, "modal", na.policy = "only")
-# terra::writeRaster(sp, "/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/por_gNATSGO/por_gNATSGO_US_fna.tif")
+sp = terra::rast("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif")
 
 b_sp = exactextractr::exact_extract(sp, births_fa)
 
@@ -34,19 +32,10 @@ births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_sp, births, "sp"))
 
 
 #available water capacity
-births_fa = bll %>% 
-  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
-  st_transform(32110) %>% 
-  st_buffer(1) %>% 
-  st_transform(4326)
-
-awc = terra::rast("/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
-# awc = terra::focal(awc, 3, "modal", na.policy = "only")
-# terra::writeRaster(awc, "/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH/Soil/awc_gNATSGO/awc_gNATSGO_US_fna.tif")
-
+awc = terra::rast("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
 
 b_awc = exactextractr::exact_extract(awc, births_fa)
 
 births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_awc, births, "awc"))
 
-fwrite(births, "Nat Data/nat_births_fcleaned5.csv")
+fwrite(births, "Data_Verify/National/nat_births_fcleaned5.csv")

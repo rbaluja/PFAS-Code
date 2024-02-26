@@ -13,25 +13,36 @@ births = births %>%
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 down_well_dist = function(w){
+  #select all observations in down_well for well w
   dw = down_wells[which(down_wells$geoid == w), ]
+  #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
   dw_ll = births %>% 
     as_tibble() %>%
     dplyr::filter(geoid == dw$geoid[1]) %>% 
     dplyr::select(c("lng", "lat"))
   
+  #get the lat longs for all sites in w's watershed
   rsdw_ll = cont_sites[which(cont_sites$site %in% dw$site & 
-                               cont_sites$sum_pfoa_pfos %in% dw$pfas), c("lng", "lat")]
+                               cont_sites$sum_pfoa_pfos %in% dw$pfas), c("lng", "lat", "site")]
   
+  #distances
   ds = distm(dw_ll, rsdw_ll %>% as_tibble() %>% dplyr::select(lng, lat))
   
+  #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
   
-  rsdw_site = cont_sites$site[which(cont_sites$site %in% dw$site)]
+  #get the site name for the nearest relevant release site
+  rsdw_site = rsdw_ll %>% 
+    as_tibble() %>% 
+    dplyr::select(site) %>%
+    dplyr::filter(site %in% dw$site)
+  nearest_site = as.character(rsdw_site[ind_nearest, "site"])
   
-  nearest_site = rsdw_site[ind_nearest]
-  
-  dw$n_sites_down = nrow(dw)
-  dw = dw[which(dw$site == nearest_site[1]), ]
+  #how many down sites are within 'meters' of the well?
+  dw$n_sites_down5 = length(which(ds <= meters))
+  #subset dw to only the nearest down site
+  dw = dw[which(dw$site == nearest_site), ]
+  #append distance to nearest site to dw
   dw$dist_down = ds[ind_nearest]
   
   dw = dw %>% 
@@ -43,8 +54,6 @@ down_well_dist = function(w){
 }
 
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist))
-
-
 
 
 
@@ -61,33 +70,38 @@ uwells = unique(up_wells$geoid)
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
-  dw = up_wells[which(up_wells$geoid == w), ]
-  dw_ll = births %>% 
+  uw = up_wells[which(up_wells$geoid == w), ]
+  uw_ll = births %>% 
     as_tibble() %>%
-    dplyr::filter(geoid == dw$geoid[1]) %>% 
+    dplyr::filter(geoid == uw$geoid[1]) %>% 
     dplyr::select(c("lng", "lat"))
   
-  rsdw_ll = cont_sites[which(cont_sites$site %in% dw$site & 
-                               cont_sites$sum_pfoa_pfos %in% dw$pfas), c("lng", "lat")]
+  rsuw_ll = cont_sites[which(cont_sites$site %in% uw$site & 
+                               cont_sites$sum_pfoa_pfos %in% uw$pfas), c("lng", "lat", "site")]
   
-  ds = distm(dw_ll, rsdw_ll %>% as_tibble() %>% dplyr::select(lng, lat))
+  ds = distm(uw_ll, rsuw_ll %>% as_tibble() %>% dplyr::select(lng, lat))
   
   ind_nearest = which.min(ds)
   
-  rsdw_site = cont_sites$site[which(cont_sites$site %in% dw$site)]
+  rsuw_site = cont_sites$site[which(cont_sites$site %in% uw$site)]
   
-  nearest_site = rsdw_site[ind_nearest]
+  rsuw_site = rsuw_ll %>% 
+    as_tibble() %>% 
+    dplyr::select(site) %>%
+    dplyr::filter(site %in% uw$site)
   
-  dw$n_sites_up = nrow(dw)
-  dw = dw[which(dw$site == nearest_site[1]), ]
-  dw$dist_up = ds[ind_nearest]
+  nearest_site = as.character(rsuw_site[ind_nearest, "site"])
   
-  dw = dw %>% 
+  uw$n_sites_up5 = length(which(ds <= meters))
+  uw = uw[which(uw$site == nearest_site), ]
+  uw$dist_up = ds[ind_nearest]
+  
+  uw = uw %>% 
     dplyr::rename(pfas_up = pfas, site_up = site)
   
-  dw$up = 1
+  uw$up = 1
   
-  return(dw)
+  return(uw)
 }
 
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist))
@@ -99,11 +113,8 @@ births = births %>%
 
 births[is.na(births$down), ]$down = 0
 births[is.na(births$up), ]$up = 0
-births[is.na(births$n_sites_down), ]$n_sites_down = 0
-births[is.na(births$n_sites_up), ]$n_sites_up = 0
-
-#if both up and down, change up to 0
-births[which(births$up == 1 & births$down == 1), ]$up = 0
+births[is.na(births$n_sites_down5), ]$n_sites_down5 = 0
+births[is.na(births$n_sites_up5), ]$n_sites_up5 = 0
 
 
 #for wells that arent down or up, find nearest site and use that 
@@ -138,6 +149,7 @@ well_assgn = function(i, drop_far_down = FALSE, drop_far_up = FALSE){
   #if distance for down well is less than meters, classify well as down, set pfas at level of relevant site
   d = w$dist_down
   if (!is.na(d)){ #if there is a down site
+    w$up = 0
     if (d < meters + 100){ #if the down site is within the buffer, assign its values to the well
       w$pfas = w$pfas_down
       w$site = w$site_down
@@ -198,7 +210,7 @@ well_assgn = function(i, drop_far_down = FALSE, drop_far_up = FALSE){
 
 births = dplyr::bind_rows(pblapply(1:nrow(births), well_assgn))
 
-fwrite(births %>% as_tibble() %>% dplyr::select(geoid, births, down, up, pfas, dist, site, n_sites_meters), "Nat Data/births_sites_assigned5.csv")
+fwrite(births %>% as_tibble() %>% dplyr::select(geoid, births, down, up, pfas, dist, site, n_sites_meters), "Data_Verify/National/births_sites_assigned5.csv")
 
 
 
