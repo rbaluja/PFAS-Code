@@ -9,6 +9,7 @@ table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  updown + down +  I(
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                           m_height + tri5 +fa_resid + wind_exposure 
                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
 table1_preterm[["Late"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
@@ -697,5 +698,34 @@ modelsummary::modelsummary(list(w_reg),
                            stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
 gof_map = c("nobs", "r.squared"), 
+                           output = "latex") %>% 
+  kable_styling(fixed_thead = T, position = "center") 
+
+
+#####################
+### Table S- (effects on probability of being stillborn)
+still_table = list()
+
+still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                          m_height + tri5 +fa_resid + wind_exposure 
+                                        |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
+                                     n_sites + wind_exposure + 
+                                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
+
+modelsummary::modelsummary(still_table, 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down", "updown", "pred_pfas"),
+                           gof_map = c("nobs", "r.squared"), 
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 

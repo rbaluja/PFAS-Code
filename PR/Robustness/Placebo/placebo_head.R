@@ -1,5 +1,5 @@
 #set working directory
-setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
+setwd("~//Dropbox/PFAS Infants")
 
 set.seed(1)
 

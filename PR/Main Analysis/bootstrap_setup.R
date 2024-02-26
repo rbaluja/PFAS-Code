@@ -2,6 +2,15 @@
 load("Data_Verify/GIS/fs_test_watershed.RData")
 fs_cont = fread("Data_Verify/Contamination/cleaned_contwell.csv")
 
+#read in and set cont site watersheds 
+load("Data_Verify/GIS/cont_watershed.RData")
+
+#read in sites_ll to get right site number
+rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
+
+cont_ws = cont_ws %>% 
+  left_join(rs_ll)
+
 #This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
 #it instead looks at test wells. For any questions on code, see relevant comments in binary.R
 #a well is downgradient if there is a site in its watershed
@@ -121,9 +130,6 @@ fs_cont[is.na(fs_cont$up), ]$up = 0
 fs_cont[is.na(fs_cont$n_sites_down5), ]$n_sites_down5 = 0
 fs_cont[is.na(fs_cont$n_sites_up5), ]$n_sites_up5 = 0
 
-#get wind exposure
-fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
-
 #find nearest site and its chars
 fs_cont_dist = function(i){
   w = fs_cont[i, ]
@@ -238,6 +244,9 @@ fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
 
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc"))
 
+
+#get wind exposure
+fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
 
 fs_cont$wellpfas = fs_cont$pfos + fs_cont$pfoa
 fs_cont$domestic = ifelse(fs_cont$watervapusage == "DOMESTIC", 1, 0)

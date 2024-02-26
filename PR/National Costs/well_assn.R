@@ -1,3 +1,5 @@
+#a cbg is downgradient if there is a cont site within its watershed
+#First, calculate the intersection of the cont sites and the birth watersheds
 down_wells = st_intersection(cont_sites %>% st_transform(3437), births_ws %>% st_transform(3437))
 down_wells = down_wells %>% as_tibble() %>% dplyr::select(geoid, site, pfas = sum_pfoa_pfos) 
 dwells = unique(down_wells$geoid)
@@ -9,7 +11,7 @@ births = births %>%
          lat = sf::st_coordinates(.)[, 2]) %>% 
   st_transform(3437)
 
-#only close down determines whether we include individuals on down wells that are further than meters in analysis
+#only close down determines whether we include cbgs on down wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 down_well_dist = function(w){
@@ -56,7 +58,7 @@ down_well_dist = function(w){
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist))
 
 
-
+#a cbg is upgradient if it lies in the watershed of all cont sites within 'meters'
 up_wells = st_intersection(births %>% 
                              as_tibble() %>% 
                              dplyr::select(!geometry) %>% 
@@ -66,7 +68,7 @@ up_wells = st_intersection(births %>%
 up_wells = up_wells %>% as_tibble() %>% dplyr::select(geoid, site, pfas) 
 uwells = unique(up_wells$geoid)
 
-#only close up determines whether we include individuals on up wells that are further than meters in analysis
+#only close up determines whether we include cbgs on up wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
@@ -106,18 +108,19 @@ up_well_dist = function(w){
 
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist))
 
-
+#join up and down wells with births to begin classification algorithm
 births = births %>% 
   left_join(down_wells) %>% 
   left_join(up_wells)
 
+#set missing variables to 0 (they were not present in upwells and/or downwells)
 births[is.na(births$down), ]$down = 0
 births[is.na(births$up), ]$up = 0
 births[is.na(births$n_sites_down5), ]$n_sites_down5 = 0
 births[is.na(births$n_sites_up5), ]$n_sites_up5 = 0
 
 
-#for wells that arent down or up, find nearest site and use that 
+#Get chars of nearest release site
 well_dist = function(i){
   w = births[i, ]
   
@@ -141,7 +144,7 @@ well_dist = function(i){
 births = dplyr::bind_rows(pblapply(1:nrow(births), well_dist))
 
 
-#fill in down, up, side variables
+#fill in down, up, side variables (giving 100 meter buffer in this spec)
 well_assgn = function(i, drop_far_down = FALSE, drop_far_up = FALSE){
   w = births[i, ]
   down_far = 0

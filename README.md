@@ -115,10 +115,42 @@ Note: This is only run if GIS_create is true
     * Output: First stage regression (w_reg), natality data with predicted PFAS level
     * This file follows the same logic as in binary.R to assign contamination sites to test wells. After completing such exercise, it then assigns soil properties to each well and runs the first stage regressions. After this, it assigns soil properties to the water wells, merges this with the natality data by well identifier, and uses this information to assign predicted pfas to each birth record. 
 
+4. **PR/National Costs/national_costs_head.R**
+    * **PR/National Costs/nat_births.R**
+    Note: This only runs if nb_cbg is true
+    * Input: Raw CDC Wonder natality data (Data_Verify/National/nat_births10.txt), state name to number crosswalk (https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv), Census CBG population counts
+    * Output: CBG by county population weighted births (Data_Verify/National/births_cbg_cleaned_2010.csv)
+    * This file uses CBG-level population counts to form CBG-county weights to downscale the county-level population counts to the CBG-level.
+
+    * **PR/National Costs/nat_watersheds.R**
+    Note: This only runs if nat_run_cont_ws is true
+    * This file creates the watersheds of each CBG centroid and primary release site in the 11 states used in calculating national impact costs
+
+    * **PR/National Costs/nat_assn.R**
+    Note: This only runs if nat_reassn is true
+    * This file cleans up the identifiers in the births and contamination datasets, then call well_assn.R. well_assn.R follows the same logic as the primary specification (Main Analysis/binary.R) in assigning CBG centroids to contamination sites, and in assigning up, down, and side classifications. 
+
+    * **PR/National Costs/nat_costs**
+    * This file uses the assigned natality data, the estimated first stage equation (Main Analysis/first_stage.R), and the linear IV results to calculate estimated impacts at the CBG level. It then creates the primary cost figure. 
+
+
+
+
+
+
+
 
 With the current setup:
-- To get cutoff figure: run Fiugures/meters_cutoff.R
+- To get cutoff figure: run Figures/meters_cutoff.R
 - To get robustness figure: First run infant_health_head.R through main analysis with drop_states = TRUE, then run Robustness/drop_near_state.R. Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
+- To make national map: Run PR/National Costs/nat_map.R
+- To make primary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs.R
+- To make binary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs_binary.R
+- To get the ratio of the population in 11 states by that of the lower 48: Run PR/National Costs/Stats/frac_nat_pop.R
+- Table 1, S-2, S-3, S-6, S-7, S-8, and S-11 all come from PR/Tables/tables.R
+- Table 2 comes from PR/Tables/tables.R, with the standard errors calculated in Main Analysis/bootstrap_iv.R
+- Table S-9 and Figure S-3 comes from PR/Figures/quantiles_pfas.R (standard errors also come from bootstrap_iv.R)
+- Table S-4 comes from PR/Robustness/oster.R 
 
 
 

@@ -1,3 +1,6 @@
+bll = fread("Data_Verify/National/cbg_ll.csv")
+bll = bll[which(bll$geoid %in% births$geoid), ]
+
 flowacc = function(i, d, w, option){
   d2 = d[[i]]
   w2 = w[i, ]

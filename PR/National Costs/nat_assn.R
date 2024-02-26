@@ -1,3 +1,4 @@
+###Prepare main datasets to be merged with births_ws and cont_ws
 births$state = stringr::str_sub(births$county, 1, 2)
 
 births$geoid = paste0(births$county, as.numeric(births$tract), births$cbg)
@@ -38,12 +39,14 @@ births = births %>%
   dplyr::select(county, tract, cbg, births, state, geoid, geometry) %>% 
   unique()
 
+
+
 #merge watersheds
-#first do cont sites
+#cont sites
 cont_ws = cont_ws %>% 
   left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, state, pfas = sum_pfoa_pfos))
 
-#now do births
+#births
 births_ws = wells_ws %>%  #this is how the original object was named. It isnt actually wells
   left_join(births %>% as_tibble() %>% dplyr::select(geoid, births))
 

@@ -1,10 +1,8 @@
 #clear memory
 rm(list = ls())
-#restart R
-.rs.restartR()
 
 #set working directory
-setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
 source("PFAS-Code/PR/env_functions.R")
@@ -40,9 +38,9 @@ census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
 source("PFAS-Code/PR/Data/data_head.R")
 
-#main analysis
-source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
+source("PFAS-Code/PR/Main Analysis/binary.R")
 
+source("PFAS-Code/PR/Main Analysis/flow_accumulation.R")
 
 #bootstrap IV
 bts = 10000
@@ -401,3 +399,43 @@ vlbw2_sd = sqrt(sum((boot_coefs$vlbw2 - reg_data[2, "vlbw_coef"])^2)/9999)
 vlbw3_sd = sqrt(sum((boot_coefs$vlbw3 - reg_data[3, "vlbw_coef"])^2)/9999)
 vlbw4_sd = sqrt(sum((boot_coefs$vlbw4 - reg_data[4, "vlbw_coef"])^2)/9999)
 vlbw5_sd = sqrt(sum((boot_coefs$vlbw5 - reg_data[5, "vlbw_coef"])^2)/9999)
+
+
+boot_err_sb = function(i, df, fs_cont){
+  boot_coefs = data.frame(matrix(ncol = 1, nrow = 1))
+  colnames(boot_coefs) = c("stillborn")
+  
+  
+  fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
+  
+  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                          updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                          p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont_bs) 
+  
+  
+  df$domestic = 0
+  df$elevation = df$well_elev
+  df$t = as.numeric(df$year) - 2010
+  df$pred_pfas = predict(w_reg, df)
+  
+  #regressions
+  stillbrn = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
+                            n_sites + wind_exposure + 
+                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                            m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
+  
+  
+  
+  boot_coefs[1, "stillborn"] = stillbrn$coefficients["pred_pfas"]
+  
+  return(boot_coefs)
+}
+
+boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
+save(boot_coefs, file = "Data_Verify/RData/bootstrap_sb.RData")
+
+sb_se = sqrt(sum((boot_coefs$stillborn - 0.000528)^2)/(nrow(boot_coefs) - 1))
+1 - pnorm(0.000528/sb_se)

@@ -1,6 +1,3 @@
-bll = fread("Data_Verify/National/cbg_ll.csv")
-bll = bll[which(bll$geoid %in% births$geoid), ]
- 
 #soil stuff
 source("PFAS-Code/PR/National Costs/soil.R")
 

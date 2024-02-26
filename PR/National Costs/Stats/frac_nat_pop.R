@@ -1,4 +1,4 @@
-cbg_pop = fread("New Hampshire/Data/Supplemental/cbg_pop.csv")
+cbg_pop = fread("Data_Verify/Supplemental/cbg_pop.csv")
 cbg_births = fread("New Hampshire/Data/Supplemental/births_cbg_cleaned_2010.csv")
 
 c = cbg_pop %>% left_join(cbg_births %>% dplyr::select(county, tract, cbg, births))

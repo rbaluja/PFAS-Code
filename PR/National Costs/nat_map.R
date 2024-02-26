@@ -1,9 +1,3 @@
-library(tidycensus)
-library(data.table)
-library(dplyr)
-library(sf)
-library(ggplot2)
-
 #get population at block group
 states = fread('https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv')
 sc = as.character(states$st)
@@ -47,7 +41,7 @@ counties = counties %>%
 counties$pop_dens = as.numeric(counties$CENSUS_2020_POP)/as.numeric(counties$ALAND)
 counties$log_pd = log(counties$pop_dens)
 
-cont_sites = readxl::read_xlsx('New Hampshire/Data/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = readxl::read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater') %>% 
   dplyr::select(`Site name`, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 
