@@ -9,7 +9,7 @@ source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus)
+             units, tidycensus, ggpattern)
 options(modelsummary_format_numeric_latex = "mathmode")
 
 #set up environment
@@ -31,9 +31,9 @@ create_figures = FALSE #output figures?
 nat_run_cont_ws = FALSE#recreate national watershed shapes?
 nat_reassn = FALSE #reassign national CBGs to release sites?
 nat_redo_soil = FALSE #recalculate soil stats for national data?
+nb_cbg = FALSE
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
-nb_cbg = FALSE #Reclean national births (county -> cbg stats)
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
 #data cleaning

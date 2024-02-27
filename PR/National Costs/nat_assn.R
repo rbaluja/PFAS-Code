@@ -39,6 +39,10 @@ births = births %>%
   dplyr::select(county, tract, cbg, births, state, geoid, geometry) %>% 
   unique()
 
+#only keep births in 11 states
+births = births %>% 
+  dplyr::filter(state %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55"))
+
 
 
 #merge watersheds
@@ -51,4 +55,4 @@ births_ws = wells_ws %>%  #this is how the original object was named. It isnt ac
   left_join(births %>% as_tibble() %>% dplyr::select(geoid, births))
 
 
-source("Code/PR/National Costs/well_assn.R") 
+source("PFAS-Code/PR/National Costs/well_assn.R") 

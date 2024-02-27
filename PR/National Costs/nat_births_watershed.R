@@ -63,7 +63,7 @@ for (sn in 1:length(unique(births$state))){
 #check to make sure all watershed boundaries were made
 x = rep(0, nrow(births))
 for (i in 1:nrow(births)){
-  if (!file.exists(paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", state_cbgs$geoid[i],  "_ws_shape.shp"))){
+  if (!file.exists(paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", births$geoid[i],  "_ws_shape.shp"))){
     x[i] = 1
   }
 }
@@ -81,4 +81,4 @@ well_ws = function(f){
 }
 
 wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
-save(wells_ws, file = "New Hampshire/Data/RData/nat_cbg_watershed.RData")
+save(wells_ws, file = "Data_Verify/GIS/nat_cbg_watershed.RData")
