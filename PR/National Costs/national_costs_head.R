@@ -14,7 +14,7 @@ if (nat_run_cont_ws == TRUE){
   #load in watersheds
   load("Data_Verify/GIS/National/nat_cont_watershed.RData")
   cont_ws = wells_ws
-  load("Data_Verify/GIS/National/nat_cbg_watershed.RData")
+  load("Data_Verify/GIS/nat_cbg_watershed.RData")
 }
 
 #assign cbg to sites

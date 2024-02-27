@@ -1,5 +1,6 @@
-bll = fread("Data_Verify/National/cbg_ll.csv")
-bll = bll[which(bll$geoid %in% births$geoid), ]
+bll = births %>% 
+  as_tibble() %>% 
+  dplyr::select(geoid, lng, lat)
 
 flowacc = function(i, d, w, option){
   d2 = d[[i]]
@@ -42,3 +43,4 @@ b_awc = exactextractr::exact_extract(awc, births_fa)
 births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_awc, births, "awc"))
 
 fwrite(births, "Data_Verify/National/nat_births_fcleaned5.csv")
+

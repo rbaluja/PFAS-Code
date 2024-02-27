@@ -19,21 +19,7 @@ cont_sites = read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contami
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
 
-#subsetting to states with initiatives
-bs = births %>% 
-  left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, state)) %>% 
-  dplyr::filter(state %in% c("Michigan", 
-                             "Minnesota", 
-                             "New Hampshire", 
-                             "New York", 
-                             "Colorado", 
-                             "Maine", 
-                             "Vermont", 
-                             "California", 
-                             "Florida", 
-                             "North Dakota", 
-                             "Wisconsin"))
-
+bs = births
 
 
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
@@ -53,55 +39,55 @@ bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down +
 
 #getting impacts in states with initiatives
 bs$add_vpre = bs$pred_pfas * bs$births * 0.0039
-sum(bs$add_vpre) #961.1678
-#very preterm cost: 961.1678 * 204083 = 196158008/10^9
+sum(bs$add_vpre) #959.6433
+#very preterm cost: 959.6433 * 204083 = 195846884/10^9
 #standard error: 
 bs$add_vpre_se = bs$pred_pfas * bs$births * 0.001
-sum(bs$add_vpre_se)#246.4533 births se
-#cost se: 246.4533  * 204083 = 50296929/10^9
+sum(bs$add_vpre_se)#246.0624 births se
+#cost se: 246.0624  * 204083 = 50217153/10^9
 
 bs$add_mpre = bs$pred_pfas * bs$births * 0.00019
-sum(bs$add_mpre) #46.82612
-#moderately preterm cost: 46.82612 * 205041 =  9601274/10^9
+sum(bs$add_mpre) #46.75185
+#moderately preterm cost: 46.75185 * 205041 =  9586046/10^9
 #standard error: 
 bs$add_mpre_se = bs$pred_pfas * bs$births * 0.002
-sum(bs$add_mpre_se)#492.9066 births se
-#cost se: 492.9066 * 205041 = 101066062/10^9
+sum(bs$add_mpre_se)# 492.1248births se
+#cost se:  492.1248* 205041 = 100905761/10^9
 
 
 bs$add_lpre = bs$pred_pfas * bs$births * 0.006
-sum(bs$add_lpre) #1478.72 * 36728 = 54310428/10^9
+sum(bs$add_lpre) #1476.374 * 36728 =  54224264/10^9
 #standard error: 
 bs$add_lpre_se = bs$pred_pfas * bs$births *  0.002
-sum(bs$add_lpre_se)# 492.9066 births se
-#cost se: 492.90662 * 36728 = 18103474/10^9
+sum(bs$add_lpre_se)# 492.1248 births se
+#cost se: 492.1248 * 36728 = 18074760/10^9
 
 
 #birthweight
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
-sum(bs$add_vlbw) #862.5865
-#very low birthweight cost: 862.5865 * 5133739.83 = 4428294672/10^9
+sum(bs$add_vlbw) #861.2183
+#very low birthweight cost: 861.2183 * 5133739.83 =  4421270689/10^9
 #standard error: 
 bs$add_vlbw_se = bs$pred_pfas * bs$births * 0.001
-sum(bs$add_vlbw_se)#246.4533 births se
-#cost se: 246.4533 * 5133739.83 =  1265227122/10^9
+sum(bs$add_vlbw_se)# 246.0624 births se
+#cost se:  246.0624 * 5133739.83 =   1263220344/10^9
 
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
-sum(bs$add_mlbw) #327.7829
-#moderately low birthweight cost: 327.7829 * 1634411.22 = 535732049/10^9
+sum(bs$add_mlbw) # 327.263
+#moderately low birthweight cost:  327.263 * 1634411.22 = 534882319/10^9
 #standard error: 
 bs$add_mlbw_se = bs$pred_pfas * bs$births *0.0005
-sum(bs$add_mlbw_se) #123.2266births se
-#cost se: 123.2266 * 1634411.22 = 201402938/10^9
+sum(bs$add_mlbw_se) #123.0312 births se
+#cost se: 123.0312 * 1634411.22 = 201083574/10^9
 
 
 #social cost figure
 data = data.frame(
   Weeks = factor(rep(c("Very Preterm", "Mod. Preterm", "Late Preterm"), 2), 
                  levels = c("Very Preterm", "Mod. Preterm", "Late Preterm")),
-  Value = c(961, 47, 1479, 0.20, 0.01, 0.05), # Combined values for both axes
+  Value = c(960, 47, 1476, 0.20, 0.01, 0.05), # Combined values for both axes
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")), # Axis assignment
-  se = c("(246)", "(493)", "(493)", "(0.05)", "(0.10)", "(0.02)")
+  se = c("(246)", "(492)", "(492)", "(0.05)", "(0.10)", "(0.02)")
 )
 
 # Scaling factor for right axis values
@@ -165,9 +151,9 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
                  levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
-  Value = c(863, 328, 4.43, 0.54), # Combined values for both axes
+  Value = c(861, 327, 4.42, 0.53), # Combined values for both axes
   Axis = factor(c("Left", "Left", "Right", "Right")), # Axis assignment
-  se = c("(246)", "(123)", "(1.27)", "(0.20)")
+  se = c("(246)", "(123)", "(1.26)", "(0.20)")
 )
 
 # Scaling factor for right axis values
