@@ -1,43 +1,53 @@
 #getting impacts in states with initiatives
-add_vpre = sum(bs[which(bs$down == 1), ]$births) * 0.0047 # 92.50363
-#very preterm cost:  92.50363 * 204083 =  18878418/10^9
+add_vpre = sum(bs[which(bs$down == 1), ]$births) * 0.0047 # 92.33542
+add_vpre
+#very preterm cost:  92.33542 * 204083 =  18844090/10^9
 #standard error: 
-add_vpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.42692
-#cost se: 35.42692 *204083 = 7230032/10^9
+add_vpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
+add_vpre_se
+#cost se: 35.3625 *204083 = 7216885/10^9
 
-add_mpre = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.20406
-#m preterm cost se: 49.20406 * 205041  =  1887210/10^9
+add_mpre = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
+add_mpre
+#m preterm cost se: 49.11458 * 205041  =  10070503/10^9
 #standard error: 
-add_mpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.14038
-#cost se: 53.14038 * 205041  = 10895957/10^9
+add_mpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
+add_mpre_se
+#cost se: 53.04375 * 205041  = 10876144/10^9
 
-add_lpre = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.5803
-#late preterm cost:  149.5803 * 36728.05 = 5493793/10^9
+add_lpre = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
+add_lpre
+#late preterm cost:  149.3083 * 36728.05 = 5483803/10^9
 #standard error: 
-add_lpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0079 # 155.4848
-#cost se: 155.4848 * 36728.05 = 5710654/10^9
+add_lpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0079 #155.2021
+add_lpre_se
+#cost se:155.2021 * 36728.05 = 5700270/10^9
 
 
 
 #birthweight
-add_vlbw = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #120.0579
-#very lbw cost:120.0579 * 5133739.83 = 616346023/10^9
+add_vlbw = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #119.8396
+add_vlbw
+#very lbw cost:119.8396 * 5133739.83 = 615225328/10^9
 #standard error: 
-add_vlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.33141
-#cost se: 41.33141 * 5133739.83 = 212184706/10^9
+add_vlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
+add_vlbw_se
+#cost se: 41.25625 * 5133739.83 = 211798854/10^9
 
-add_mlbw = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9840812
-#mod lbw cost: -0.9840812* 1634411.22 = -1608393/10^9
+add_mlbw = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
+add_mlbw
+#mod lbw cost: -0.9822917* 1634411.22 = -1605469/10^9
 #standard error: 
-add_mlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.411
-#cost se: 36.411 * 1634411.22 = 59510547/10^9
+add_mlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
+add_mlbw_se
+#cost se: 36.34479 * 1634411.22 = 59402333/10^9
 
 
 #social cost figure
 data = data.frame(
   Weeks = factor(rep(c("Very Preterm", "Mod. Preterm", "Late Preterm"), 2), 
                  levels = c("Very Preterm", "Mod. Preterm", "Late Preterm")),
-  Value = c(93, 49, 150, 0.02, 0.002, 0.005), # Combined values for both axes
+  Value = c(92, 49, 149, 0.02, 0.01, 0.005), # Combined values for both axes
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")), # Axis assignment
   se = c("(35)", "(53)", "(155)", "(0.007)", "(0.01)", "(0.006)")
 )
@@ -103,7 +113,7 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
                  levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
-  Value = c(120, -1, 0.61, -0.002), # Combined values for both axes
+  Value = c(120, -1, 0.62, -0.002), # Combined values for both axes
   Axis = factor(c("Left", "Left", "Right", "Right")), # Axis assignment
   se = c("(41)", "(36)", "(0.21)", "(0.06)")
 )

@@ -2,12 +2,12 @@
 births = st_intersection(births %>% st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(5070), csite_buff)
 
 births$state = stringr::str_sub(births$county, 1, 2)
-
+#subset to 11 states
 births = births[births$state %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55"), ]
 
 births$geoid = paste0(births$county, as.numeric(births$tract), births$cbg)
 
-#only need to know which cbgs are relevant here
+#only need to know which cbgs are within 5km, so delete dups
 births = births %>% 
   dplyr::select(county, tract, cbg, births, state, geoid, geometry) %>% 
   unique()
@@ -82,3 +82,5 @@ well_ws = function(f){
 
 wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
 save(wells_ws, file = "Data_Verify/GIS/nat_cbg_watershed.RData")
+
+unlink("Data_Verify/GIS/nat_births", recursive = T)

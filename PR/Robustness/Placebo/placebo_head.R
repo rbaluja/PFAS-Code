@@ -86,7 +86,7 @@ if (rerun_placebos == TRUE){
     env = new.env()
     
     # Load the file into the new environment
-    load(paste0("New Hampshire/Data/RData/placebos_", i, ".RData"), envir = env)
+    load(paste0("Data_Verify/RData/placebos_", i, ".RData"), envir = env)
     
     # Dynamically access the object name, assuming it's the only object in the file
     object_name = ls(env)
@@ -105,34 +105,30 @@ if (rerun_placebos == TRUE){
   length(which(is.na(plac$preterm)))
   plac = plac %>%
     tidyr::drop_na()
-  #23 missing obs, fill those in
-  plac_na = dplyr::bind_rows(pblapply(1:23, placebo, df, wells))
+  #15 missing obs, fill those in
+  plac_na = dplyr::bind_rows(pblapply(1:15, placebo, df, wells))
   
   plac = rbind(plac, plac_na)
-  save(plac, file = "New Hampshire/Data/RData/placebos.RData") 
+  save(plac, file = "Data_Verify/RData/placebos.RData") 
 }else{
-  load("New Hampshire/Data/RData/placebos.RData") 
+  load("Data_Verify/RData/placebos.RData") 
 }
 
-plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.644854)
-sum(plac$pre_sig)#149 false positives
-plac$lpre_sig = as.numeric(plac$lpreterm/plac$lpreterm_se > 1.644854)
-sum(plac$lpre_sig)#129 false positives
+plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.281552)
+sum(plac$pre_sig)#212 false positives
 plac$vpre_sig = as.numeric(plac$vpreterm/plac$vpreterm_se > 2.326348)
-sum(plac$vpre_sig)#39 false positives at 1%
+sum(plac$vpre_sig)#49 false positives at 1%
 
 plac$lbw_sig = as.numeric(plac$lbw/plac$lbw_se > 2.326348) 
-sum(plac$lbw_sig)#89 false positives
+sum(plac$lbw_sig)#97 false positives
 plac$llbw_sig = as.numeric(plac$llbw/plac$llbw_se > 1.644854)
-sum(plac$llbw_sig)#177 false positives
-plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#49 false positives
+sum(plac$llbw_sig)#190 false positives
+plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#46 false positives
 sum(plac$vlbw_sig)
 
-sum(as.numeric(plac$preterm/plac$preterm_se > 1.644854 & 
-                 plac$lpreterm/plac$lpreterm_se > 1.644854 & 
+sum(as.numeric(plac$preterm/plac$preterm_se > 1.281552 & 
                  plac$vpreterm/plac$vpreterm_se > 2.326348 & 
                  plac$lbw/plac$lbw_se > 2.326348 & 
                  plac$llbw/plac$llbw_se > 1.644854 & 
-                 plac$vlbw/plac$vlbw_se > 2.326348) &
-                  plac$mlbw/plac$mlbw_se < -0.0053/0.0046) # 2 of the 1000 had the same significance (or greater) on all of our significant effects
+                 plac$vlbw/plac$vlbw_se > 2.326348)) # 1 of the 1000 had the same significance (or greater) on all of our significant effects
 
