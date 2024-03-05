@@ -35,6 +35,7 @@ nb_cbg = FALSE
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+code_check = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")

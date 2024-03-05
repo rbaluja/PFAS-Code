@@ -9,8 +9,13 @@ source("PFAS-Code/PR/Data/wind.R")
 
 
 if (run_cleaning == TRUE){
-  #read in (and clean) natality data
-  source('PFAS-Code/PR/Data/natality_data.R')
+  if (code_check == FALSE){
+    #read in (and clean) natality data
+    source('PFAS-Code/PR/Data/natality_data.R') 
+  }else{
+    load("Data_Verify/fake_natality.RData")
+    #source("PFAS-Code/PR/Data/fake_natality.R")
+  }
   
   #get covariates for birth records
   source("PFAS-Code/PR/Data/birth_covars.R")
@@ -21,7 +26,7 @@ if (run_cleaning == TRUE){
   #get elevation at relevant well and residence
   source("PFAS-Code/PR/Data/elev_setup.R")
   
-}else if (match_wells == TRUE){
+}else if (match_wells == TRUE ){
   load(paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
   #match residences to water wells
   source("PFAS-Code/PR/Data/natality_wells.R")

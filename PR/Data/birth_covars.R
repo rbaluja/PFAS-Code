@@ -27,6 +27,7 @@ dem_vars = env %>%
   left_join(dem_vars, by = c("t_geoid" = "geoid"))
 
 df = df %>% 
+  dplyr::mutate(year = as.character(year)) %>%
   left_join(dem_vars %>% 
               dplyr::mutate(year = as.character(year), 
                                 geoid = as.character(geoid)))
@@ -39,36 +40,10 @@ tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>%
 tri$index = 1:nrow(tri)
 
 #get distance from each row in df and tri
-tri_dists = distm(df %>% 
-                    as_tibble() %>% 
-                    dplyr::select(lng, lat), tri %>% 
-                    dplyr::select(tri_lng, tri_lat))
-#iterates over rows of df
-t_dist = function(i){
-  d = df[i, ]
-  dists = tri_dists[i, ]
-  d$tri1 = length(which(dists <= 1000))
-  d$tri3 = length(which(dists <= 3000))
-  d$tri5 = length(which(dists <= 5000))
-  return(d)
-  
-}
-#apply above function to each row of df, then combine list of one row dataframes into a single dataframe
-df = dplyr::bind_rows(pblapply(1:nrow(df), t_dist, cl = 4))
+tri_dist =  st_distance(df %>% st_transform(32110), cont_sites %>% st_as_sf(coords = c("tri_lng", "tri_lat"), crs = 4326) %>% st_transform(32110))
+df$tri5 = apply(tri_dist, 1, function(x) sum(x <= 5000))
 
 #distance from each mother's residence and the nearest cont site
-cont_dists = distm(df %>% 
-                     as_tibble() %>% 
-                     dplyr::select(lng, lat), cont_sites %>% 
-                     as_tibble() %>% 
-                     dplyr::select(lng, lat))
-dc_dist = function(i){
-  d = df[i, ]
-  dists = cont_dists[i, ]
-  d$csite_dist = min(dists)
-  return(d)
-  
-}
-df = dplyr::bind_rows(pblapply(1:nrow(df), dc_dist, cl = 4))
-
-save(df, file= paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
+rc_dist= st_distance(df %>% st_transform(32110), cont_sites %>% st_transform(32110))
+df$csite_dist = apply(rc_dist, 1, min)
+#save(df, file= paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
