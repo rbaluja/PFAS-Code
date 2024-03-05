@@ -141,15 +141,15 @@ Note: This is only run if GIS_create is true
 
 
 With the current setup:
-- To get cutoff figure: run Figures/meters_cutoff.R
-- To get robustness figure: First run infant_health_head.R through main analysis with drop_states = TRUE, then run Robustness/drop_near_state.R. Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
+- To get cutoff figure (Figure S-3): run Figures/meters_cutoff.R
+- To get robustness figure (Figure S-4): First run infant_health_head.R through main analysis with drop_states = TRUE. Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R (this can take a while if GIS is false. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
 - To make national map: Run PR/National Costs/nat_map.R
 - To make primary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs.R
 - To make binary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs_binary.R
 - To get the ratio of the population in 11 states by that of the lower 48: Run PR/National Costs/Stats/frac_nat_pop.R
 - Table 1, S-2, S-3, S-6, S-7, S-8, and S-11 all come from PR/Tables/tables.R
 - Table 2 comes from PR/Tables/tables.R, with the standard errors calculated in Main Analysis/bootstrap_iv.R
-- Table S-9 and Figure S-3 comes from PR/Figures/quantiles_pfas.R (standard errors also come from bootstrap_iv.R)
+- Table S-10 and Figure S-5 come from PR/Figures/quantiles_pfas.R (standard errors also come from bootstrap_iv.R)
 - Table S-4 comes from PR/Robustness/oster.R 
 
 
