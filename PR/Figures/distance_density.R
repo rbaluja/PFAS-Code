@@ -38,7 +38,7 @@ nat_redo_soil = FALSE #recalculate soil stats for national data?
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-
+code_check = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -46,7 +46,7 @@ source("PFAS-Code/PR/Data/data_head.R")
 #main analysis
 source("PFAS-Code/PR/Main Analysis/binary.R")
 
-ggplot(wells1, aes(x = dist_near / 1000)) +
+figure_s2a = ggplot(wells1, aes(x = dist_near / 1000)) +
   geom_density(aes(fill = "blue"), alpha = 0.4, color = NA) +  # Set fill and remove border
   scale_fill_identity() +  # Use the literal color name
   theme_minimal() +
@@ -56,3 +56,5 @@ ggplot(wells1, aes(x = dist_near / 1000)) +
   theme(axis.text = element_text(size = 20, face = "bold"), 
         axis.title = element_text(size = 20, face = "bold")) + 
   scale_x_continuous(breaks = c(5, 20, 40, 60))
+
+ggsave("Figures/figure_s2a.png", figure_s2a)

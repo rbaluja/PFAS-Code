@@ -35,7 +35,7 @@ nb_cbg = FALSE
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-code_check = FALSE
+code_check = TRUE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -50,12 +50,12 @@ source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
 #Tables
 source("PFAS-Code/PR/Tables/tables.R")
 
-#Oster Coefficient of Proportionality (Table S4)
+#Oster Coefficient - \delta in paper (Table S-5)
 if (oster_robust == TRUE){
   source("PFAS-Code/PR/Robustness/oster_selection.R")
 }
 
-#bootstrap standard errors for all results using first stage - Table 2, Figure 4, Figure S3, Table S9, Figure S5
+#bootstrap standard errors for all results using first stage - Table 2, Figure 3, Table S4, Figure S3, Table S9, Figure S5
 source("PFAS-Code/PR/Main Analysis/bootstrap_iv.R")
 
 #figures
@@ -64,7 +64,7 @@ source("PFAS-Code/PR/Figures/figures_head.R")
 #national costs
 source("PFAS-Code/PR/National Costs/national_costs_head.R")
 
-#Falsification Test
+#Falsification Test (Table S-6)
 if (false_test == TRUE){
   source("PFAS-Code/PR/Robustness/Placebo/placebo_head.R") 
 }

@@ -32,23 +32,26 @@ drop_states = FALSE
 GIS_create = FALSE
 rerun_fs_clean = FALSE
 relaxed_up = FALSE
+code_check = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
 
 if (GIS_create == TRUE){
   source("Code/PR/GIS/df_watershed.R") #mothers residence - NOTE: This takes a long time to run 
-}else{
+}else if (!code_check){
   #read in natality dataset with binary, flow accumulation, and catchment areas 
   load(paste0(natality_path ,"/[UA Box Health] natality_ws.RData"))
+}else{
+  load("Data_Verify_Konan/GIS/fake_natality_ws.RData")
 }
 
 
 #read in and set cont site watersheds 
-load("Data_Verify/GIS/cont_watershed.RData")
+load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
 
 #read in sites_ll to get right site number
-rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
 
 cont_ws = cont_ws %>% 
   left_join(rs_ll)
@@ -327,4 +330,4 @@ vlbw_rside = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + 
 
 
 save(lbw_rside, llbw_rside, mlbw_rside, vlbw_rside, pr_rside, lpr_rside, mpr_rside, vpr_rside, 
-     file = "Data_Verify/Robustness/side_robustness.RData")
+     file = modify_path("Data_Verify/Robustness/side_robustness.RData"))

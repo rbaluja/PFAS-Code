@@ -1,5 +1,5 @@
 #read in flow accumulation raster
-cont_fa = terra::rast("Data_Verify/GIS/cont_fa_sum_buffed.tiff")
+cont_fa = terra::rast(modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))
 
 #get flow accumulation at residence
 #turns df spatial, and buffers its geometry by 10meters

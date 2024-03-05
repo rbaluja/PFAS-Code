@@ -108,7 +108,8 @@ for (i in 2:5){
   index = index + 1
 }
 
-#need to run boostrap quantiles to get these values
+#need to run bootstrap_iv.R to recreate these values
+load("Data_Verify/RData/quintiles_iv_se.RData")
 reg_data$pre_se[2] = p2_sd
 reg_data$pre_se[3] = p3_sd
 reg_data$pre_se[4] = p4_sd
@@ -374,12 +375,15 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
 
 
 
-((pr_pfas_fig | lbw_pfas_fig)/
+figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (lpr_pfas_fig | llbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
+ggsave("Figures/IV/figure_s5.png", figure_s5, width = 10, height = 10)
 
+
+#Copy these to paste into table S-10
 #Q2 preterm
 clipr::write_clip(round(as.numeric(reg_data[2, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
 clipr::write_clip(round(as.numeric(reg_data[2, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")

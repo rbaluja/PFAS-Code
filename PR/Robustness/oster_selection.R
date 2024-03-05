@@ -401,3 +401,14 @@ d_vpre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
      (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
+
+
+#table S-5
+d_pre
+d_lpre
+d_mpre
+d_vpre
+d_lbw
+d_llbw
+d_mlbw
+d_vlbw

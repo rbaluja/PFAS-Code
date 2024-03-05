@@ -1,4 +1,4 @@
-fs_cont = fread("Data_Verify/Contamination/NH_tests.csv") 
+fs_cont = fread(modify_path("Data_Verify/Contamination/NH_tests.csv"))
 
 #translate all results to ppt
 fs_cont[fs_cont$DETLIMU == "UG/KG" | fs_cont$DETLIMU == "UG/KG DRY", ]$NUMRESULT1 = 1000 * fs_cont[fs_cont$DETLIMU == "UG/KG" | fs_cont$DETLIMU == "UG/KG DRY", ]$NUMRESULT1
@@ -97,7 +97,7 @@ fs_cont$cbg = str_sub(fs_cont$GEOID, 1, 12)
 
 
 #read in weather and pm25 data at cbg level
-w = fread("Data_Verify/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
+w = fread(modify_path("Data_Verify/Supplemental/nh_cbg_weather.csv"), colClasses=c("location" = "character")) %>% 
   dplyr::rename(geoid = location)
 w$year = as.numeric(str_sub(w$date, 1, 4))
 
@@ -113,7 +113,7 @@ w = w %>%
 
 
 #read in and bind pollution data
-pm = fread("Data_Verify/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
+pm = fread(modify_path("Data_Verify/Supplemental/nh_cbg_pm25.csv"), colClasses=c("geoid" = "character"))
 #summarize pm25 to a constant average, by geoid (average over years)
 pm = pm %>% 
   dplyr::group_by(geoid) %>% 
@@ -164,7 +164,7 @@ fs_cont = fs_cont %>%
   left_join(td, by = c("t_geoid" = "geoid"))
 
 #bring in elevation 
-dem_elev = raster("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")
+dem_elev = raster(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"))
 fs_cont$row = 1:nrow(fs_cont)
 fs_cont_ll = fs_cont %>% 
   as_tibble() %>% 
@@ -176,7 +176,7 @@ fs_cont$elevation = e1
 
 
 #bringing in tri facilities
-tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>% 
+tri = fread(modify_path("Data_Verify/Supplemental/tri_nh.csv")) %>% 
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
@@ -198,4 +198,4 @@ fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), t_dist, cl = 4))
 
 fwrite(fs_cont %>% 
          as_tibble() %>% 
-         dplyr::select(!geometry), "Data_Verify/Contamination/cleaned_contwell.csv")
+         dplyr::select(!geometry), modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))

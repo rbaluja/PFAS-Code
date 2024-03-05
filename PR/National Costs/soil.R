@@ -28,7 +28,7 @@ births_fa = bll %>%
   st_buffer(1) %>% 
   st_transform(4326)
 
-sp = terra::rast("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif")
+sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
 
 b_sp = exactextractr::exact_extract(sp, births_fa)
 
@@ -36,11 +36,11 @@ births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_sp, births, "sp"))
 
 
 #available water capacity
-awc = terra::rast("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
+awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
 
 b_awc = exactextractr::exact_extract(awc, births_fa)
 
 births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_awc, births, "awc"))
 
-fwrite(births, "Data_Verify/National/nat_births_fcleaned5.csv")
+fwrite(births, modify_path("Data_Verify/National/nat_births_fcleaned5.csv"))
 

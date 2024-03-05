@@ -8,7 +8,7 @@ births = births %>%
   st_as_sf(coords = c("lng", "lat"), crs = 4326)
 
 #load in contamination data
-cont_sites = read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater' & State != "Alaska") %>% 
   dplyr::select(`Site name`, State, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 

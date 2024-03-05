@@ -1,15 +1,15 @@
 # #read in and set well watersheds
-load("Data_Verify/GIS/wells_watershed.RData")
+load(modify_path("Data_Verify/GIS/wells_watershed.RData"))
 
 #read in well_ll to get appropriate sys and well ids
-well_ll = fread("Data_Verify/GIS/wells_ll_ws.csv")
+well_ll = fread(modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
 wells_ws = wells_ws %>% left_join(well_ll)
 
 #read in and set cont site watersheds 
-load("Data_Verify/GIS/cont_watershed.RData")
+load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
 
 #read in sites_ll to get right site number
-rs_ll = fread("Data_Verify/GIS/rs_ll_ws.csv")
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
 
 cont_ws = cont_ws %>% 
   left_join(rs_ll)

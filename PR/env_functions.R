@@ -5,3 +5,11 @@ load_library = function(...) {
   
   return(invisible(lapply(obj, function(x)library(toString(x), character.only=TRUE))))
 }
+
+modify_path = function(path) {
+  if(code_check) {
+    return(gsub("Data_Verify", "Data_Verify_Konan", path))
+  } else {
+    return(path)
+  }
+}

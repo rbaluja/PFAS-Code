@@ -27,9 +27,9 @@ cbg_ll$county = paste0(cbg_ll$state, cbg_ll$county)
 
 counties = tigris::counties()
 url = "https://www.ers.usda.gov/webdocs/DataFiles/48747/PopulationEstimates.xlsx?v=7498.4"
-download.file(url, "New Hampshire/Data/Supplemental/nat_pops.csv")
+download.file(url, modify_path("Data_Verify/Supplemental/nat_pops.csv"))
 
-c_pop = readxl::read_xlsx("New Hampshire/Data/Supplemental/nat_pops.csv")
+c_pop = readxl::read_xlsx(modify_path("Data_Verify/Supplemental/nat_pops.csv"))
 c_pop = janitor::row_to_names(c_pop, 4)
 
 counties = counties %>% left_join(c_pop, by = c("GEOID" = "FIPStxt"))
@@ -41,7 +41,7 @@ counties = counties %>%
 counties$pop_dens = as.numeric(counties$CENSUS_2020_POP)/as.numeric(counties$ALAND)
 counties$log_pd = log(counties$pop_dens)
 
-cont_sites = readxl::read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = readxl::read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater') %>% 
   dplyr::select(`Site name`, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 
@@ -72,7 +72,7 @@ states_keep = c("Michigan",
                 "Florida", 
                 "North Dakota", 
                 "Wisconsin")
-ggplot() +
+figure_s6 = ggplot() +
   geom_sf(data = counties, aes(fill = log_pd), color = NA, alpha = 0.6) +
   scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Log Population \nDensity") +
   geom_point(data = cont_sites %>% dplyr::filter(state %in% states_keep), aes(x = lng, y = lat, size = sum_pfoa_pfos/10^3), alpha = 0.6) +
@@ -89,3 +89,5 @@ ggplot() +
         legend.box.margin = margin(0, 0, 0, 0), 
         plot.margin = margin(0, 0, 0, 0)) + 
   xlab("") + ylab("")
+
+ggsave("Figures/National Costs/nat_map.png", figure_s6)

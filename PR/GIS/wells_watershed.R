@@ -11,7 +11,7 @@ wells$index = 1:nrow(wells)
 #get spatial dataframe for wells
 wells_ll = wells %>% as_tibble() %>% st_as_sf(coords = c("lng", "lat"), crs = 4326) 
 #write this mapping to memory so we can know which wells correspond to which indices
-fwrite(wells_ll %>% as_tibble() %>% dplyr::select(sys_id, source, index), "Data_Verify/GIS/wells_ll_ws.csv")
+fwrite(wells_ll %>% as_tibble() %>% dplyr::select(sys_id, source, index), modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
 
 wells_watershed = function(i){
   
@@ -22,28 +22,28 @@ wells_watershed = function(i){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = "Data_Verify/GIS/flow_acc.tiff", 
-                       output = paste0("Data_Verify/GIS/wells/wells_pp/pp_site_", i, ".shp"), 
+                       flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
+                       output = modify_path(paste0("Data_Verify/GIS/wells/wells_pp/pp_site_", i, ".shp")), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
-  wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
-                pour_pts = paste0("Data_Verify/GIS/wells/wells_pp/pp_site_", i, ".shp"), 
-                output = paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff"))
+  wbt_watershed(d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
+                pour_pts = modify_path(paste0("Data_Verify/GIS/wells/wells_pp/pp_site_", i, ".shp")), 
+                output = modify_path(paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff")))
   
   #read in watershed
-  ws = terra::rast(paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff"))
+  ws = terra::rast(modify_path(paste0("Data_Verify/GIS/wells/wells_watershed/watershed_", i, ".tiff")))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
   #save shapefile of watershed
-  writeVector(ws_poly, paste0("Data_Verify/GIS/wells/wells_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
+  writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/wells/wells_watershed/Shapes/ws_shape_", i, ".shp")), overwrite = TRUE)
   
 }
 
 pblapply(1:nrow(wells_ll), wells_watershed, cl = 4)
 
 
-files = list.files("Data_Verify/GIS/wells/wells_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS/wells/wells_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
 
 well_ws = function(f){
   w_ws1 = st_read(f)
@@ -53,7 +53,7 @@ well_ws = function(f){
 }
 
 wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
-save(wells_ws, file = "Data_Verify/GIS/wells_watershed.RData")
+save(wells_ws, file = modify_path("Data_Verify/GIS/wells_watershed.RData"))
 
 #delete intermediate files
 unlink("Data_Verify/GIS/wells/", recursive = TRUE)

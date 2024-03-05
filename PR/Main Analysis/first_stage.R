@@ -1,6 +1,6 @@
 #read in watersheds for test wells
-load("Data_Verify/GIS/fs_test_watershed.RData")
-fs_cont = fread("Data_Verify/Contamination/cleaned_contwell.csv")
+load(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
+fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
 
 #This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
 #it instead looks at test wells. For any questions on code, see relevant comments in binary.R
@@ -223,14 +223,14 @@ fs_cont_fa= fs_cont %>%
   st_buffer(10) %>% 
   st_transform(4326)
 
-sp = terra::rast("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif")
+sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
 
 fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
 
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp"))
 
 #available water capacity
-awc = terra::rast("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
+awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
 
 fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
 

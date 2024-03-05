@@ -42,7 +42,7 @@ t1_preterm = modelsummary::modelsummary(table1_preterm,
                                     gof_map = c("nobs", "r.squared"), 
                                     output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
-sink("Tables/table1_preterm.tex")
+sink(modify_path("Tables/table1_preterm.tex"))
 print(t1_preterm)
 sink()
 
@@ -98,12 +98,14 @@ t1_lbw = modelsummary::modelsummary(table1_lbw,
                            gof_map = c("nobs", "r.squared"), 
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
-sink("Tables/table1_lbw.tex")
+sink(modify_path("Tables/table1_lbw.tex"))
 print(t1_lbw)
 sink()
 
 ################
-###Table 2 Note, standard errors need to be manually copied after running iv_bootstrap. 
+###Table 2 Note, standard errors are read in from bootstrap_iv.R run
+load(modify_path("Data_Verify/RData/linear_iv_se.RData"))
+
 #preterm
 table2_preterm = list()
 
@@ -148,7 +150,7 @@ t2_preterm = modelsummary::modelsummary(table2_preterm,
                                         gof_map = c("nobs", "r.squared"), 
                                         output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
-sink("Tables/table2_preterm.tex")
+sink(modify_path("Tables/table2_preterm.tex"))
 print(t2_preterm)
 sink()
 #p values
@@ -166,8 +168,8 @@ table2_preterm[["Late"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred
 (table2_preterm[["Late"]]$coefficients["pred_pfas"] + 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
 table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
-(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] - 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
-(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] + 1.96 * 0.002) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] - 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] + 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
 table2_preterm[["Very"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 (table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * 0.001) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
@@ -218,7 +220,7 @@ t2_lbw = modelsummary::modelsummary(table2_lbw,
                                         gof_map = c("nobs", "r.squared"), 
                                         output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
-sink("Tables/table2_lbw.tex")
+sink(modify_path("Tables/table2_lbw.tex"))
 print(t2_lbw)
 sink()
 #p vales
@@ -321,7 +323,7 @@ table_s2 = datasummary_balance(~group,
                     output = "latex") %>% 
   kable_styling(font_size = 6, fixed_thead = T, position = "center")
 
-sink("Tables/table_s2.tex")
+sink(modify_path("Tables/table_s2.tex"))
 print(table_s2)
 sink()
 
@@ -404,9 +406,43 @@ table_s3 = datasummary_balance(~group,
                     output = "latex") %>% 
   kable_styling(font_size = 6, fixed_thead = T, position = "center")
 
-sink("Tables/table_s3.tex")
+sink(modify_path("Tables/table_s3.tex"))
 print(table_s3)
 sink()
+
+
+#####################
+### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
+load(modify_path("Data_Verify/RData/linear_iv_se_sb.RData"))
+still_table = list()
+
+still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                          m_height + tri5 +fa_resid + wind_exposure 
+                                        |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
+                                      n_sites + wind_exposure + 
+                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
+
+table_s4 = modelsummary::modelsummary(still_table, 
+                                      stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                                      fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                      coef_map = c("down", "updown", "pred_pfas"),
+                                      gof_map = c("nobs", "r.squared"), 
+                                      output = "latex") %>% 
+  kable_styling(fixed_thead = T, position = "center") 
+
+sink(modify_path("Tables/table_s4.tex"))
+print(table_s11)
+sink() 
 
 
 ##########################
@@ -453,7 +489,7 @@ table_s7_preterm = modelsummary::modelsummary(tables6_preterm,
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s7_preterm.tex")
+sink(modify_path("Tables/table_s7_preterm.tex"))
 print(table_s7_preterm)
 sink()
 
@@ -512,7 +548,7 @@ table_s7_lbw = modelsummary::modelsummary(tables6_lbw,
                                               output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s7_lbw.tex")
+sink(modify_path("Tables/table_s7_lbw.tex"))
 print(table_s7_lbw)
 sink() 
 
@@ -560,7 +596,7 @@ table_s6_preterm = modelsummary::modelsummary(tables7_preterm,
                                               output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s6_preterm.tex")
+sink(modify_path("Tables/table_s6_preterm.tex"))
 print(table_s6_preterm)
 sink()
 
@@ -619,7 +655,7 @@ table_s6_lbw = modelsummary::modelsummary(tables7_lbw,
                                           output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s6_lbw.tex")
+sink(modify_path("Tables/table_s6_lbw.tex"))
 print(table_s6_lbw)
 sink() 
 
@@ -671,7 +707,7 @@ table_s8_preterm = modelsummary::modelsummary(tables8_preterm,
                                               gof_map = c("nobs", "r.squared"), 
                                               output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
-sink("Tables/table_s8_preterm.tex")
+sink(modify_path("Tables/table_s8_preterm.tex"))
 print(table_s8_preterm)
 sink()
 
@@ -728,14 +764,14 @@ table_s8_lbw = modelsummary::modelsummary(tables8_lbw,
                                           output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s8_lbw.tex")
+sink(modify_path("Tables/table_s8_lbw.tex"))
 print(table_s8_lbw)
 sink() 
 
 
 
 #######################
-#### Table S-11 (first stage)
+#### Table S-12 (first stage)
 w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                         updown + wind_exposure + domestic + temp + pm25 + med_inc +
                         p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
@@ -747,39 +783,6 @@ gof_map = c("nobs", "r.squared"),
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink("Tables/table_s11.tex")
-print(table_s11)
-sink() 
-
-
-#####################
-### Table S-4 (effects on probability of being stillborn)
-still_table = list()
-
-still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height + tri5 +fa_resid + wind_exposure 
-                                        |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
-
-still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
-                                     n_sites + wind_exposure + 
-                                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
-
-table_s4 = modelsummary::modelsummary(still_table, 
-                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
-                           fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("down", "updown", "pred_pfas"),
-                           gof_map = c("nobs", "r.squared"), 
-                           output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink("Tables/table_s4.tex")
-print(table_s11)
+sink(modify_path("Tables/table_s12.tex"))
+print(table_s12)
 sink() 

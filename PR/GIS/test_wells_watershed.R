@@ -5,7 +5,7 @@ dir.create("Data_Verify/GIS/fs_test/fs_test_watershed")
 dir.create("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes")
 
 #read in test wells
-fs_cont = fread("Data_Verify/Contamination/cleaned_contwell.csv")%>% 
+fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))%>% 
   st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326)
 #set index to keep track of which well is which
 fs_cont$index = 1:nrow(fs_cont)
@@ -19,27 +19,27 @@ test_watershed = function(i){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = "Data_Verify/GIS/flow_acc.tiff", 
-                       output = paste0("Data_Verify/GIS/fs_test/fs_test_pp/pp_site_", i, ".shp"), 
+                       flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
+                       output = modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_pp/pp_site_", i, ".shp")), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
-  wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
-                pour_pts = paste0("Data_Verify/GIS/fs_test/fs_test_pp/pp_site_", i, ".shp"), 
-                output = paste0("Data_Verify/GIS/fs_test/fs_test_watershed/watershed_", i, ".tiff"))
+  wbt_watershed(d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
+                pour_pts = modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_pp/pp_site_", i, ".shp")), 
+                output = modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_watershed/watershed_", i, ".tiff")))
   #read in watershed
-  ws = terra::rast(paste0("Data_Verify/GIS/fs_test/fs_test_watershed/watershed_", i, ".tiff"))
+  ws = terra::rast(modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_watershed/watershed_", i, ".tiff")))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
   #save shapefile of watershed
-  writeVector(ws_poly, paste0("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
+  writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes/ws_shape_", i, ".shp")), overwrite = TRUE)
   
 }
 #apply above function over all test wells to get their shapes
 pblapply(1:nrow(fs_cont), test_watershed, cl = 4)
 
 #list all test well shapes
-files = list.files("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
 
 #function to read in test well shapes
 well_ws = function(f){
@@ -50,7 +50,9 @@ well_ws = function(f){
 }
 #apply well_ws to each file, resulting in a list of single row dataframes. Then bind rows into a single dataframe
 test_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
-save(test_ws, file = "Data_Verify/GIS/fs_test_watershed.RData")
+
+save(test_ws, file = "Data_Verify/GIS/fs_test_watershed.RData") 
+
 
 #delete intermediate files
 unlink("Data_Verify/GIS/fs_test/", recursive = TRUE)

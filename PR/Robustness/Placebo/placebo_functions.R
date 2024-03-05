@@ -60,24 +60,24 @@ placebo_ws = function(i, psites){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = "Data_Verify/GIS/flow_acc.tiff", 
-                       output = paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp"), 
+                       flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
+                       output = modify_path(paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp")), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
-  wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
-                pour_pts = paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp"), 
-                output = paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff"))
+  wbt_watershed(d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
+                pour_pts = modify_path(paste0("Data_Verify/GIS/placebo/cont_pp/pp_site_", i, ".shp")), 
+                output = modify_path(paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff")))
   #read in watershed
-  ws = terra::rast(paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff"))
+  ws = terra::rast(modify_path(paste0("Data_Verify/GIS/placebo/cont_watershed/watershed_", i, ".tiff")))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
   #save shapefile of watershed
-  writeVector(ws_poly, paste0("Data_Verify/GIS/placebo/cont_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
+  writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/placebo/cont_watershed/Shapes/ws_shape_", i, ".shp")), overwrite = TRUE)
 }
 
 combine_placebo_ws = function(){
-  files = list.files("Data_Verify/GIS/placebo/cont_watershed/Shapes", pattern = "*.shp", recursive = T, full.names = T)
+  files = list.files(modify_path("Data_Verify/GIS/placebo/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
   files = files[!endsWith(files, ".xml")]
   
   cont_ws = function(f){
@@ -95,10 +95,10 @@ combine_placebo_ws = function(){
 
 bin_spec = function(df, wells, cont_ws, psites){
   # #read in and set well watersheds
-  load("Data_Verify/GIS/wells_watershed.RData")
+  load(modify_path("Data_Verify/GIS/wells_watershed.RData"))
   
   #read in well_ll to get appropriate sys and well ids
-  well_ll = fread("Data_Verify/GIS/wells_ll_ws.csv")
+  well_ll = fread(modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
   wells_ws = wells_ws %>% left_join(well_ll)
   
   #a well is downgradient if there is a site in its watershed

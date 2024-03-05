@@ -1,5 +1,5 @@
 #set working directory
-setwd("~//Dropbox/PFAS Infants")
+setwd("~/Dropbox/PFAS Infants")
 
 set.seed(1)
 
@@ -37,6 +37,7 @@ oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 rerun_placebos = TRUE
+check_code = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -50,34 +51,34 @@ source("PFAS-Code/PR/Robustness/Placebo/placebo_functions.R")
 
 if (rerun_placebos == TRUE){
   placebos_1 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_1, file = "Data_Verify/RData/placebos_1.RData")
+  save(placebos_1, file = modify_path("Data_Verify/RData/placebos_1.RData"))
   
   placebos_2 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_2, file = "Data_Verify/RData/placebos_2.RData")
+  save(placebos_2, file = modify_path("Data_Verify/RData/placebos_2.RData"))
   
   placebos_3 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_3, file = "Data_Verify/RData/placebos_3.RData")
+  save(placebos_3, file = modify_path("Data_Verify/RData/placebos_3.RData"))
   
   placebos_4 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_4, file = "Data_Verify/RData/placebos_4.RData")
+  save(placebos_4, file = modify_path("Data_Verify/RData/placebos_4.RData"))
   
   placebos_5 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_5, file = "Data_Verify/RData/placebos_5.RData")
+  save(placebos_5, file = modify_path("Data_Verify/RData/placebos_5.RData"))
   
   placebos_6 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_6, file = "Data_Verify/RData/placebos_6.RData")
+  save(placebos_6, file = modify_path("Data_Verify/RData/placebos_6.RData"))
   
   placebos_7 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_7, file = "Data_Verify/RData/placebos_7.RData")
+  save(placebos_7, file = modify_path("Data_Verify/RData/placebos_7.RData"))
   
   placebos_8 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_8, file = "Data_Verify/RData/placebos_8.RData")
+  save(placebos_8, file = modify_path("Data_Verify/RData/placebos_8.RData"))
   
   placebos_9 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_9, file = "Data_Verify/RData/placebos_9.RData")
+  save(placebos_9, file = modify_path("Data_Verify/RData/placebos_9.RData"))
   
   placebos_10 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_10, file = "Data_Verify/RData/placebos_10.RData")
+  save(placebos_10, file = modify_path("Data_Verify/RData/placebos_10.RData"))
   
   plac = NULL
   # Loop through the files
@@ -86,9 +87,8 @@ if (rerun_placebos == TRUE){
     env = new.env()
     
     # Load the file into the new environment
-    load(paste0("Data_Verify/RData/placebos_", i, ".RData"), envir = env)
+    load(modify_path(paste0("Data_Verify/RData/placebos_", i, ".RData")), envir = env)
     
-    # Dynamically access the object name, assuming it's the only object in the file
     object_name = ls(env)
     
     # Use get() to retrieve the object by name from the environment
@@ -109,11 +109,12 @@ if (rerun_placebos == TRUE){
   plac_na = dplyr::bind_rows(pblapply(1:15, placebo, df, wells))
   
   plac = rbind(plac, plac_na)
-  save(plac, file = "Data_Verify/RData/placebos.RData") 
+  save(plac, file = modify_path("Data_Verify/RData/placebos.RData") )
 }else{
-  load("Data_Verify/RData/placebos.RData") 
+  load(modify_path("Data_Verify/RData/placebos.RData") )
 }
 
+#This is the input to table S-6. It counts the number of runs with sig positive coef estimates
 plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.281552)
 sum(plac$pre_sig)#212 false positives
 plac$vpre_sig = as.numeric(plac$vpreterm/plac$vpreterm_se > 2.326348)

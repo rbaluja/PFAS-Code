@@ -64,4 +64,4 @@ vlbw_ds = fixest::feols(I(bweight < 1000) ~  updown + down + I(pfas/10^3) + dist
                                                    m_height + tri5 + fa_resid+ wind_exposure
                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-save(p_all_ds, lp_ds, mp_ds, vp_ds, lbw_all_ds, llbw_ds, mlbw_ds, vlbw_ds, file = "Data_Verify/Robustness/drop_nearby_state_robustness.RData")
+save(p_all_ds, lp_ds, mp_ds, vp_ds, lbw_all_ds, llbw_ds, mlbw_ds, vlbw_ds, file = modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))

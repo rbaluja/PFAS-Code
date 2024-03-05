@@ -30,22 +30,22 @@ inner_cbg_ws = function(i, state_cbgs, state){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = paste0("Data_Verify/GIS/National", state, "flow_acc.tif"), 
-                       output = paste0("Data_Verify/GIS/nat_births/cbg_", state_cbgs$geoid[i], "pp.shp"),
+                       flow_accum = modify_path(paste0("Data_Verify/GIS/National", state, "flow_acc.tif")), 
+                       output = modify_path(paste0("Data_Verify/GIS/nat_births/cbg_", state_cbgs$geoid[i], "pp.shp")),
                        snap_dist = 0.007569 * 5)
   
   #calculate watershed
-  wbt_watershed(d8_pntr = paste0("Data_Verify/GIS/National/", state, "flow_dir.tif"), 
-                pour_pts = paste0("Data_Verify/GIS/nat_births/cbg_", state_cbgs$geoid[i], "pp.shp"), 
-                output = paste0("Data_Verify/GIS/nat_births/cont_watershed/cbg_", state_cbgs$geoid[i], "_watershed.tif"))
+  wbt_watershed(d8_pntr = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")), 
+                pour_pts = modify_path(paste0("Data_Verify/GIS/nat_births/cbg_", state_cbgs$geoid[i], "pp.shp")), 
+                output = modify_path(paste0("Data_Verify/GIS/nat_births/cont_watershed/cbg_", state_cbgs$geoid[i], "_watershed.tif")))
   
   #read in watershed
-  ws = terra::rast(paste0("Data_Verify/GIS/nat_births/cont_watershed/cbg_", state_cbgs$geoid[i], "_watershed.tif"))
+  ws = terra::rast(modify_path(paste0("Data_Verify/GIS/nat_births/cont_watershed/cbg_", state_cbgs$geoid[i], "_watershed.tif")))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
   #save shapefile of watershed
-  writeVector(ws_poly, paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", state_cbgs$geoid[i],  "_ws_shape.shp"), overwrite = TRUE)
+  writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", state_cbgs$geoid[i],  "_ws_shape.shp")), overwrite = TRUE)
 }
 
 #set watersheds for each cbg
@@ -63,14 +63,14 @@ for (sn in 1:length(unique(births$state))){
 #check to make sure all watershed boundaries were made
 x = rep(0, nrow(births))
 for (i in 1:nrow(births)){
-  if (!file.exists(paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", births$geoid[i],  "_ws_shape.shp"))){
+  if (!file.exists(modify_path(paste0("Data_Verify/GIS/nat_births/cont_watershed/Shapes/cbg_", births$geoid[i],  "_ws_shape.shp")))){
     x[i] = 1
   }
 }
 sum(x)
 #great, they are all saved. 
 #now lets read them all in and save them 
-files = list.files("Data_Verify/GIS/nat_births/cont_watershed/Shapes/", pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS/nat_births/cont_watershed/Shapes/"), pattern = "*.shp", recursive = T, full.names = T)
 files = files[!endsWith(files, "pp.shp")]
 
 well_ws = function(f){
@@ -81,6 +81,6 @@ well_ws = function(f){
 }
 
 wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
-save(wells_ws, file = "Data_Verify/GIS/nat_cbg_watershed.RData")
+save(wells_ws, file = modify_path("Data_Verify/GIS/nat_cbg_watershed.RData"))
 
 unlink("Data_Verify/GIS/nat_births", recursive = T)

@@ -1,7 +1,7 @@
 #create necessary directory
 dir.create("Data_Verify/GIS/cont_fa")
 #read in cont_sites
-cont_sites = read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
   dplyr::select(site = `Site name`, lat = Latitude, 
                 date = `Date Sampled`, lng = Longitude, industry = Industry, 
@@ -27,11 +27,11 @@ cont_fa = function(i){
   
   #get flow path from site i as a raster (non flow path cells are NA)
   wbt_trace_downslope_flowpaths(seed_pts = temp_point_path, 
-                                d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
-                                output = paste0("Data_Verify/GIS/cont_fa/cont_fa_", i, ".tiff"))
+                                d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
+                                output = modify_path(paste0("Data_Verify/GIS/cont_fa/cont_fa_", i, ".tiff")))
   
   #read in flow path 
-  fa = terra::rast(paste0("Data_Verify/GIS/cont_fa/cont_fa_", i, ".tiff"))
+  fa = terra::rast(modify_path(paste0("Data_Verify/GIS/cont_fa/cont_fa_", i, ".tiff")))
   
   #buffer non NA values 500 meters (so, buffer flow path by 500 meters)
   fa = terra::buffer(fa, 500, background = NA)
@@ -39,7 +39,7 @@ cont_fa = function(i){
   #set all non NA values to pfas at site (set flow path valyes to pfas at the site)
   values(fa)[!is.na(values(fa))] =  rep(c_pfas$sum_pfoa_pfos[i], length(which(!is.na(values(fa)))))
   #write raster
-  writeRaster(fa, paste0("Data_Verify/GIS/cont_fa/cont_fa_raster", i, ".tiff"), overwrite = TRUE)
+  writeRaster(fa, modify_path(paste0("Data_Verify/GIS/cont_fa/cont_fa_raster", i, ".tiff")), overwrite = TRUE)
   
  
   }
@@ -47,11 +47,11 @@ cont_fa = function(i){
 pblapply(1:nrow(cont_sites), cont_fa)
 
 #initiate blank raster with same cells as DEM with all zeros
-dem = terra::rast("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")
+dem = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"))
 z_raster = terra::init(dem, fun=0)
 
 
-files = list.files("Data_Verify/GIS/cont_fa/", pattern = "cont_fa_raster", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS/cont_fa/"), pattern = "cont_fa_raster", recursive = T, full.names = T)
 
 cont_fa_read = function(f, z_raster){
   w_ws1 = terra::rast(f) #read in file f
@@ -64,7 +64,7 @@ rl = rast(rl) #turn the list of rasters into one raster with multiple layers (sa
 rl = sum(rl) #sum across layers
 
 #save buffer flow accumulation raster
-writeRaster(rl, "Data_Verify/GIS/cont_fa_sum_buffed.tiff")
+writeRaster(rl, modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))
 
 #delete intermediate files
 unlink("Data_Verify/GIS/cont_fa/", recursive = TRUE)

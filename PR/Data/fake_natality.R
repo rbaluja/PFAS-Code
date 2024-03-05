@@ -61,4 +61,4 @@ df = df %>%
 df = df %>% 
   dplyr::rename(geoid = GEOID)
 
-save(df, file = "Data_Verify/fake_natality.RData")
+save(df, file = = modify_path("Data_Verify/fake_natality.RData"))

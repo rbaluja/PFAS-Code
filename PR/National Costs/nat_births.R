@@ -1,5 +1,5 @@
 #read in birth data (this is the raw file from CDC Wonder)
-births =  fread("Data_Verify/National/nat_births10.txt", sep = "\t") #only for counties with at least 100,000 people
+births = fread(modify_path("Data_Verify/National/nat_births10.txt", sep = "\t")) #only for counties with at least 100,000 people
 
 births =births %>% 
   dplyr::select(!Notes) %>% 
@@ -51,4 +51,4 @@ cbg_births = cbg_births %>%
 
 
 #save cbg-level birth information
-fwrite(cbg_births, "Data_Verify/National/births_cbg_cleaned_2010.csv")
+fwrite(cbg_births, modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"))

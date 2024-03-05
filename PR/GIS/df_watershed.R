@@ -40,6 +40,7 @@ nat_redo_soil = FALSE #recalculate soil stats for national data?
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+code_check = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -84,7 +85,7 @@ df = df %>%
                   !is.na(wic))
 
 df$index = 1:nrow(df)
-fwrite(df %>% as_tibble() %>% dplyr::select(id, index), "Data_Verify/GIS/natality_id_ws.csv")
+fwrite(df %>% as_tibble() %>% dplyr::select(id, index), modify_path("Data_Verify/GIS/natality_id_ws.csv"))
 
 df = df %>% st_as_sf(coords = c("lng", "lat"), crs = 4326)
 
@@ -97,28 +98,28 @@ df_watershed = function(i){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = "Data_Verify/GIS/flow_acc.tiff", 
-                       output = paste0("Data_Verify/GIS/df/df_pp/pp_site_", i, ".shp"), 
+                       flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
+                       output = modify_path(paste0("Data_Verify/GIS/df/df_pp/pp_site_", i, ".shp")), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
-  wbt_watershed(d8_pntr = "Data_Verify/GIS/flow_dir.tiff", 
-                pour_pts = paste0("Data_Verify/GIS/df/df_pp/pp_site_", i, ".shp"), 
-                output = paste0("Data_Verify/GIS/df/df_watershed/watershed_", i, ".tiff"))
+  wbt_watershed(d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
+                pour_pts = modify_path(paste0("Data_Verify/GIS/df/df_pp/pp_site_", i, ".shp")), 
+                output = modify_path(paste0("Data_Verify/GIS/df/df_watershed/watershed_", i, ".tiff")))
   
   #read in watershed
-  ws = terra::rast(paste0("Data_Verify/GIS/df/df_watershed/watershed_", i, ".tiff"))
+  ws = terra::rast(modify_path(paste0("Data_Verify/GIS/df/df_watershed/watershed_", i, ".tiff")))
   
   #transform watershed to a polygon
   ws_poly = as.polygons(ws)
   #save shapefile of watershed
-  writeVector(ws_poly, paste0("Data_Verify/GIS/df/df_watershed/Shapes/ws_shape_", i, ".shp"), overwrite = TRUE)
+  writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/df/df_watershed/Shapes/ws_shape_", i, ".shp")), overwrite = TRUE)
   
 }
 
 pblapply(1:nrow(df), df_watershed, cl = 4)
 
 
-files = list.files("Data_Verify/GIS/df/df_watershed/Shapes/", pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS/df/df_watershed/Shapes/"), pattern = "*.shp", recursive = T, full.names = T)
 
 well_ws = function(f){
   w_ws1 = st_read(f)
@@ -129,7 +130,12 @@ well_ws = function(f){
 
 df_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
 df = df %>% as_tibble() %>% dplyr::select(!geometry) %>% left_join(df_ws)
-save(df, file = paste0(natality_path, "[UA Box Health] natality_ws.RData"))
+if (!code_check){
+  save(df, file = paste0(natality_path, "[UA Box Health] natality_ws.RData"))  
+}else{
+  save(df, "Data_Verify_Konan/GIS/fake_natality_ws.RData")
+}
+
 
 
 #delete folder

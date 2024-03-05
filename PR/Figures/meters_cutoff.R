@@ -50,13 +50,30 @@ IV = TRUE
 fa_resid = FALSE
 drop_states = FALSE
 relaxed_up = FALSE
+code_check = FALSE
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
 index = 1
-load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+if (code_check == FALSE){
+  load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData"))  
+}else{
+  load("Data_Verify/fake_natality.RData")
+  #get covariates for birth records
+  source("PFAS-Code/PR/Data/birth_covars.R")
+  
+  #match residences to water wells
+  source("PFAS-Code/PR/Data/natality_wells.R")
+  
+  #get elevation at relevant well and residence
+  source("PFAS-Code/PR/Data/elev_setup.R")
+  source("PFAS-Code/PR/Data/natality_wells.R")
+  
+  #get elevation at relevant well and residence
+  source("PFAS-Code/PR/Data/elev_setup.R")
+}
 #get flow accumulation at residence
 # #read in flow accumulation raster
-cont_fa = terra::rast("Data_Verify/GIS/cont_fa_sum_buffed.tiff")
+cont_fa = terra::rast(modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))
 df_inter_fa= df %>% as_tibble() %>%  
   dplyr::select(!geometry) %>% 
   st_as_sf(coords = c("lng", "lat"), crs = 4326, remove = F) %>% 
@@ -461,7 +478,7 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   scale_x_continuous(breaks = 1:10) + ylim(c(-0.02, 0.12))
 
 
-plot = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
+figure_s3 = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
+ggsave("Figures/Robustness/figure_s3.png", figure_s3)
 
-plot
 

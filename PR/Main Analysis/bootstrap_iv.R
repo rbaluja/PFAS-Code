@@ -35,6 +35,7 @@ nat_redo_soil = FALSE #recalculate soil stats for national data?
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+code_check = FALSE
 
 source("PFAS-Code/PR/Data/data_head.R")
 
@@ -170,19 +171,19 @@ boot_err = function(i, df, fs_cont){
 }
 
 # boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
-# save(boot_coefs, file = "Data_Verify/RData/bootstrap.RData")
-load("Data_Verify/RData/bootstrap.RData")
+# save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData"))
+load(modify_path("Data_Verify/RData/bootstrap.RData"))
 
-
+#subtract off mean (from table 2), divide by dof
 preterm_sd = sqrt(sum((boot_coefs$preterm - 0.010)^2)/9999)
-0.010/preterm_sd # significant at 1%
+0.010/preterm_sd
 preterm_sd
 
 lpreterm_sd = sqrt(sum((boot_coefs$lpreterm - 0.0060)^2)/9999)
 0.006/lpreterm_sd # significant at 5%
 lpreterm_sd
 
-mpreterm_sd = sqrt(sum((boot_coefs$mpreterm + 0.00019)^2)/9999)
+mpreterm_sd = sqrt(sum((boot_coefs$mpreterm - 0.00019)^2)/9999)
 0.00019/mpreterm_sd # significant at 5%
 mpreterm_sd
 
@@ -205,6 +206,10 @@ mlbw_sd
 vlbw_sd = sqrt(sum((boot_coefs$vlbw - 0.0035)^2)/9999)
 0.0035/vlbw_sd # significant at 5%
 vlbw_sd
+
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, 
+     lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, 
+     file = modify_path("Data_Verify/RData/linear_iv_se.RData"))
 
 
 
@@ -356,10 +361,10 @@ boot_err_quant = function(i, df, fs_cont){
   return(boot_coefs)
 }
 # boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
-# save(boot_coefs, file = "Data_Verify/RData/bootstrap_quant.RData")
-load("Data_Verify/RData/bootstrap_quant.RData")
+# save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData"))
+load(modify_path("Data_Verify/RData/bootstrap_quant.RData"))
 
-
+#subtract off mean (from quantiles.R/table S-10) and divide by dof
 p2_sd = sqrt(sum((boot_coefs$preterm2 - reg_data[2, "pre_coef"])^2)/9999)
 p3_sd = sqrt(sum((boot_coefs$preterm3 - reg_data[3, "pre_coef"])^2)/9999)
 p4_sd = sqrt(sum((boot_coefs$preterm4 - reg_data[4, "pre_coef"])^2)/9999)
@@ -400,6 +405,16 @@ vlbw3_sd = sqrt(sum((boot_coefs$vlbw3 - reg_data[3, "vlbw_coef"])^2)/9999)
 vlbw4_sd = sqrt(sum((boot_coefs$vlbw4 - reg_data[4, "vlbw_coef"])^2)/9999)
 vlbw5_sd = sqrt(sum((boot_coefs$vlbw5 - reg_data[5, "vlbw_coef"])^2)/9999)
 
+save(p2_sd, p3_sd, p4_sd, p5_sd, 
+     lp2_sd, lp3_sd, lp4_sd, lp5_sd, 
+     mp2_sd, mp3_sd, mp4_sd, mp5_sd, 
+     vp2_sd, vp3_sd, vp4_sd, vp5_sd, 
+     lbw2_sd, lbw3_sd, lbw4_sd, lbw5_sd,
+     llbw2_sd, llbw3_sd, llbw4_sd, llbw5_sd,
+     mlbw2_sd, mlbw3_sd, mlbw4_sd, mlbw5_sd,
+     vlbw2_sd, vlbw3_sd, vlbw4_sd, vlbw5_sd,
+     file = modify_path("Data_Verify/RData/quintiles_iv_se.RData"))
+
 
 boot_err_sb = function(i, df, fs_cont){
   boot_coefs = data.frame(matrix(ncol = 1, nrow = 1))
@@ -434,8 +449,10 @@ boot_err_sb = function(i, df, fs_cont){
   return(boot_coefs)
 }
 
-boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
-save(boot_coefs, file = "Data_Verify/RData/bootstrap_sb.RData")
+#boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
+#save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_sb.RData"))
 
+load(modify_path("Data_Verify/RData/bootstrap_sb.RData"))
 sb_se = sqrt(sum((boot_coefs$stillborn - 0.000528)^2)/(nrow(boot_coefs) - 1))
+save(sb_se, file = modify_path("Data_Verify/RData/linear_iv_se_sb.RData"))
 1 - pnorm(0.000528/sb_se)

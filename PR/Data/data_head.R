@@ -13,8 +13,7 @@ if (run_cleaning == TRUE){
     #read in (and clean) natality data
     source('PFAS-Code/PR/Data/natality_data.R') 
   }else{
-    load("Data_Verify/fake_natality.RData")
-    #source("PFAS-Code/PR/Data/fake_natality.R")
+    source("PFAS-Code/PR/Data/fake_natality.R")
   }
   
   #get covariates for birth records

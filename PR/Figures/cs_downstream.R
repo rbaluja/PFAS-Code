@@ -4,16 +4,16 @@ rm(list = ls())
 .rs.restartR()
 
 #fill sinks
-wbt_breach_depressions("New Hampshire/Data/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff", "New Hampshire/Data/QGIS/filled_dem.tiff")
+wbt_breach_depressions(modify_path("New Hampshire/Data/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"), modify_path("New Hampshire/Data/QGIS/filled_dem.tiff"))
 
 #flow accumulation
-wbt_d8_flow_accumulation("New Hampshire/Data/QGIS/filled_dem.tif", "New Hampshire/Data/QGIS/flow_acc.tiff")
+wbt_d8_flow_accumulation(modify_path("New Hampshire/Data/QGIS/filled_dem.tif"), modify_path("New Hampshire/Data/QGIS/flow_acc.tiff"))
 
 #flow direction
-wbt_d8_pointer("New Hampshire/Data/QGIS/filled_dem.tif", "New Hampshire/Data/QGIS/flow_dir.tiff")
+wbt_d8_pointer(modify_path("New Hampshire/Data/QGIS/filled_dem.tif"), modify_path("New Hampshire/Data/QGIS/flow_dir.tiff"))
 
 #read in cont_sites
-cont_sites = read_xlsx('New Hampshire/Data/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = read_xlsx(modify_path('New Hampshire/Data/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
   dplyr::select(`Site name`, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 
@@ -49,15 +49,15 @@ if (GIS_create == TRUE){
     st_write(spo, temp_point_path, quiet = TRUE)
     # Run snap pour points
     wbt_snap_pour_points(pour_pts = temp_point_path, 
-                         flow_accum = "New Hampshire/Data/QGIS/flow_acc.tiff", 
-                         output = paste0("New Hampshire/Data/QGIS/cont_pp/pp_site_", j, ".shp"), 
+                         flow_accum = modify_path("New Hampshire/Data/QGIS/flow_acc.tiff"), 
+                         output = modify_path(paste0("New Hampshire/Data/QGIS/cont_pp/pp_site_", j, ".shp")), 
                          snap_dist = 0.007569 * 5)
     #calculate watershed
-    wbt_watershed(d8_pntr = "New Hampshire/Data/QGIS/flow_dir.tiff", 
-                  pour_pts = paste0("New Hampshire/Data/QGIS/cont_pp/pp_site_", j, ".shp"), 
-                  output = paste0("New Hampshire/Data/QGIS/cont_watershed/watershed_", j, ".tiff"))
+    wbt_watershed(d8_pntr = modify_path("New Hampshire/Data/QGIS/flow_dir.tiff"), 
+                  pour_pts = modify_path(paste0("New Hampshire/Data/QGIS/cont_pp/pp_site_", j, ".shp")), 
+                  output = modify_path(paste0("New Hampshire/Data/QGIS/cont_watershed/watershed_", j, ".tiff")))
     #read in watershed
-    ws = terra::rast(paste0("New Hampshire/Data/QGIS/cont_watershed/watershed_", j, ".tiff"))
+    ws = terra::rast(modify_path(paste0("New Hampshire/Data/QGIS/cont_watershed/watershed_", j, ".tiff")))
     
     #transform watershed to a polygon
     ws_poly = st_as_sf(as.polygons(ws)) %>% 
@@ -113,9 +113,9 @@ if (GIS_create == TRUE){
   cs_dws = dplyr::bind_rows(cs_dws)
   
 }else{
-  load("New Hampshire/Data/RData/cont_sites_downstream10000_1_20.RData")
+  load(modify_path("/Data/RData/cont_sites_downstream10000_1_20.RData"))
   cs_dws1 = dplyr::bind_rows(cs_dws)
-  load("New Hampshire/Data/RData/cont_sites_downstream10000_21_41.RData")
+  load(modify_path("Data/RData/cont_sites_downstream10000_21_41.RData"))
   cs_dws = rbind(cs_dws1, cs_dws) 
 }
 
@@ -129,7 +129,7 @@ nh_map_plot = ggplot() +
   theme_minimal()
 
 # Add site points and arrows to the map
-nh_map_plot +
+figure_s1 = nh_map_plot +
   geom_point(data = cont_sites, aes(x = lng, y = lat)) +
   geom_sf(data = cs_dws %>% st_transform(4326), alpha = 0.2, fill = "blue", color = NA) + 
   theme_minimal() + 
@@ -140,3 +140,5 @@ nh_map_plot +
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank(), 
         text=element_text(family="Helvetica"))
+
+ggplot("Figures/figure_s1.png", figure_s1)

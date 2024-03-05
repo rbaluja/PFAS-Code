@@ -1,7 +1,7 @@
 #soil stuff
 source("PFAS-Code/PR/National Costs/soil.R")
 
-cont_sites = read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater' & State != "Alaska") %>% 
   dplyr::select(`Site name`, State, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 
@@ -23,7 +23,7 @@ bs = births
 
 
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
-#taken from national first stage. See daily note (01/23/23) for why these are only vars
+#taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
 bs$pred_pfas = 0.017041 + 6.886192 * bs$down + 0.004021 * bs$sp + 
   -0.005266 * bs$awc + 0.665858 * asinh(bs$pfas) + -0.568659 * log(bs$dist) + 
   -0.270853 * bs$updown + -0.002472 * bs$sp * bs$down +  0.001074 * bs$awc * bs$down + 
@@ -85,13 +85,12 @@ sum(bs$add_mlbw_se) #123.0312 births se
 data = data.frame(
   Weeks = factor(rep(c("Very Preterm", "Mod. Preterm", "Late Preterm"), 2), 
                  levels = c("Very Preterm", "Mod. Preterm", "Late Preterm")),
-  Value = c(960, 47, 1476, 0.20, 0.01, 0.05), # Combined values for both axes
-  Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")), # Axis assignment
+  Value = c(960, 47, 1476, 0.20, 0.01, 0.05), 
+  Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
   se = c("(246)", "(492)", "(492)", "(0.05)", "(0.10)", "(0.02)")
 )
 
 # Scaling factor for right axis values
-#scale_factor = max(data$Value[data$Axis == "Left"]) / max(data$Value[data$Axis == "Right"])
 scale_factor = 3000/8
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
@@ -102,20 +101,20 @@ data$Weeks = factor(data$Weeks,
 
 # Updated ggplot code
 p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
-  geom_bar_pattern( # Use geom_bar_pattern for patterns
+  geom_bar_pattern( 
     stat="identity", 
     position=position_dodge(), 
     aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor), alpha = 0.5, pattern = Axis),
-    pattern_fill = "white", # Set the color of the pattern
-    pattern_density = 0.1, # Adjust density of the pattern lines
-    pattern_spacing = 0.02, # Adjust spacing of the pattern lines
-    pattern_key_scale_factor = 0.9 # Adjust the scale of the pattern in the legend
+    pattern_fill = "white", 
+    pattern_density = 0.1, 
+    pattern_spacing = 0.02, 
+    pattern_key_scale_factor = 0.9 
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
     "Annual Additional Births",
-    sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), # Adjusting secondary axis
-    limits = c(NA, 3000) # Set the upper limit to a higher value
+    sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
+    limits = c(NA, 3000) 
   )  +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -132,15 +131,15 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe"))
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=2), 
-                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 200), # Adjust the offset as needed
+                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 200),
                               position=position_dodge(width=0.9), 
-                              vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                              vjust=0, 
                               size=7, 
                               fontface = "bold")
 p_costs = p_costs + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 100), # Adjust the offset as needed
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 100),
                                 position=position_dodge(width=0.9), 
-                                vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                                vjust=0, 
                                 size=5, 
                                 fontface = "bold")
 p_costs
@@ -151,13 +150,12 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
                  levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
-  Value = c(861, 327, 4.42, 0.53), # Combined values for both axes
-  Axis = factor(c("Left", "Left", "Right", "Right")), # Axis assignment
+  Value = c(861, 327, 4.42, 0.53), 
+  Axis = factor(c("Left", "Left", "Right", "Right")),
   se = c("(246)", "(123)", "(1.26)", "(0.20)")
 )
 
-# Scaling factor for right axis values
-#scale_factor_bw = max(data_bw$Value[data_bw$Axis == "Left"]) / max(data_bw$Value[data_bw$Axis == "Right"])
+# Scaling factor
 scale_factor_bw = 3000/8
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
@@ -168,20 +166,20 @@ data_bw$Weeks = factor(data_bw$Weeks,
 
 # Updated ggplot code
 lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
-  geom_bar_pattern( # Use geom_bar_pattern to apply patterns
+  geom_bar_pattern(
     stat="identity", 
     position=position_dodge(),
     aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw), alpha = 0.5, pattern = Axis),
-    pattern_fill = "black", # Set color of the pattern
-    pattern_density = 0.1, # Adjust density of pattern lines
-    pattern_spacing = 0.02, # Adjust spacing of pattern lines
-    pattern_key_scale_factor = 0.9 # Adjust scale of pattern in legend
+    pattern_fill = "black", 
+    pattern_density = 0.1, 
+    pattern_spacing = 0.02, 
+    pattern_key_scale_factor = 0.9 
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
     "Annual Additional Births",
-    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), # Adjusting secondary axis
-    limits = c(NA, 3000) # Set the upper limit to a higher value
+    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
+    limits = c(NA, 3000) 
   ) +
   theme_minimal() +
   theme(legend.position = "bottom",
@@ -197,20 +195,21 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   guides(alpha = "none") + # Adjust guide for patterns
   scale_pattern_manual(values = c("none", "stripe"))
 lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=2), 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 200), # Adjust the offset as needed
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 200),
                                 position=position_dodge(width=0.9), 
-                                vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                                vjust=0, 
                                 size=7, 
                                 fontface = "bold")
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 100), # Adjust the offset as needed
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 100),
                                 position=position_dodge(width=0.9), 
-                                vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                                vjust=0, 
                                 size=5, 
                                 fontface = "bold")
 
 lbw_cost
 
 p_costs = p_costs + guides(pattern = "none")
-p_costs / lbw_cost
+figure_3 = p_costs / lbw_cost
+ggsave("Figures/National Costs/figure_3.png", figure_3)

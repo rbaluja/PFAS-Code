@@ -8,9 +8,9 @@ one_sp = function(tval, pval){
   }
 }
 #preterm
-load("Data_Verify/Robustness/drop_nearby_state_robustness.RData")
-load("Data_Verify/Robustness/side_robustness.RData")
-load("Data_Verify/Robustness/relaxed_up_robust.RData")
+load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
+load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
+load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
 full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -1241,5 +1241,9 @@ vlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
 geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
 
-wrap_plots(list(preterm_robustness, lbw_robustness, lpreterm_robustness, llbw_robustness, mpreterm_robustness, mlbw_robustness, vpreterm_robustness, vlbw_robustness), nrow = 4)
+figure_s4 = wrap_plots(list(preterm_robustness, lbw_robustness, lpreterm_robustness, 
+                            llbw_robustness, mpreterm_robustness, mlbw_robustness, 
+                            vpreterm_robustness, vlbw_robustness), nrow = 4)
+
+ggsave("Figures/Robustness/figure_s4.png", figure_s4)
 

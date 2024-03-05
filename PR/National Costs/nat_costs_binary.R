@@ -64,20 +64,20 @@ data$Weeks = factor(data$Weeks,
 
 # Updated ggplot code
 p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
-  geom_bar_pattern( # Use geom_bar_pattern for patterns
+  geom_bar_pattern( 
     stat="identity", 
     position=position_dodge(), 
     aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor), alpha = 0.5, pattern = Axis),
-    pattern_fill = "white", # Set the color of the pattern
-    pattern_density = 0.1, # Adjust density of the pattern lines
-    pattern_spacing = 0.02, # Adjust spacing of the pattern lines
-    pattern_key_scale_factor = 0.9 # Adjust the scale of the pattern in the legend
+    pattern_fill = "white", 
+    pattern_density = 0.1, 
+    pattern_spacing = 0.02, 
+    pattern_key_scale_factor = 0.9
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
     "Annual Additional Births",
-    sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), # Adjusting secondary axis
-    limits = c(NA, 500) # Set the upper limit to a higher value
+    sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
+    limits = c(NA, 500)
   )  +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -94,15 +94,15 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe"))
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=3), 
-                                 y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 25), # Adjust the offset as needed
+                                 y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 25), 
                              position=position_dodge(width=0.9), 
-                             vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                             vjust=0, 
                              size=7, 
                              fontface = "bold")
 p_costs = p_costs + geom_text(aes(label=se, 
-                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5), # Adjust the offset as needed
+                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5), 
                               position=position_dodge(width=0.9), 
-                              vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                              vjust=0, 
                               size=5, 
                               fontface = "bold")
 p_costs
@@ -113,13 +113,12 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
                  levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
-  Value = c(120, -1, 0.62, -0.002), # Combined values for both axes
-  Axis = factor(c("Left", "Left", "Right", "Right")), # Axis assignment
+  Value = c(120, -1, 0.62, -0.002),
+  Axis = factor(c("Left", "Left", "Right", "Right")), 
   se = c("(41)", "(36)", "(0.21)", "(0.06)")
 )
 
 # Scaling factor for right axis values
-#scale_factor_bw = max(data_bw$Value[data_bw$Axis == "Left"]) / max(data_bw$Value[data_bw$Axis == "Right"])
 scale_factor_bw = 500/1
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
@@ -130,20 +129,20 @@ data_bw$Weeks = factor(data_bw$Weeks,
 
 # Updated ggplot code
 lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
-  geom_bar_pattern( # Use geom_bar_pattern to apply patterns
+  geom_bar_pattern( 
     stat="identity", 
     position=position_dodge(),
     aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw), alpha = 0.5, pattern = Axis),
-    pattern_fill = "black", # Set color of the pattern
-    pattern_density = 0.1, # Adjust density of pattern lines
-    pattern_spacing = 0.02, # Adjust spacing of pattern lines
-    pattern_key_scale_factor = 0.9 # Adjust scale of pattern in legend
+    pattern_fill = "black",
+    pattern_density = 0.1,
+    pattern_spacing = 0.02, 
+    pattern_key_scale_factor = 0.9
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
     "Annual Additional Births",
-    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), # Adjusting secondary axis
-    limits = c(NA, 500) # Set the upper limit to a higher value
+    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"),
+    limits = c(NA, 500) 
   ) +
   theme_minimal() +
   theme(legend.position = "bottom",
@@ -156,23 +155,24 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         plot.title = element_text(hjust = 0.5, size = 22, face = "bold"), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) + 
-  guides(alpha = "none") + # Adjust guide for patterns
+  guides(alpha = "none") +
   scale_pattern_manual(values = c("none", "stripe"))
 lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=3), 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 25), # Adjust the offset as needed
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 25),
                                 position=position_dodge(width=0.9), 
-                                vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                                vjust=0,
                                 size=7, 
                                 fontface = "bold")
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5), # Adjust the offset as needed
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5),
                                 position=position_dodge(width=0.9), 
-                                vjust=0, # Vertically justifies text to the bottom, making it appear above the bar
+                                vjust=0,
                                 size=5, 
                                 fontface = "bold")
 
 lbw_cost
 
 p_costs = p_costs + guides(pattern = "none")
-p_costs / lbw_cost
+figure_s7 = p_costs / lbw_cost
+ggsave("Figures/National Costs/figure_s7.png", figure_s7)

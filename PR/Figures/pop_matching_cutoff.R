@@ -28,12 +28,31 @@ drop_far_up = FALSE
 rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
+code_check = FALSE
 
 
 
 
 index = 1
-load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+if (!code_check){
+  load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+}else{
+  load("Data_Verify/fake_natality.RData")
+  
+  #get covariates for birth records
+  source("PFAS-Code/PR/Data/birth_covars.R")
+  
+  #match residences to water wells
+  source("PFAS-Code/PR/Data/natality_wells.R")
+  
+  #get elevation at relevant well and residence
+  source("PFAS-Code/PR/Data/elev_setup.R")
+  
+  source("PFAS-Code/PR/Data/natality_wells.R")
+  
+  #get elevation at relevant well and residence
+  source("PFAS-Code/PR/Data/elev_setup.R")
+}
 dfs = df
 reg_data = data.frame(matrix(ncol = 4, nrow = 0))
 colnames(reg_data) = c('meters', "total_n", "n_up", "n_down")
@@ -111,7 +130,7 @@ reg_data_long = reg_data %>%
                names_to = "Category",
                values_to = "Value")
 
-ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) + 
+figure_s2b = ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) + 
   geom_line(size = 2) +
   ylab('Sample Size') + 
   xlab('Buffer (km)') + 
@@ -122,3 +141,5 @@ ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) +
   theme(axis.text = element_text(size = 20, face = "bold"), 
         axis.title = element_text(size = 20, face = "bold")) + 
   scale_x_continuous(breaks = 1:10)
+
+ggsave("Figures/figure_s2b.png", figure_s2b)
