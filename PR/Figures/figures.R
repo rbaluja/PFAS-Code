@@ -125,13 +125,13 @@ df$updown = ifelse(df$up == 1 | df$down == 1, 1, 0)
 r_coefs = data.frame(matrix(ncol = 3, nrow = 0))
 colnames(r_coefs) = c("weeks", "coef", "se")
 index = 1
-for (w in seq(from = 20, to = 40, by = 4)){
+for (w in seq(from = 20, to = 36, by = 4)){
   r1 = fixest::feols(I(gestation < w & gestation >= w - 4) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                       m_height + tri5 + fa_resid
+                       m_height + tri5 +fa_resid + wind_exposure 
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
   
@@ -156,8 +156,8 @@ r_coefs$pre_lower = r_coefs$coef - 1.96*r_coefs$se
 r_coefs$pre_upper = r_coefs$coef + 1.96*r_coefs$se
 
 r_coefs$week_range = cut(r_coefs$weeks,
-                          breaks = c(16, 20, 24, 28, 32, 36, 40),
-                          labels = c("[17, 20]", "[21, 24]", "[25, 28]", "[29, 32]", "[33, 36]", "[37, 40]"),
+                          breaks = c(16, 20, 24, 28, 32, 36),
+                          labels = c("[17, 20]", "[21, 24]", "[25, 28]", "[29, 32]", "[33, 36]"),
                           include.lowest = TRUE)
 
 # Use the new variable for the x-axis
@@ -166,6 +166,27 @@ pre_bin = ggplot(r_coefs, aes(x=week_range, y=coef)) +
   geom_errorbar(aes(ymin=pre_lower , ymax=pre_upper), width=0.1, alpha = 0.5) + 
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   ylab('Estimated Impact of Downgradient') + xlab('Gestation (Weeks)') + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12, face = "bold"), 
+        axis.title.x = element_text(face = "bold", size = 12), 
+        axis.title.y = element_text(face = "bold", size = 12), 
+        axis.text.y = element_text(face = "bold", size = 12))
+
+#putting y axis as percent increase of the mean
+
+r_coefs$effect_size = 0
+r_coefs$es_sd = 0
+for (i in 1:nrow(r_coefs)){
+  m = mean(df$gestation < r_coefs$weeks[i] & df$gestation >= r_coefs$weeks[i] - 4)
+  r_coefs$effect_size[i] = (r_coefs$coef[i]/m) * 100
+  r_coefs$es_sd[i] = (r_coefs$se[i]/m) * 100
+}
+
+ggplot(r_coefs, aes(x=week_range, y=effect_size)) +
+  geom_point(size=2) + 
+  geom_errorbar(aes(ymin=effect_size - 1.96 * es_sd , ymax=effect_size + 1.96 * es_sd), width=0.1, alpha = 0.5) + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
+  ylab('% Increase in Probability of Gestation Outcome') + xlab('Gestation (Weeks)') + 
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12, face = "bold"), 
         axis.title.x = element_text(face = "bold", size = 12), 
@@ -201,7 +222,7 @@ r_coefs$pre_upper = r_coefs$pre_s + 1.96*r_coefs$se
 ggplot(r_coefs, aes(x = weeks)) + 
   geom_line(aes(y = pre_s), color = "blue") +
   geom_ribbon(aes(ymin = pre_lower, ymax = pre_upper, x = weeks, fill = 'Confidence Band' ), alpha = .3, fill = 'blue') +
-  ylab('Estimated Impact of Downgradient') + xlab('Preterm Cutoff (Weeks)') + theme_minimal() 
+  ylab('Estimated Impact of Downgradient') + xlab('Birthweight (Grams)') + theme_minimal() 
 
 r_coefs$pre_lower = r_coefs$coef - 1.96*r_coefs$se
 r_coefs$pre_upper = r_coefs$coef + 1.96*r_coefs$se
@@ -222,6 +243,27 @@ lbw_bin = ggplot(r_coefs, aes(x=week_range, y=coef)) +
         axis.title.x = element_text(face = "bold", size = 12), 
         axis.title.y = element_text(face = "bold", size = 12), 
         axis.text.y = element_text(face = "bold", size = 12)) 
+
+r_coefs$effect_size = 0
+r_coefs$es_sd = 0
+for (i in 1:nrow(r_coefs)){
+  m = mean(df$bweight < r_coefs$weeks[i] & df$bweight >= r_coefs$weeks[i] - 500)
+  r_coefs$effect_size[i] = (r_coefs$coef[i]/m) * 100
+  r_coefs$es_sd[i] = (r_coefs$se[i]/m) * 100
+}
+
+ggplot(r_coefs, aes(x=week_range, y=effect_size)) +
+  geom_point(size=2) + 
+  geom_errorbar(aes(ymin=effect_size - 1.96 * es_sd , ymax=effect_size + 1.96 * es_sd), width=0.1, alpha = 0.5) + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
+  ylab('% Increase in Probability of Birthweight Outcome') + xlab('Birthweight (Grams)') + 
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12, face = "bold"), 
+        axis.title.x = element_text(face = "bold", size = 12), 
+        axis.title.y = element_text(face = "bold", size = 12), 
+        axis.text.y = element_text(face = "bold", size = 12))
+
+
 
 pre_bin | lbw_bin
 

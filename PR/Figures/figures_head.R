@@ -1,3 +1,6 @@
+#Primary figure (figure 2)
+source("Code/PR/Figures/figure2.R")
+
 #buffer cutoff figure (Figure 2) - This will restart R, don't run it until you don't need anything in memory!
 source("Code/PR/Figures/meters_cutoff.R")
 
