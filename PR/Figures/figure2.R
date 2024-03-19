@@ -9,7 +9,7 @@ r1 = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-r_coefs[1, "weeks"] = "Very Preterm (<28 Weeks)"
+r_coefs[1, "weeks"] = "Very (<28 Weeks)"
 r_coefs[1, "coef"] = r1$coeftable["down", 1]
 r_coefs[1, "se"] = r1$coeftable["down", 2]
 r_coefs[1, "effect_size"] = r1$coeftable["down", 1]/mean(df$gestation < 28) * 100
@@ -24,7 +24,7 @@ r2 = fixest::feols(I(gestation >= 28 & gestation < 32) ~  updown + down +  I(pfa
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-r_coefs[2, "weeks"] = "Mod. Preterm (28-31 Weeks)"
+r_coefs[2, "weeks"] = "Moderately (28-31 Weeks)"
 r_coefs[2, "coef"] = r2$coeftable["down", 1]
 r_coefs[2, "se"] = r2$coeftable["down", 2]
 r_coefs[2, "effect_size"] = r2$coeftable["down", 1]/mean(df$gestation > 28 & df$gestation <= 32) * 100
@@ -38,7 +38,7 @@ r3 = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfa
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-r_coefs[3, "weeks"] = "Late Preterm (32-36 Weeks)"
+r_coefs[3, "weeks"] = "Late (32-36 Weeks)"
 r_coefs[3, "coef"] = r3$coeftable["down", 1]
 r_coefs[3, "se"] = r3$coeftable["down", 2]
 r_coefs[3, "effect_size"] = r3$coeftable["down", 1]/mean(df$gestation < 37 & df$gestation >= 32) * 100
@@ -64,8 +64,8 @@ r_coefs = r_coefs %>%
          upper = effect_size + 1.96 * es_sd)
 
 # Create a factor with levels in the desired order for "weeks"
-r_coefs$weeks = factor(r_coefs$weeks, levels = c("Any", "Late Preterm (32-36 Weeks)", 
-                                                 "Mod. Preterm (28-31 Weeks)", "Very Preterm (<28 Weeks)"))
+r_coefs$weeks = factor(r_coefs$weeks, levels = c("Any", "Late (32-36 Weeks)", 
+                                                 "Moderately (28-31 Weeks)", "Very (<28 Weeks)"))
 
 r_coefs$sig = c(1, 0, 0, 1)
 
@@ -78,8 +78,8 @@ preterm_plot = ggplot(r_coefs, aes(x = weeks, y = effect_size, group = weeks)) +
   scale_color_manual(values = c("1" = "blue", "0" = "darkgrey")) + # Assign colors based on sig
   geom_vline(xintercept =  1.5, linetype= "dashed") + 
   geom_hline(yintercept = 0) +
-  scale_x_discrete(limits = c("Any", "Late Preterm (32-36 Weeks)", 
-                              "Mod. Preterm (28-31 Weeks)", "Very Preterm (<28 Weeks)")) +
+  scale_x_discrete(limits = c("Any", "Late (32-36 Weeks)", 
+                              "Moderately (28-31 Weeks)", "Very (<28 Weeks)")) +
   labs(x = "", y = "% Increase in Preterm Births") +
   theme_minimal() + 
   theme(
@@ -105,7 +105,7 @@ r1 = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + 
                      m_height + tri5 + fa_resid+ wind_exposure
                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-r_coefs[1, "grams"] = "Very Low-Birthweight (<1000 Grams)"
+r_coefs[1, "grams"] = "Very (<1000 Grams)"
 r_coefs[1, "coef"] = r1$coeftable["down", 1]
 r_coefs[1, "se"] = r1$coeftable["down", 2]
 r_coefs[1, "effect_size"] = r1$coeftable["down", 1]/mean(df$bweight < 1000) * 100
@@ -121,7 +121,7 @@ r2 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfa
                      m_height + tri5 + fa_resid + wind_exposure
                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-r_coefs[2, "grams"] = "Mod. Low-Birthweight (1000-1500 Grams)"
+r_coefs[2, "grams"] = "Moderately (1000-1500 Grams)"
 r_coefs[2, "coef"] = r2$coeftable["down", 1]
 r_coefs[2, "se"] = r2$coeftable["down", 2]
 r_coefs[2, "effect_size"] = r2$coeftable["down", 1]/mean(df$bweight < 1500 & df$bweight > 1000) * 100
@@ -179,32 +179,36 @@ r_coefs = r_coefs %>%
 # Create a factor with levels in the desired order for "weeks"
 r_coefs$weeks = factor(r_coefs$grams, levels = c("Any", "Any - Full Term", 
                                                  "Low-Birthweight (1500-2500 Grams)",
-                                                 "Mod. Low-Birthweight (1000-1500 Grams)", 
-                                                 "Very Low-Birthweight (<1000 Grams)"))
+                                                 "Moderately (1000-1500 Grams)", 
+                                                 "Very (<1000 Grams)"))
 
-r_coefs$sig = c(1, 0, 1, 1, 1)
+r_coefs$sig = c("Yes", "No", "Yes", "Yes", "Yes")
+r_coefs$sig = factor(r_coefs$sig, levels = c("Yes", "No"))
 
 # Plot
 bweight_plot = ggplot(r_coefs, aes(x = grams, y = effect_size, group = grams)) +
   geom_point(aes(color = as.factor(sig)), size = 3) + # Adjust point size here
-  geom_errorbar(data = subset(r_coefs, sig == 0), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.2, size = 0.75) +
+  geom_errorbar(data = subset(r_coefs, sig == "No"), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.2, size = 0.75) +
   # Significant error bars: blue and thicker
-  geom_errorbar(data = subset(r_coefs, sig == 1), aes(ymin = lower, ymax = upper), color = "blue", width = 0.2, size = 1.5) +
-  scale_color_manual(values = c("1" = "blue", "0" = "darkgrey")) + # Assign colors based on sig
+  geom_errorbar(data = subset(r_coefs, sig == "Yes"), aes(ymin = lower, ymax = upper), color = "blue", width = 0.2, size = 1.5) +
+  scale_color_manual(values = c("Yes" = "blue", "No" = "darkgrey")) + # Assign colors based on sig
   geom_vline(xintercept =  2.5, linetype= "dashed") + 
   geom_hline(yintercept = 0) +
   scale_x_discrete(limits = c("Any", "Any - Full Term", 
                               "Low-Birthweight (1500-2500 Grams)",
-                              "Mod. Low-Birthweight (1000-1500 Grams)", 
-                              "Very Low-Birthweight (<1000 Grams)")) +
-  labs(x = "", y = "% Increase in Low-Birthweight") +
+                              "Moderately (1000-1500 Grams)", 
+                              "Very (<1000 Grams)")) +
+  labs(x = "", y = "% Increase in Low-Birthweight", color = expression("Test against H" [0]: "``Downgradient'' effect being weakly negative is significant at 5% level")) +
   theme_minimal() + 
   theme(
     axis.title = element_text(size = 18, face = "bold"), 
     axis.text = element_text(face = "bold", size = 14), 
-    title = element_text(size = 18, face = "bold")) + 
-  ylim(-75, 275) + guides(color = "none")
-
+    title = element_text(size = 18, face = "bold"), 
+    legend.position = "bottom", 
+    legend.text = element_text(size = 18, face = "bold"), 
+    legend.title =  element_text(size = 18, face = "bold")) + 
+  ylim(-75, 275) 
+bweight_plot
 
 
 preterm_plot / bweight_plot
