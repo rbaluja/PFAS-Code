@@ -38,21 +38,21 @@ bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down +
 
 
 #getting impacts in states with initiatives
-bs$add_vpre = bs$pred_pfas * bs$births * 0.0039
-sum(bs$add_vpre) #959.6433
-#very preterm cost: 959.6433 * 204083 = 195846884/10^9
+bs$add_vpre = bs$pred_pfas * bs$births * 0.0027
+sum(bs$add_vpre) #664.3684
+#very preterm cost: 664.3684 * 204083 = 135586296/10^9
 #standard error: 
 bs$add_vpre_se = bs$pred_pfas * bs$births * 0.001
 sum(bs$add_vpre_se)#246.0624 births se
 #cost se: 246.0624  * 204083 = 50217153/10^9
 
-bs$add_mpre = bs$pred_pfas * bs$births * 0.00019
-sum(bs$add_mpre) #46.75185
-#moderately preterm cost: 46.75185 * 205041 =  9586046/10^9
+bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
+sum(bs$add_mpre) #339.5661
+#moderately preterm cost: 339.5661 * 205041 =  69624973/10^9
 #standard error: 
-bs$add_mpre_se = bs$pred_pfas * bs$births * 0.002
-sum(bs$add_mpre_se)# 492.1248births se
-#cost se:  492.1248* 205041 = 100905761/10^9
+bs$add_mpre_se = bs$pred_pfas * bs$births * 0.0004
+sum(bs$add_mpre_se)# 98.42495  births se
+#cost se:  98.42495* 205041 = 20181150/10^9
 
 
 bs$add_lpre = bs$pred_pfas * bs$births * 0.006
@@ -83,11 +83,11 @@ sum(bs$add_mlbw_se) #123.0312 births se
 
 #social cost figure
 data = data.frame(
-  Weeks = factor(rep(c("Very Preterm", "Mod. Preterm", "Late Preterm"), 2), 
-                 levels = c("Very Preterm", "Mod. Preterm", "Late Preterm")),
-  Value = c(960, 47, 1476, 0.20, 0.01, 0.05), 
+  Weeks = factor(rep(c("Very", "Moderately", "Slightly"), 2), 
+                 levels = c("Very", "Moderately", "Slightly")),
+  Value = c(664, 340, 1476, 0.14, 0.07, 0.05), 
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
-  se = c("(246)", "(492)", "(492)", "(0.05)", "(0.10)", "(0.02)")
+  se = c("(246)", "(98)", "(492)", "(0.05)", "(0.02)", "(0.02)")
 )
 
 # Scaling factor for right axis values
@@ -95,8 +95,8 @@ scale_factor = 3000/8
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data$Weeks = factor(data$Weeks, 
-                    levels = c("Very Preterm", "Mod. Preterm", "Late Preterm"),
-                    labels = c("Very Preterm", "Mod. Preterm", "Late Preterm"))
+                    levels = c("Very", "Moderately", "Slightly"),
+                    labels = c("Very", "Moderately", "Slightly"))
 
 
 # Updated ggplot code
@@ -112,7 +112,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
-    "Annual Additional Births",
+    "Annual Additional Preterm Births",
     sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
     limits = c(NA, 3000) 
   )  +
@@ -148,8 +148,8 @@ p_costs
 
 #Birthweight
 data_bw = data.frame(
-  Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
-                 levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
+  Weeks = factor(rep(c("Very", "Moderately"), 2), 
+                 levels = c("Very", "Moderately")),
   Value = c(861, 327, 4.42, 0.53), 
   Axis = factor(c("Left", "Left", "Right", "Right")),
   se = c("(246)", "(123)", "(1.26)", "(0.20)")
@@ -160,8 +160,8 @@ scale_factor_bw = 3000/8
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data_bw$Weeks = factor(data_bw$Weeks, 
-                       levels = c("Very Low Birthweight", "Mod. Low Birthweight"),
-                       labels = c("Very Low Birthweight", "Mod. Low Birthweight"))
+                       levels = c("Very", "Moderately"),
+                       labels = c("Very", "Moderately"))
 
 
 # Updated ggplot code
@@ -177,7 +177,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
-    "Annual Additional Births",
+    "Annual Additional Low-Birthweight Births",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
     limits = c(NA, 3000) 
   ) +

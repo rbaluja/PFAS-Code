@@ -21,7 +21,7 @@ if (nat_run_cont_ws == TRUE){
 if (nat_reassn == TRUE){
   source("PFAS-Code/PR/National Costs/nat_assn.R")
 }else{
-  births = fread(modify_path("Data_Verify/National/births_sites_assigned5.csv"))
+  load(modify_path("Data_Verify/National/births_sites_assigned5.RData"))
 }
 
 #run national costs (primary - Figure 4)

@@ -183,12 +183,12 @@ lpreterm_sd = sqrt(sum((boot_coefs$lpreterm - 0.0060)^2)/9999)
 0.006/lpreterm_sd # significant at 5%
 lpreterm_sd
 
-mpreterm_sd = sqrt(sum((boot_coefs$mpreterm - 0.00019)^2)/9999)
-0.00019/mpreterm_sd # significant at 5%
+mpreterm_sd = sqrt(sum((boot_coefs$mpreterm - 0.00138)^2)/9999)
+0.00138/mpreterm_sd # significant at 5%
 mpreterm_sd
 
-vpreterm_sd = sqrt(sum((boot_coefs$vpreterm - 0.0039)^2)/9999)
-0.0039/vpreterm_sd # significant at 5%
+vpreterm_sd = sqrt(sum((boot_coefs$vpreterm - 0.0027)^2)/9999)
+0.0027/vpreterm_sd # significant at 5%
 vpreterm_sd
 
 lbw_sd = sqrt(sum((boot_coefs$lbw - 0.0101)^2)/9999)

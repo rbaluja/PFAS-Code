@@ -45,8 +45,8 @@ add_mlbw_se
 
 #social cost figure
 data = data.frame(
-  Weeks = factor(rep(c("Very Preterm", "Mod. Preterm", "Late Preterm"), 2), 
-                 levels = c("Very Preterm", "Mod. Preterm", "Late Preterm")),
+  Weeks = factor(rep(c("Very", "Moderately", "Slightly"), 2), 
+                 levels = c("Very", "Moderately", "Slightly")),
   Value = c(92, 49, 149, 0.02, 0.01, 0.005), # Combined values for both axes
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")), # Axis assignment
   se = c("(35)", "(53)", "(155)", "(0.007)", "(0.01)", "(0.006)")
@@ -58,8 +58,8 @@ scale_factor = 500/1
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data$Weeks = factor(data$Weeks, 
-                    levels = c("Very Preterm", "Mod. Preterm", "Late Preterm"),
-                    labels = c("Very Preterm", "Mod. Preterm", "Late Preterm"))
+                    levels = c("Very", "Moderately", "Slightly"),
+                    labels = c("Very", "Moderately", "Slightly"))
 
 
 # Updated ggplot code
@@ -75,7 +75,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
-    "Annual Additional Births",
+    "Annual Additional Preterm Births",
     sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
     limits = c(NA, 500)
   )  +
@@ -111,8 +111,8 @@ p_costs
 
 #Birthweight
 data_bw = data.frame(
-  Weeks = factor(rep(c("Very Low Birthweight", "Mod. Low Birthweight"), 2), 
-                 levels = c("Very Low Birthweight", "Mod. Low Birthweight")),
+  Weeks = factor(rep(c("Very", "Moderately"), 2), 
+                 levels = c("Very", "Moderately")),
   Value = c(120, -1, 0.62, -0.002),
   Axis = factor(c("Left", "Left", "Right", "Right")), 
   se = c("(41)", "(36)", "(0.21)", "(0.06)")
@@ -123,8 +123,8 @@ scale_factor_bw = 500/1
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data_bw$Weeks = factor(data_bw$Weeks, 
-                       levels = c("Very Low Birthweight", "Mod. Low Birthweight"),
-                       labels = c("Very Low Birthweight", "Mod. Low Birthweight"))
+                       levels = c("Very", "Moderately"),
+                       labels = c("Very", "Moderately"))
 
 
 # Updated ggplot code
@@ -140,7 +140,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
   scale_y_continuous(
-    "Annual Additional Births",
+    "Annual Additional Low-Birthweight Births",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"),
     limits = c(NA, 500) 
   ) +

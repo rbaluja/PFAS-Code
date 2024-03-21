@@ -213,10 +213,7 @@ well_assgn = function(i, drop_far_down = FALSE, drop_far_up = FALSE){
 
 births = dplyr::bind_rows(pblapply(1:nrow(births), well_assgn))
 
-fwrite(births %>% 
-         as_tibble() %>% 
-         dplyr::select(geoid, births, down, up, pfas, dist, site, n_sites_meters), 
-       modify_path("Data_Verify/National/births_sites_assigned5.csv"))
+save(births, file = modify_path("Data_Verify/National/births_sites_assigned5.RData"))
 
 
 
