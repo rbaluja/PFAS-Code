@@ -94,7 +94,7 @@ preterm_plot = ggplot(r_coefs, aes(x = weeks, y = effect_size, group = weeks)) +
     axis.title = element_text(size = 18, face = "bold"), 
     axis.text = element_text(face = "bold", size = 14), 
     title = element_text(size = 18, face = "bold")) + 
-  guides(color = "none") + ylim(-75, 275)
+  guides(color = "none") +   ylim(0, 200) 
 
 
 
@@ -178,10 +178,11 @@ r_coefs$weeks = factor(r_coefs$grams, levels = c("Any",
 
 r_coefs$sig = c("Yes", "Yes", "Yes", "Yes")
 r_coefs$sig = factor(r_coefs$sig, levels = c("Yes", "No"))
+r_coefs <- rbind(r_coefs, data.frame(grams = NA, coef = NA, se = NA, effect_size = NA, lower_es = NA, upper_es = NA, weeks= NA, sig = "No"))
 
 # Plot
 bweight_plot = ggplot(r_coefs, aes(x = grams, y = effect_size, group = grams)) +
-  geom_point(aes(color = as.factor(sig)), size = 3) + # Adjust point size here
+  geom_point(aes(color = sig), size = 3) + # Adjust point size here
   geom_errorbar(data = subset(r_coefs, sig == "No"), aes(ymin = lower_es, ymax = upper_es), color = "darkgrey", width = 0.1, size = 0.75) +
   # Significant error bars: blue and thicker
   geom_errorbar(data = subset(r_coefs, sig == "Yes"), aes(ymin = lower_es, ymax = upper_es), color = "blue", width = 0.1, size = 1.5) +
@@ -201,7 +202,7 @@ bweight_plot = ggplot(r_coefs, aes(x = grams, y = effect_size, group = grams)) +
     legend.position = "bottom", 
     legend.text = element_text(size = 18, face = "bold"), 
     legend.title =  element_text(size = 18, face = "bold")) + 
-  ylim(-75, 275) 
+  ylim(0, 200) 
 
 
 preterm_plot/bweight_plot

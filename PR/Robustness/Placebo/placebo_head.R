@@ -1,6 +1,5 @@
 #set working directory
-setwd("~/Dropbox/PFAS Infants")
-
+setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
 set.seed(1)
 
 #load in helper functions
@@ -37,7 +36,7 @@ oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 rerun_placebos = TRUE
-check_code = FALSE
+code_check = FALSE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")

@@ -1,5 +1,5 @@
 #set working directory
-setwd("Dropbox/PFAS Infants")
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
 source("PFAS-Code/PR/env_functions.R")

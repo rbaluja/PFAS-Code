@@ -1,7 +1,5 @@
 #clear memory
 rm(list = ls())
-#restart R
-.rs.restartR()
 
 #set working directory
 setwd("~/Dropbox/PFAS Infants")
@@ -320,7 +318,7 @@ p_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = pre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = pre_dlower, ymax = pre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = pre_dupper, label = pre_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("All Preterm") + 
+  ylab("Any (<37 Weeks)") + 
   xlab("") + 
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -336,7 +334,7 @@ lp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = lpre_dlower, ymax = lpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lpre_dupper, label = lpre_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Late Preterm") + 
+  ylab("Slightly (32-36 Weeks)") + 
   xlab("") +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -350,7 +348,7 @@ mp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = mpre_dlower, ymax = mpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mpre_dupper, label = mpre_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Mod. Preterm") + 
+  ylab("Moderately (28-31 Weeks)") + 
   xlab("") +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -365,7 +363,7 @@ vp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = vpre_dlower, ymax = vpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vpre_dupper, label = vpre_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Very Preterm") + 
+  ylab("Very (<28 Weeks)") + 
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme(legend.position = "bottom", 
@@ -418,7 +416,7 @@ lbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = lbw_dlower, ymax = lbw_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lbw_dupper, label = lbw_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("All Low Birthweight") + 
+  ylab("Any (<2500g)") + 
   theme_minimal() + 
   xlab("") + 
   theme(legend.position = "bottom", 
@@ -434,7 +432,7 @@ llbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = llbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = llbw_dlower, ymax = llbw_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = llbw_dupper, label = llbw_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Low Birthweight") + 
+  ylab("Slightly (1500-2499g)") + 
   theme_minimal() + 
   xlab("") + 
   theme(legend.position = "bottom", 
@@ -448,7 +446,7 @@ vlbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vlbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = vlbw_dlower, ymax = vlbw_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vlbw_dupper, label = vlbw_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Mod. Low Birthweight") + 
+  ylab("Moderately (1000-1499g)") + 
   theme_minimal() + 
   xlab("") + 
   theme(legend.position = "bottom", 
@@ -463,7 +461,7 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = elbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = elbw_dlower, ymax = elbw_dupper), width = 0.1,) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = elbw_dupper, label = elbw_down_p_label), nudge_y = 0.005, size = 5) +
-  ylab("Very Low Birthweight") + 
+  ylab("Very (<1000g)") + 
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme_minimal() + 

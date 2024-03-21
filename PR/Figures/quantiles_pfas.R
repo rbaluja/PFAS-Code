@@ -223,7 +223,7 @@ pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)
     
   )+
-  xlab("") + ylab("All Preterm") + 
+  xlab("") + ylab("Any (<37 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels)  + ylim(c(-0.06, 0.09)) + 
   ggtitle("Preterm")
 
@@ -246,7 +246,7 @@ lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
     axis.text.y = element_text(face = "bold", size = 18)
     
   )+
-  xlab("") + ylab("Late Preterm") + 
+  xlab("") + ylab("Slightly (32-36 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 reg_data$pval_label = sprintf("%.6f", reg_data$mpre_p)
@@ -268,7 +268,7 @@ mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
     axis.text.y = element_text(face = "bold", size = 18)
     
   )+
-  xlab("") + ylab("Mod. Preterm") + 
+  xlab("") + ylab("Moderately (28-31 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 reg_data$pval_label = sprintf("%.6f", reg_data$vpre_p)
@@ -280,7 +280,7 @@ vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
   theme_minimal() + 
   theme(axis.text = element_text(size = 18, face = "bold"), 
         axis.title = element_text(size = 18, face = "bold")) + 
-  xlab("Predicted PFAS Quintile") + ylab("Very Preterm") + 
+  xlab("Predicted PFAS Quintile") + ylab("Very (<28 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 
@@ -315,7 +315,7 @@ lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)
     
   ) + 
-  xlab("") + ylab("All Low Birthweight")+ ylim(c(-0.06, 0.12)) + 
+  xlab("") + ylab("Any (<2500g)")+ ylim(c(-0.06, 0.12)) + 
   ggtitle("Low Birthweight")
 
 reg_data$pval_label = sprintf("%.6f", reg_data$llbw_p)
@@ -337,7 +337,7 @@ llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
     axis.text.y = element_text(face = "bold", size = 18)
     
   ) + 
-  xlab("") + ylab("Low Birthweight") + ylim(c(-0.06, 0.09))
+  xlab("") + ylab("Slightly (1500-2499g)") + ylim(c(-0.06, 0.09))
 
 reg_data$pval_label = sprintf("%.6f", reg_data$mlbw_p)
 mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
@@ -358,7 +358,7 @@ mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
     axis.text.y = element_text(face = "bold", size = 18)
     
   ) + 
-  xlab("") + ylab("Mod. Low Birthweight")+ ylim(c(-0.06, 0.09))
+  xlab("") + ylab("Moderately (1000-1499g)")+ ylim(c(-0.06, 0.09))
 
 reg_data$pval_label = sprintf("%.6f", reg_data$vlbw_p)
 vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
@@ -369,7 +369,7 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   theme_minimal() + 
   theme(axis.text = element_text(size = 18, face = "bold"), 
         axis.title = element_text(size = 18, face = "bold")) + 
-  xlab("Predicted PFAS Quintile") + ylab("Very Low Birthweight") + 
+  xlab("Predicted PFAS Quintile") + ylab("Very (<1000g)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 

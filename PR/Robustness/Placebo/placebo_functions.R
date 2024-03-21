@@ -363,7 +363,7 @@ placebo_res = function(df){
                                          m_height + tri5 
                                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  mpreterm  = fixest::feols(I(gestation < 32 & gestation >= 29) ~  updown + down + dist  + n_sites + 
+  mpreterm  = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down + dist  + n_sites + 
                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -371,7 +371,7 @@ placebo_res = function(df){
                                                    m_height + tri5 
                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  vpreterm  = fixest::feols(I(gestation < 29) ~  updown + down + dist  + n_sites + 
+  vpreterm  = fixest::feols(I(gestation < 28) ~  updown + down + dist  + n_sites + 
                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 

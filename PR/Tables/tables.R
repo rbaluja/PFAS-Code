@@ -153,10 +153,6 @@ t2_preterm = modelsummary::modelsummary(table2_preterm,
 sink(modify_path("Tables/table2_preterm.tex"))
 print(t2_preterm)
 sink()
-#p values
-1 - pnorm(0.010/0.003)
-1 - pnorm(0.006/0.002)
-1 - pnorm(0.0039/0.001)
 
 #marginal effect
 table2_preterm[["All"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
@@ -223,11 +219,6 @@ t2_lbw = modelsummary::modelsummary(table2_lbw,
 sink(modify_path("Tables/table2_lbw.tex"))
 print(t2_lbw)
 sink()
-#p vales
-1 - pnorm(0.0101/0.003)
-1 - pnorm(0.0052/0.002)
-1 - pnorm(0.00133/0.0005)
-1 - pnorm(0.0048/0.0023)
 
 #marginal effects
 table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))

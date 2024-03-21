@@ -122,7 +122,7 @@ preterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title = element_text(size = 18, face = "bold"), 
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("All Preterm") + ggtitle("Preterm") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Any (<37 Weeks)") + ggtitle("Preterm") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -238,7 +238,7 @@ lpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.text.x = element_blank(),
     axis.title = element_text(size = 18, face = "bold")) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Late Preterm") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Slightly (32-36 Weeks)") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -401,7 +401,7 @@ mpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.text.x = element_blank(),
     axis.title = element_text(size = 18, face = "bold")) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Mod. Preterm") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Moderately (28-31 Weeks)") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -574,7 +574,7 @@ vpreterm_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title.y = element_text(size = 16, face = "bold")
   ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very Preterm") + guides(color = "none") + ylim(c(-0.04, 0.15)) + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very (<28 Weeks)") + guides(color = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 6.5, linetype = "dashed", color = "black") # Add a vertical line
@@ -737,7 +737,7 @@ lbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26),
         axis.title.y = element_text(size = 18, face = "bold") ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("All Low Birthweight") + ggtitle("Low Birthweight") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Any (<2500g)") + ggtitle("Low Birthweight") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -901,7 +901,7 @@ llbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
 
         axis.title.y = element_text(size = 18, face = "bold")  ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Low Birthweight") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Slightly (1500-2499g)") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -1064,7 +1064,7 @@ mlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
 
         axis.title.y = element_text(size = 18, face = "bold") ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Mod. Low Birthweight") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Moderately (1000-1499g)") + 
   guides(color = "none", fill = "none") + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
   geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line
@@ -1235,7 +1235,7 @@ vlbw_robustness = ggplot(data, aes(x = Check, group = Check)) +
     axis.title.y = element_text(size = 18, face = "bold")
   ) +
   xlab("") +
-  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very Low Birthweight") + 
+  geom_hline(yintercept = 0, color = "black", alpha = 0.6) + ylab("Very (<1000g)") + 
   scale_color_manual(values = c("Downgradient" = "blue", "Upgradient" = "red"))  + ylim(c(-0.04, 0.15)) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", color = "black") +  # Add a vertical line
 geom_vline(xintercept = 5.5, linetype = "dashed", color = "black") +  # Add a vertical line

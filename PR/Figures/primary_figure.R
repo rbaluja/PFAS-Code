@@ -72,9 +72,9 @@ r_coefs$sig = c(1, 0, 0, 0)
 # Plot
 preterm_plot = ggplot(r_coefs, aes(x = weeks, y = effect_size, group = weeks)) +
   geom_point(aes(color = as.factor(sig)), size = 3) + # Adjust point size here
-  geom_errorbar(data = subset(r_coefs, sig == 0), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.2, size = 0.75) +
+  geom_errorbar(data = subset(r_coefs, sig == 0), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.1, size = 0.75) +
   # Significant error bars: blue and thicker
-  geom_errorbar(data = subset(r_coefs, sig == 1), aes(ymin = lower, ymax = upper), color = "blue", width = 0.2, size = 1.5) +
+  geom_errorbar(data = subset(r_coefs, sig == 1), aes(ymin = lower, ymax = upper), color = "blue", width = 0.1, size = 1.5) +
   scale_color_manual(values = c("1" = "blue", "0" = "darkgrey")) + # Assign colors based on sig
   geom_vline(xintercept =  1.5, linetype= "dashed") + 
   geom_hline(yintercept = 0) +
@@ -188,9 +188,9 @@ r_coefs$sig = factor(r_coefs$sig, levels = c("Yes", "No"))
 # Plot
 bweight_plot = ggplot(r_coefs, aes(x = grams, y = effect_size, group = grams)) +
   geom_point(aes(color = as.factor(sig)), size = 3) + # Adjust point size here
-  geom_errorbar(data = subset(r_coefs, sig == "No"), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.2, size = 0.75) +
+  geom_errorbar(data = subset(r_coefs, sig == "No"), aes(ymin = lower, ymax = upper), color = "darkgrey", width = 0.1, size = 0.75) +
   # Significant error bars: blue and thicker
-  geom_errorbar(data = subset(r_coefs, sig == "Yes"), aes(ymin = lower, ymax = upper), color = "blue", width = 0.2, size = 1.5) +
+  geom_errorbar(data = subset(r_coefs, sig == "Yes"), aes(ymin = lower, ymax = upper), color = "blue", width = 0.1, size = 1.5) +
   scale_color_manual(values = c("Yes" = "blue", "No" = "darkgrey")) + # Assign colors based on sig
   geom_vline(xintercept =  2.5, linetype= "dashed") + 
   geom_hline(yintercept = 0) +
