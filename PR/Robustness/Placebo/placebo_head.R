@@ -1,5 +1,6 @@
 #set working directory
-setwd("/Users/robert/Library/CloudStorage/Dropbox/PFAS Infants")
+setwd("~/Dropbox/PFAS Infants")
+
 set.seed(1)
 
 #load in helper functions
@@ -115,20 +116,20 @@ if (rerun_placebos == TRUE){
 
 #This is the input to table S-6. It counts the number of runs with sig positive coef estimates
 plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.281552)
-sum(plac$pre_sig)#212 false positives
+sum(plac$pre_sig)#201 false positives
 plac$vpre_sig = as.numeric(plac$vpreterm/plac$vpreterm_se > 2.326348)
-sum(plac$vpre_sig)#49 false positives at 1%
+sum(plac$vpre_sig)#35 false positives at 1%
 
 plac$lbw_sig = as.numeric(plac$lbw/plac$lbw_se > 2.326348) 
-sum(plac$lbw_sig)#97 false positives
+sum(plac$lbw_sig)#103 false positives
 plac$llbw_sig = as.numeric(plac$llbw/plac$llbw_se > 1.644854)
-sum(plac$llbw_sig)#190 false positives
-plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#46 false positives
+sum(plac$llbw_sig)#195 false positives
+plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#47 false positives
 sum(plac$vlbw_sig)
 
 sum(as.numeric(plac$preterm/plac$preterm_se > 1.281552 & 
                  plac$vpreterm/plac$vpreterm_se > 2.326348 & 
                  plac$lbw/plac$lbw_se > 2.326348 & 
                  plac$llbw/plac$llbw_se > 1.644854 & 
-                 plac$vlbw/plac$vlbw_se > 2.326348)) # 1 of the 1000 had the same significance (or greater) on all of our significant effects
+                 plac$vlbw/plac$vlbw_se > 2.326348)) # 2 of the 1000 had the same significance (or greater) on all of our significant effects
 
