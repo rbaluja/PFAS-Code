@@ -1,6 +1,12 @@
 ### PFAS in Drinking Water Wells Cause Preterm and Low-Weight Births
 #### Baluja, Guo, Howden, Langer, Lemoine
 
+### Software Dependencies
+- GDAL
+- PROJ
+- GEOS
+- Whitebox Tools
+
 ### Code Summary
 
 #### Execution file: PR/infant_health_head.R  
