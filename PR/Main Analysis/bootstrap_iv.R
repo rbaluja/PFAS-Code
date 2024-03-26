@@ -174,6 +174,7 @@ boot_err = function(i, df, fs_cont){
 # save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData"))
 load(modify_path("Data_Verify/RData/bootstrap.RData"))
 
+#NOTEL these parameter values are hardcoded from the primary results table
 #subtract off mean (from table 2), divide by dof
 preterm_sd = sqrt(sum((boot_coefs$preterm - 0.010)^2)/9999)
 0.010/preterm_sd

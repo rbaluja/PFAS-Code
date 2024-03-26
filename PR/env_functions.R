@@ -13,3 +13,11 @@ modify_path = function(path) {
     return(path)
   }
 }
+
+modify_path2 = function(path) {
+  if(code_check) {
+    return(gsub("Tables", "Tables_Konan", path))
+  } else {
+    return(path)
+  }
+}

@@ -40,7 +40,7 @@ tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>%
 tri$index = 1:nrow(tri)
 
 #get distance from each row in df and tri
-tri_dist =  st_distance(df %>% st_transform(32110), cont_sites %>% st_as_sf(coords = c("tri_lng", "tri_lat"), crs = 4326) %>% st_transform(32110))
+tri_dist =  st_distance(df %>% st_transform(32110), tri %>% st_as_sf(coords = c("tri_lng", "tri_lat"), crs = 4326) %>% st_transform(32110))
 df$tri5 = apply(tri_dist, 1, function(x) sum(x <= 5000))
 
 #distance from each mother's residence and the nearest cont site

@@ -180,21 +180,9 @@ tri = fread(modify_path("Data_Verify/Supplemental/tri_nh.csv")) %>%
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
-
-tri_dists = distm(fs_cont %>% 
-                    as_tibble() %>% 
-                    dplyr::select(well_lng, well_lat), tri %>% 
-                    dplyr::select(tri_lng, tri_lat))
-t_dist = function(i){
-  d = fs_cont[i, ]
-  dists = tri_dists[i, ]
-  d$tri1 = length(which(dists <= 1000))
-  d$tri3 = length(which(dists <= 3000))
-  d$tri5 = length(which(dists <= 5000))
-  return(d)
-  
-}
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), t_dist, cl = 4))
+#get distance from each row in df and tri
+tri_dist =  st_distance(fs_cont %>% st_transform(32110), tri %>% st_as_sf(coords = c("tri_lng", "tri_lat"), crs = 4326) %>% st_transform(32110))
+fs_cont$tri5 = apply(tri_dist, 1, function(x) sum(x <= 5000))
 
 fwrite(fs_cont %>% 
          as_tibble() %>% 
