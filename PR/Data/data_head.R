@@ -38,3 +38,9 @@ if (run_cleaning == TRUE){
 if (domestic == FALSE){
   df = df[df$sys_id != "Domestic Well", ] #50874 individuals on domestic water
 }
+
+if (IV == TRUE){
+  if (rerun_fs_clean == TRUE){
+    source("PFAS-Code/PR/Data/cont_cleaning.R")
+  }
+}

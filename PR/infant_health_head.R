@@ -37,17 +37,12 @@ false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 code_check = FALSE
 
-if (rerun_fs_clean == TRUE){
-  source("PFAS-Code/PR/Data/cont_cleaning.R")
-}
+#data cleaning
+source("PFAS-Code/PR/Data/data_head.R")
 
 if (GIS_create == TRUE){
   source("PFAS-Code/PR/GIS/gis_head.R")
 }
-
-#data cleaning
-source("PFAS-Code/PR/Data/data_head.R")
-
 
 #main analysis
 source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
