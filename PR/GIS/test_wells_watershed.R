@@ -36,7 +36,7 @@ test_watershed = function(i){
   
 }
 #apply above function over all test wells to get their shapes
-pblapply(1:nrow(fs_cont), test_watershed, cl = 4)
+pblapply(1:nrow(fs_cont), test_watershed, cl = 1)
 
 #list all test well shapes
 files = list.files(modify_path("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
@@ -49,7 +49,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 #apply well_ws to each file, resulting in a list of single row dataframes. Then bind rows into a single dataframe
-test_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+test_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 1))
 
 save(test_ws, file = modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
 

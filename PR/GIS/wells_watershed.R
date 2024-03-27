@@ -40,7 +40,7 @@ wells_watershed = function(i){
   
 }
 
-pblapply(1:nrow(wells_ll), wells_watershed, cl = 4)
+pblapply(1:nrow(wells_ll), wells_watershed, cl = 1)
 
 
 files = list.files(modify_path("Data_Verify/GIS/wells/wells_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
@@ -52,7 +52,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 1))
 save(wells_ws, file = modify_path("Data_Verify/GIS/wells_watershed.RData"))
 
 #delete intermediate files

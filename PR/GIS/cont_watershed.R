@@ -58,7 +58,7 @@ cont_watershed = function(i){
   
 }
 #apply watershed function over all sites 
-pblapply(1:nrow(cont_sites), cont_watershed, cl = 4)
+pblapply(1:nrow(cont_sites), cont_watershed, cl = 1)
 
 #list all cont watershed shapes
 files = list.files(modify_path("Data_Verify/GIS/cont_site/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
@@ -71,7 +71,7 @@ cont_ws = function(f){
   return(w_ws1)
 }
 #apply cont_ws to each file, resulting in a list of single row dataframes. Then bind rows into a single dataframe
-cont_ws = dplyr::bind_rows(pblapply(files, cont_ws, cl = 4))
+cont_ws = dplyr::bind_rows(pblapply(files, cont_ws, cl = 1))
 
 save(cont_ws, file = modify_path("Data_Verify/GIS/cont_watershed.RData")) 
 
