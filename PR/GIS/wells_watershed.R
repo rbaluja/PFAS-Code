@@ -1,8 +1,8 @@
 #create necessary directories
-dir.create("Data_Verify/GIS/wells")
-dir.create("Data_Verify/GIS/wells/wells_pp")
-dir.create("Data_Verify/GIS/wells/wells_watershed")
-dir.create("Data_Verify/GIS/wells/wells_watershed/Shapes")
+dir.create(modify_path("Data_Verify/GIS/wells"))
+dir.create(modify_path("Data_Verify/GIS/wells/wells_pp"))
+dir.create(modify_path("Data_Verify/GIS/wells/wells_watershed"))
+dir.create(modify_path("Data_Verify/GIS/wells/wells_watershed/Shapes"))
 
 #read in wells
 source("PFAS-Code/PR/Data/NHDES_PWS.R")
@@ -56,4 +56,4 @@ wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
 save(wells_ws, file = modify_path("Data_Verify/GIS/wells_watershed.RData"))
 
 #delete intermediate files
-unlink("Data_Verify/GIS/wells/", recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS/wells/"), recursive = TRUE)

@@ -1,8 +1,8 @@
 #create necessary directories
-dir.create("Data_Verify/GIS/fs_test")
-dir.create("Data_Verify/GIS/fs_test/fs_test_pp")
-dir.create("Data_Verify/GIS/fs_test/fs_test_watershed")
-dir.create("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes")
+dir.create(modify_path("Data_Verify/GIS/fs_test"))
+dir.create(modify_path("Data_Verify/GIS/fs_test/fs_test_pp"))
+dir.create(modify_path("Data_Verify/GIS/fs_test/fs_test_watershed"))
+dir.create(modify_path("Data_Verify/GIS/fs_test/fs_test_watershed/Shapes"))
 
 #read in test wells
 fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))%>% 
@@ -51,8 +51,8 @@ well_ws = function(f){
 #apply well_ws to each file, resulting in a list of single row dataframes. Then bind rows into a single dataframe
 test_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
 
-save(test_ws, file = "Data_Verify/GIS/fs_test_watershed.RData") 
+save(test_ws, file = modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
 
 
 #delete intermediate files
-unlink("Data_Verify/GIS/fs_test/", recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS/fs_test/"), recursive = TRUE)

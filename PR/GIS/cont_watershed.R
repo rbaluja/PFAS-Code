@@ -1,8 +1,8 @@
 #create necessary directories
-dir.create("Data_Verify/GIS/cont_site")
-dir.create("Data_Verify/GIS/cont_site/cont_pp")
-dir.create("Data_Verify/GIS/cont_site/cont_watershed")
-dir.create("Data_Verify/GIS/cont_site/cont_watershed/Shapes")
+dir.create(modify_path("Data_Verify/GIS/cont_site"))
+dir.create(modify_path("Data_Verify/GIS/cont_site/cont_pp"))
+dir.create(modify_path("Data_Verify/GIS/cont_site/cont_watershed"))
+dir.create(modify_path("Data_Verify/GIS/cont_site/cont_watershed/Shapes"))
 
 #fill sinks
 wbt_breach_depressions(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"), modify_path("Data_Verify/GIS/filled_dem.tiff"))
@@ -42,7 +42,7 @@ cont_watershed = function(i){
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
                        flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
-                       output = modify_path( paste0("Data_Verify/GIS/cont_site/cont_pp/pp_site_", i, ".shp")), 
+                       output = modify_path(paste0("Data_Verify/GIS/cont_site/cont_pp/pp_site_", i, ".shp")), 
                        snap_dist = 0.007569 * 5)
   #calculate watershed
   wbt_watershed(d8_pntr = modify_path("Data_Verify/GIS/flow_dir.tiff"), 
@@ -77,4 +77,4 @@ save(cont_ws, file = modify_path("Data_Verify/GIS/cont_watershed.RData"))
 
 
 #delete intermediate files
-unlink("Data_Verify/GIS/cont_site/", recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS/cont_site/"), recursive = TRUE)

@@ -79,4 +79,4 @@ df = df %>%
   st_as_sf(coords = c('lng', 'lat'), crs = 4326, remove = FALSE)
 
 #get cbg of residence
-source("Code/PR/Data/cbg_births.R")
+source("PFAS-Code/PR/Data/cbg_births.R")

@@ -193,7 +193,7 @@ bweight_plot = ggplot(r_coefs, aes(x = grams, y = effect_size, group = grams)) +
                               "Slightly (1500-2500g)",
                               "Moderately (1000-1500g)", 
                               "Very (<1000g)")) +
-  labs(x = "", y = "% Increase in Low-Birthweight", color = expression("Test against H" [0]: "``Downgradient'' effect being weakly negative is significant at 5% level")) +
+  labs(x = "", y = "% Increase in Low-Birthweight", color = expression("Test against H" [0]: "Effect of predicted PFAS level being weakly negative is significant at 5% level")) +
   theme_minimal() + 
   theme(
     axis.title = element_text(size = 18, face = "bold"), 

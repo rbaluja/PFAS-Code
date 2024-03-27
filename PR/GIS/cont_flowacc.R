@@ -1,5 +1,5 @@
 #create necessary directory
-dir.create("Data_Verify/GIS/cont_fa")
+dir.create(modify_path("Data_Verify/GIS/cont_fa"))
 #read in cont_sites
 cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
@@ -67,5 +67,5 @@ rl = sum(rl) #sum across layers
 writeRaster(rl, modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))
 
 #delete intermediate files
-unlink("Data_Verify/GIS/cont_fa/", recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS/cont_fa/"), recursive = TRUE)
   
