@@ -41,6 +41,8 @@ df$birth_race_dsc_1 = sample(c("White", "Chinese", "Other (Specify)",
                                "Other Asian", "Japanese", "Other", "Guamanian or Chomorro", 
                                "Native Hawaiian", "Other Asian(Specify)", "Other Pacific Islander", 
                                "Samoan", "Guamanian or Chamorro", "Other(Specify)"), nrow(df), replace = T)
+df$gestation = sample(20:40, nrow(df), replace = T)
+df$bweight = sample(500:4000, nrow(df), replace = T)
 
 #read in blocks shapefile
 cbg_shape = tigris::block_groups("NH")

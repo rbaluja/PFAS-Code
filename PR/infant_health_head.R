@@ -11,6 +11,7 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              units, tidycensus, ggpattern)
 options(modelsummary_format_numeric_latex = "mathmode")
+options(tigris_use_cache = TRUE)
 
 #set up environment
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
@@ -35,7 +36,7 @@ nb_cbg = FALSE
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-code_check = FALSE
+code_check = TRUE
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
