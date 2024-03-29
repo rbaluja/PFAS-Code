@@ -1,5 +1,5 @@
 #sample lat long from union of service areas
-saf = st_read('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Water_and_Sewer_Lines.shp') %>%
+saf = st_read(modify_path('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Water_and_Sewer_Lines.shp')) %>%
   dplyr::rename_all(tolower) %>% 
   dplyr::filter(pipe_type %in% c('WATER', 'BOTH') & sys_type == 'C') %>% #get rid of only sewer service and non community water systems (think restaurants, schools, etc.)
   dplyr::select(sys_id, sys_name, geometry) %>% #only keep the system name and its shape
