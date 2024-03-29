@@ -104,7 +104,7 @@ sink()
 
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-load(modify_path2("Data_Verify/RData/linear_iv_se.RData"))
+load(modify_path("Data_Verify/RData/linear_iv_se.RData"))
 
 #preterm
 table2_preterm = list()
