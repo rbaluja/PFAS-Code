@@ -1,5 +1,5 @@
 #read in DEM
-dem_elev = terra::rast("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")
+dem_elev = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"))
 #subset wells to lat long and turn spatial
 well_elev = wells %>% 
   as_tibble() %>% 

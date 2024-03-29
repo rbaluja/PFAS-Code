@@ -1,7 +1,7 @@
 source("PFAS-Code/PR/Data/wind_functions.R")
 
 #first, subset contamination dataset to only Saint Gobain
-c_sites = read_xlsx('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+c_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
   dplyr::select(site = `Site name`, lat = Latitude, 
                 date = `Date Sampled`, lng = Longitude, industry = Industry, 
@@ -17,7 +17,7 @@ sites = cont_sites %>%
   terra::vect()
 
 #bring in the average daily wind direction from GRIDMET
-wind = raster::brick('Data_Verify/Wind/agg_met_th_1979_CurrentYear_CONUS.nc')
+wind = raster::brick(modify_path('Data_Verify/Wind/agg_met_th_1979_CurrentYear_CONUS.nc'))
 wind = as(wind, 'SpatRaster')
 
 #get mean wind direction value at SG

@@ -1,6 +1,6 @@
 sf_use_s2(F)
 #read in service area data
-sa = st_read('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Water_and_Sewer_Lines.shp') 
+sa = st_read(modify_path('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Water_and_Sewer_Lines.shp')) 
 
 sa = sa %>% 
   dplyr::rename_all(tolower) %>% 
@@ -12,7 +12,7 @@ sa = sa %>%
   unique()
 
 #bring in well location data
-wells = st_read('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Public_Water_Supply_Wells.shp') 
+wells = st_read(modify_path('Data_Verify/Groundwater/NH_Confidential_Data/Secure_Data/Public_Water_Supply_Wells.shp')) 
 
 wells = wells %>% 
   dplyr::rename_all(tolower) %>% 

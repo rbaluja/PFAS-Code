@@ -1,5 +1,5 @@
 #first read in and aggregate weather data
-w = fread("Data_Verify/Supplemental/nh_cbg_weather.csv", colClasses=c("location" = "character")) %>% 
+w = fread(modify_path("Data_Verify/Supplemental/nh_cbg_weather.csv"), colClasses=c("location" = "character")) %>% 
   dplyr::rename(geoid = location)
 w$year = as.numeric(str_sub(w$date, 1, 4))
 #calculate mean temp and average over daily average temps
@@ -10,12 +10,12 @@ w = w %>%
 
 
 #read in and bind pollution data
-pm = fread("Data_Verify/Supplemental/nh_cbg_pm25.csv", colClasses=c("geoid" = "character"))
+pm = fread(modify_path("Data_Verify/Supplemental/nh_cbg_pm25.csv"), colClasses=c("geoid" = "character"))
 
 env = left_join(w, pm)
 
 #read in census vars (at tract level)
-dem_vars = fread("Data_Verify/Supplemental/tract_stats.csv", colClasses = c("tract" = "character"))
+dem_vars = fread(modify_path("Data_Verify/Supplemental/tract_stats.csv"), colClasses = c("tract" = "character"))
 dem_vars = dem_vars %>% 
   dplyr::mutate(county = stringr::str_pad(county, 3, "left", "0"), #county and tract were read in as numeric, fix that
                 tract = stringr::str_pad(tract, 6, "left", "0")) %>%
@@ -35,7 +35,7 @@ df = df %>%
 df$county = paste0("33", df$COUNTYFP)
 
 #bringing in tri facilities
-tri = fread("Data_Verify/Supplemental/tri_nh.csv") %>% 
+tri = fread(modify_path("Data_Verify/Supplemental/tri_nh.csv")) %>% 
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
