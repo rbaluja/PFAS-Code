@@ -18,7 +18,8 @@ df = do.call(rbind, st_geometry(f_resid)) %>%
 
 df$year = sample(2010:2019, nrow(df), replace = T)
 df$month = sample(stringr::str_pad(as.character(1:12), 2, "left", "0"), nrow(df), replace = T)
-
+df$wic = sample(c(0, 1), nrow(df), replace = T)
+df$m_height = sample(48:100, nrow(df), replace = T)
 df$m_age = sample(16:45, nrow(df), replace = T)
 df$m_married = sample(c(0, 1), nrow(df), replace = T)
 df$private_insurance = sample(c(0, 1), nrow(df), replace = T)
