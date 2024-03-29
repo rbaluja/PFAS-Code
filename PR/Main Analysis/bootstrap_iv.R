@@ -11,7 +11,7 @@ source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets)
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, tidycensus)
 options(modelsummary_format_numeric_latex = "mathmode")
 
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
@@ -36,6 +36,7 @@ oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 code_check = FALSE
+run_bootstrap = TRUE
 
 source("PFAS-Code/PR/Data/data_head.R")
 
@@ -169,12 +170,14 @@ boot_err = function(i, df, fs_cont){
   
   return(boot_coefs)
 }
+if (run_bootstrap == TRUE){
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
+  save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData")) 
+}else{
+  load(modify_path("Data_Verify/RData/bootstrap.RData")) 
+}
 
-# boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
-# save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData"))
-load(modify_path("Data_Verify/RData/bootstrap.RData"))
-
-#NOTEL these parameter values are hardcoded from the primary results table
+#NOTE: these parameter values are hardcoded from the primary results table
 #subtract off mean (from table 2), divide by dof
 preterm_sd = sqrt(sum((boot_coefs$preterm - 0.010)^2)/9999)
 0.010/preterm_sd
@@ -361,11 +364,15 @@ boot_err_quant = function(i, df, fs_cont){
 
   return(boot_coefs)
 }
-# boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
-# save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData"))
-load(modify_path("Data_Verify/RData/bootstrap_quant.RData"))
+if (run_bootstrap){
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
+  save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData")) 
+}else{
+  load(modify_path("Data_Verify/RData/bootstrap_quant.RData")) 
+}
 
 #subtract off mean (from quantiles.R/table S-10) and divide by dof
+load(modify_path("Data_Verify/RData/quintiles_table.R"))
 p2_sd = sqrt(sum((boot_coefs$preterm2 - reg_data[2, "pre_coef"])^2)/9999)
 p3_sd = sqrt(sum((boot_coefs$preterm3 - reg_data[3, "pre_coef"])^2)/9999)
 p4_sd = sqrt(sum((boot_coefs$preterm4 - reg_data[4, "pre_coef"])^2)/9999)
@@ -449,11 +456,12 @@ boot_err_sb = function(i, df, fs_cont){
   
   return(boot_coefs)
 }
-
-#boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
-#save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_sb.RData"))
-
-load(modify_path("Data_Verify/RData/bootstrap_sb.RData"))
+if (run_bootstrap == TRUE){
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
+  save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_sb.RData")) 
+}else{
+  load(modify_path("Data_Verify/RData/bootstrap_sb.RData")) 
+}
 sb_se = sqrt(sum((boot_coefs$stillborn - 0.000528)^2)/(nrow(boot_coefs) - 1))
 save(sb_se, file = modify_path("Data_Verify/RData/linear_iv_se_sb.RData"))
 1 - pnorm(0.000528/sb_se)

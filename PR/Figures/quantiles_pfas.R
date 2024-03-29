@@ -107,9 +107,11 @@ for (i in 2:5){
   
   index = index + 1
 }
+#save reg_data for bootstrap calculation
+save(reg_data, file = modify_path("Data_Verify/RData/quintiles_table.R"))
 
 #need to run bootstrap_iv.R to recreate these values
-load("Data_Verify/RData/quintiles_iv_se.RData")
+load(modify_path("Data_Verify/RData/quintiles_iv_se.RData"))
 reg_data$pre_se[2] = p2_sd
 reg_data$pre_se[3] = p3_sd
 reg_data$pre_se[4] = p4_sd
@@ -380,7 +382,7 @@ figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave("Figures/IV/figure_s5.png", figure_s5, width = 10, height = 10)
+ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5, width = 10, height = 10)
 
 
 #Copy these to paste into table S-10
