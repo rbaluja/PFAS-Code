@@ -171,7 +171,7 @@ boot_err = function(i, df, fs_cont){
   return(boot_coefs)
 }
 if (run_bootstrap == TRUE){
-  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 2))
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = 1))
   save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData")) 
 }else{
   load(modify_path("Data_Verify/RData/bootstrap.RData")) 
@@ -365,7 +365,7 @@ boot_err_quant = function(i, df, fs_cont){
   return(boot_coefs)
 }
 if (run_bootstrap){
-  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 2))
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = 1))
   save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData")) 
 }else{
   load(modify_path("Data_Verify/RData/bootstrap_quant.RData")) 
@@ -457,7 +457,7 @@ boot_err_sb = function(i, df, fs_cont){
   return(boot_coefs)
 }
 if (run_bootstrap == TRUE){
-  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 4))
+  boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_sb, df, fs_cont, cl = 1))
   save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_sb.RData")) 
 }else{
   load(modify_path("Data_Verify/RData/bootstrap_sb.RData")) 

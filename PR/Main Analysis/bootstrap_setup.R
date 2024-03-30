@@ -61,7 +61,7 @@ down_well_dist = function(w){
   return(dw)
 }
 
-down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = 3))
+down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = 1))
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
 up_wells = st_intersection(fs_cont %>% 
@@ -117,7 +117,7 @@ up_well_dist = function(w){
   return(uw)
 }     
 
-up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = 3))
+up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = 1))
 
 fs_cont = fs_cont %>% 
   left_join(down_wells, by = c("index")) %>% 
@@ -151,7 +151,7 @@ fs_cont_dist = function(i){
   
   
 }
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = 3))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = 1))
 
 #fill in down, up, side variables
 fs_cont_assgn = function(i, drop_far_down, drop_far_up){
