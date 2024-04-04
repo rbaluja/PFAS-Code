@@ -141,4 +141,4 @@ figure_s1 = nh_map_plot +
         axis.ticks.y=element_blank(), 
         text=element_text(family="Helvetica"))
 
-ggplot("Figures/figure_s1.png", figure_s1)
+ggsave("Figures/figure_s1.png", figure_s1)
