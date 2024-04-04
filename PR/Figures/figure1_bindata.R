@@ -119,13 +119,16 @@ fig$vlbw = ifelse(fig$vlbw == "1", "Yes", "No")
 points_sf$vlbw = ifelse(points_sf$vlbw == "1", "Yes", "No")
 points_sf$vlbw = factor(points_sf$vlbw, levels = c("Yes", "No"))
 
-ggplot() +
-  geom_sf(data = fig, fill = NA, color = "grey") +  # Plot polygons
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.75) +  # Plot points
+fig1_bin = ggplot() +
+  geom_sf(data = fig, fill = NA, color = "black") +  # Plot polygons
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.75, size = 3) +  # Plot points
   scale_color_manual(values = c("No" = "blue", "Yes" = "red")) +  # Define custom colors
   theme_minimal() + labs(color = "Very Low Birthweight") + 
-  geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.1, "inches")), color = "black", size = 0.5) +
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.3, "inches")), color = "black", size = 1) +
   theme(axis.text = element_blank(), 
         axis.title = element_blank(),
-        legend.text = element_text(size= 20, face = "bold"), 
-        legend.title = element_text(size= 20, face = "bold"))
+        legend.text = element_text(size= 28, face = "bold"), 
+        legend.title = element_text(size= 28, face = "bold")) + 
+  guides(color = guide_legend(override.aes = list(size = 6)))
+
+ggsave("Figures/Figure1/figure1_bindata.png", fig1_bin)
