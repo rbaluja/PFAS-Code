@@ -73,6 +73,7 @@
 - census_key: Census API key used for fetching tract and CBG-level covariates
 - tables: Create tables?
 - figures: create figures?
+- n_cores: number of cores used to parallelize tasks
 
 #### Files ran within the execution file (in order):
 
