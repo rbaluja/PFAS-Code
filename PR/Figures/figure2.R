@@ -1165,7 +1165,7 @@ lplot = ggplot(legend_data) +
   geom_point(aes(x = category, y = 1, color = category), shape = 16) +
   scale_color_manual(values = legend_data$color) +
   theme_void() + 
-  theme(legend.position = "bottom", legend.title = element_text(size = 30), legend.text = element_text(size = 30)) +   
+  theme(legend.position = "bottom", legend.title = element_text(size = 40), legend.text = element_text(size = 40)) +   
   guides(color = guide_legend(title = "Severity", override.aes = list(size = 8))) + ylim(0, 0.1)
 
 

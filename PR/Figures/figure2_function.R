@@ -20,8 +20,8 @@ figure2_fun = function(data, category, keep_x, header, ti){
             axis.ticks.y= element_blank(),
             axis.text.y= element_blank(),
             axis.title.y= element_blank(), 
-            axis.text.x = element_text(size = 30), 
-            axis.title.x = element_text(size = 40)) + 
+            axis.text.x = element_text(size = 40), 
+            axis.title.x = element_text(size = 48)) + 
       guides(color = "none") + xlim(c(-400, 400)) + xlab(ti)
   }else{
     pany1 = data %>% 
@@ -107,7 +107,7 @@ figure2_fun = function(data, category, keep_x, header, ti){
     p_left = 
       p_left +
       geom_text(aes(x = 0, label = Check), hjust = 0, 
-                fontface = "plain", size = 10)
+                fontface = "plain", size = 14)
   }else{
     p_left =
       res_plot  %>%
@@ -115,7 +115,7 @@ figure2_fun = function(data, category, keep_x, header, ti){
     p_left = 
       p_left +
       geom_text(aes(x = 0, label = Check), hjust = 0, 
-                fontface = ifelse(res_plot$model == "Model", "bold", "plain"), size = 10)
+                fontface = ifelse(res_plot$model == "Model", "bold", "plain"), size = 14)
   }
   
   
@@ -131,12 +131,12 @@ figure2_fun = function(data, category, keep_x, header, ti){
       geom_text(
         aes(x = 0, y = model, label = estimate_lab),
         hjust = 0,
-        fontface = "plain", size = 10)
+        fontface = "plain", size = 14)
     p_right =  p_right + 
       geom_text(
         aes(x = 1.5, y = model, label = pval),
         hjust = 0,
-        fontface = "plain", size = 10) + 
+        fontface = "plain", size = 14) + 
       coord_cartesian(xlim = c(0, 2)) + 
       theme_void()+ 
       theme(axis.line.y = element_blank(),
@@ -149,14 +149,14 @@ figure2_fun = function(data, category, keep_x, header, ti){
       geom_text(
         aes(x = 0, y = model, label = estimate_lab),
         hjust = 0,
-        fontface = ifelse(res_plot$estimate_lab == "Estimate (95% CI)", "bold", "plain"), size = 10
+        fontface = ifelse(res_plot$estimate_lab == "Estimate (95% CI)", "bold", "plain"), size = 14
       )
     p_right =  p_right + 
       geom_text(
         aes(x = 1.5, y = model, label = pval),
         hjust = 0,
         fontface = ifelse(res_plot$pval == "p-value", "bold", "plain"), 
-        size = 10
+        size = 14
       ) + 
       coord_cartesian(xlim = c(0, 2)) + 
       theme_void()+ 
@@ -169,15 +169,15 @@ figure2_fun = function(data, category, keep_x, header, ti){
   
   if (header){
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 15), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 3.7, l = 12, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 36, b = 30, r = 45) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 0, b = 30, r = 20), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 3.7, l = 19, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 36, b = 30, r = 50) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }else{
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 15), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 0, l = 12, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 36, b = 30, r = 45) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 0, b = 30, r = 20), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 0, l = 19, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 36, b = 30, r = 50) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }
   # final plot arrangement
