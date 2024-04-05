@@ -20,7 +20,7 @@ cont_sites = cont_sites[which(!cont_sites$site %in% c("Former Aerotronic Site", 
 
 cont_sites$index = 1:nrow(cont_sites)
 
-cont_sites_buff = cont_sites %>% 
+cont_sites_bufff = cont_sites %>% 
   st_transform(32110) %>% #NH meters projected CRS
   st_buffer(5000) %>% 
   st_transform(4326)
@@ -38,7 +38,7 @@ figure1_sites = nh_map_plot +
   geom_point(data = cont_sites, aes(x = lng, y = lat), size = 0.5) +
   geom_sf(data = cont_sites_buff, aes(fill = log(sum_pfoa_pfos)), alpha = 0.5, color = NA) + 
   scale_fill_gradient(low = "yellow", high = "red") +
-  theme_minimal() + 
+  theme_void() + 
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(), 
@@ -48,4 +48,4 @@ figure1_sites = nh_map_plot +
         text = element_text(family = "Helvetica")) + 
   guides(fill = "none")
 
-ggsave("Figures/Figure1/figure1_sites.png", figure1_sites)
+ggsave("Figures/Figure1/figure1_sites.png", figure1_sites, scale = 2)

@@ -74,9 +74,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 37) * 100, 
                drop_close$coefficients["down"]/mean(df$gestation < 37) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 37) * 100, pr_rside$coefficients["down"]/mean(df$gestation < 37) * 100,
                p_all_ds$coefficients["down"]/mean(df$gestation < 37) * 100,  pr_rup$coefficients["down"]/mean(df$gestation < 37) * 100,
@@ -102,11 +102,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -180,9 +180,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
                drop_close$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
                lp_ds$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,  lpr_rup$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
@@ -208,11 +208,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 data$down = data$Estimate
 data$up = data$Upgradient
@@ -330,9 +330,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
                drop_close$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
                mp_ds$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,  mpr_rup$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
@@ -359,11 +359,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 
@@ -486,9 +486,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 28) * 100, 
                drop_close$coefficients["down"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 28) * 100, vpr_rside$coefficients["down"]/mean(df$gestation < 28) * 100,
                vp_ds$coefficients["down"]/mean(df$gestation < 28) * 100,  vpr_rup$coefficients["down"]/mean(df$gestation < 28) * 100,
@@ -515,11 +515,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -645,9 +645,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500) * 100, 
                drop_close$coefficients["down"]/mean(df$bweight < 2500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500) * 100, lbw_rside$coefficients["down"]/mean(df$bweight < 2500) * 100,
                lbw_all_ds$coefficients["down"]/mean(df$bweight < 2500) * 100,  lbw_rup$coefficients["down"]/mean(df$bweight < 2500) * 100,
@@ -673,11 +673,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -798,9 +798,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
                drop_close$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
                llbw_ds$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,  llbw_rup$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
@@ -827,11 +827,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -952,9 +952,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
                drop_close$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
                mlbw_ds$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,  mlbw_rup$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
@@ -982,11 +982,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -1107,9 +1107,9 @@ data = data.frame(
   Category = c("Baseline", 
                "Sample", "Sample", "Sample", "Sample", "Sample",
                "Controls", "Controls", "Controls"),
-  Check = c("Baseline", "Drop w/in 1km", "Drop After 2015", "No Downgradient Homes", 
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sources w/in 5km of State Border",
-            "Relaxed Upgradient Def", "No Demographics", "No Medical Controls", "Contamination Source FE"),
+            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contamination Source Fixed Effect"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 1000) * 100, 
                drop_close$coefficients["down"]/mean(df$bweight < 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1000) * 100, vlbw_rside$coefficients["down"]/mean(df$bweight < 1000) * 100,
                vlbw_ds$coefficients["down"]/mean(df$bweight < 1000) * 100,  vlbw_rup$coefficients["down"]/mean(df$bweight < 1000) * 100,
@@ -1137,11 +1137,11 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contamination Source FE", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Def", 
+data$Check = factor(data$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                  "No Demographics", "Relaxed Upgradient Definition", 
                                   "Drop Cont. Sources w/in 5km of State Border", 
                                   "Drop After 2015",
-                                  "Drop w/in 1km", "Baseline"))
+                                  "Drop within 1km", "Baseline"))
 
 
 data$down = data$Estimate
@@ -1150,7 +1150,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_very = figure2_fun(data, "Very (<1000g)", TRUE, FALSE, "Low Birthweight")
+lbw_very = figure2_fun(data, "Very (<1000g)", TRUE, FALSE, "Low-Birthweight")
 
 
 lbw = lbw_all/lbw_slight/lbw_mod/lbw_very
@@ -1172,6 +1172,6 @@ lplot = ggplot(legend_data) +
 # Combine your plots using patchwork syntax and apply the layout
 fig2 = (pre_fig | lbw) / 
   lplot + 
-  plot_layout(heights = unit(c(80, 0.5), c('cm', 'cm')))
+  plot_layout(heights = unit(c(100, 0.5), c('cm', 'cm'))) 
 
-ggsave("Figures/figure2.png", fig2, scale = 1.75)
+ggsave("Figures/figure2.png", fig2, scale = 3.5, limitsize = F)

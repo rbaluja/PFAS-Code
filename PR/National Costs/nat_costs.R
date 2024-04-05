@@ -38,56 +38,57 @@ bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down +
 
 
 #getting impacts in states with initiatives
+#vpre
 bs$add_vpre = bs$pred_pfas * bs$births * 0.0027
-sum(bs$add_vpre) #664.3684
-#very preterm cost: 664.3684 * 204083 = 135586296/10^9
-#standard error: 
+vpre_births = sum(bs$add_vpre) #664.3684
+vpre_cost = (vpre_births * 204083)/10^9
 bs$add_vpre_se = bs$pred_pfas * bs$births * 0.001
-sum(bs$add_vpre_se)#246.0624 births se
-#cost se: 246.0624  * 204083 = 50217153/10^9
+vpre_births_se = sum(bs$add_vpre_se)
+vpre_cost_se = (vpre_births_se * 204083)/10^9
 
+#mpre
 bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
-sum(bs$add_mpre) #339.5661
-#moderately preterm cost: 339.5661 * 205041 =  69624973/10^9
-#standard error: 
+mpre_births = sum(bs$add_mpre) #339.5661
+mpre_cost = (mpre_births * 205041)/10^9
 bs$add_mpre_se = bs$pred_pfas * bs$births * 0.0004
-sum(bs$add_mpre_se)# 98.42495  births se
-#cost se:  98.42495* 205041 = 20181150/10^9
+mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
+mpre_cost_se = (mpre_births_se *  205041)/10^9
 
-
+#lpre
 bs$add_lpre = bs$pred_pfas * bs$births * 0.006
-sum(bs$add_lpre) #1476.374 * 36728 =  54224264/10^9
-#standard error: 
+lpre_births = sum(bs$add_lpre)
+lpre_cost = (lpre_births * 36728)/10^9
 bs$add_lpre_se = bs$pred_pfas * bs$births *  0.002
-sum(bs$add_lpre_se)# 492.1248 births se
-#cost se: 492.1248 * 36728 = 18074760/10^9
+lpre_births_se = sum(bs$add_lpre_se)
+lpre_cost_se = (lpre_births_se * 36728)/10^9
 
 
 #birthweight
+#vlbw
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
-sum(bs$add_vlbw) #861.2183
-#very low birthweight cost: 861.2183 * 5133739.83 =  4421270689/10^9
-#standard error: 
+vlbw_births = sum(bs$add_vlbw)
+vlbw_cost = (vlbw_births * 5133739.83)/10^9
 bs$add_vlbw_se = bs$pred_pfas * bs$births * 0.001
-sum(bs$add_vlbw_se)# 246.0624 births se
-#cost se:  246.0624 * 5133739.83 =   1263220344/10^9
+vlbw_births_se = sum(bs$add_vlbw_se)
+vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 
+#mlbw
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
-sum(bs$add_mlbw) # 327.263
-#moderately low birthweight cost:  327.263 * 1634411.22 = 534882319/10^9
-#standard error: 
+mlbw_births = sum(bs$add_mlbw) 
+mlbw_cost = (mlbw_births * 1634411.22)/10^9
 bs$add_mlbw_se = bs$pred_pfas * bs$births *0.0005
-sum(bs$add_mlbw_se) #123.0312 births se
-#cost se: 123.0312 * 1634411.22 = 201083574/10^9
+mlbw_births_se = sum(bs$add_mlbw_se)
+mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
 
 #social cost figure
 data = data.frame(
   Weeks = factor(rep(c("Very", "Moderately", "Slightly"), 2), 
                  levels = c("Very", "Moderately", "Slightly")),
-  Value = c(664, 340, 1476, 0.14, 0.07, 0.05), 
+  Value = c(round(vpre_births), round(mpre_births), round(lpre_births), round(vpre_cost, digits = 2), round(mpre_cost, digits = 2), round(lpre_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
-  se = c("(246)", "(98)", "(492)", "(0.05)", "(0.02)", "(0.02)")
+  se = c(paste0("(", round(vpre_births_se), ")"), paste0("(", round(mpre_births_se), ")"), paste0("(", round(lpre_births_se), ")"), 
+         paste0("(", round(vpre_cost_se, digits = 2), ")"), paste0("(", round(mpre_cost_se, digits = 2), ")"), paste0("(", round(lpre_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor for right axis values
@@ -120,11 +121,11 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 20, face = "bold"), 
-        axis.text.y = element_text(size = 20, face = "bold"), 
-        legend.text = element_text(size = 20, face = "bold"), 
-        axis.text.x = element_text(size = 20, face = "bold"),
-        plot.title = element_text(hjust = 0.5, size = 22, face = "bold"), 
+        axis.title.y = element_text(size = 50), 
+        axis.text.y = element_text(size = 50), 
+        legend.text = element_text(size = 50), 
+        axis.text.x = element_text(size = 50),
+        plot.title = element_text(hjust = 0.5, size = 22), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) +
   guides(alpha = "none", fill = "none", pattern = "none") +
@@ -134,15 +135,12 @@ p_costs = p_costs + geom_text(aes(label=round(Value, digits=2),
                                   y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 200),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
-                              size=7, 
-                              fontface = "bold")
+                              size=16)
 p_costs = p_costs + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 100),
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 80),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=5, 
-                                fontface = "bold")
-p_costs
+                                size=14)
 
 
 
@@ -150,9 +148,10 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very", "Moderately"), 2), 
                  levels = c("Very", "Moderately")),
-  Value = c(861, 327, 4.42, 0.53), 
+  Value = c(round(vlbw_births), round(mlbw_births), round(vlbw_cost, digits = 2), round(mlbw_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Right", "Right")),
-  se = c("(246)", "(123)", "(1.26)", "(0.20)")
+  se = c(paste0("(", round(vlbw_births_se), ")"), paste0("(", round(mlbw_births_se), ")"), 
+         paste0("(", round(vlbw_cost_se, digits = 2), ")"), paste0("(", round(mlbw_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor
@@ -185,11 +184,11 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom",
         legend.title = element_blank(),
         axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 20, face = "bold"),
-        axis.text.y = element_text(size = 20, face = "bold"),
-        legend.text = element_text(size = 20, face = "bold"),
-        axis.text.x = element_text(size = 20, face = "bold"),
-        plot.title = element_text(hjust = 0.5, size = 22, face = "bold"), 
+        axis.title.y = element_text(size = 50),
+        axis.text.y = element_text(size = 50),
+        legend.text = element_text(size = 50),
+        axis.text.x = element_text(size = 50),
+        plot.title = element_text(hjust = 0.5, size = 22), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) + 
   guides(alpha = "none") + # Adjust guide for patterns
@@ -198,18 +197,15 @@ lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=2),
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 200),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=7, 
-                                fontface = "bold")
+                                size=16)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 100),
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 80),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=5, 
-                                fontface = "bold")
+                                size=14)
 
-lbw_cost
 
 p_costs = p_costs + guides(pattern = "none")
 figure_3 = p_costs / lbw_cost
-ggsave("Figures/National Costs/figure_3.png", figure_3)
+ggsave(modify_path("Figures/Figure3/costs_bar.png"), figure_3, scale = 2, device = "png")

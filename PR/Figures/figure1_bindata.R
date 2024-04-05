@@ -44,18 +44,21 @@ dfc_vlbw$middle = as.numeric(dfc_vlbw$dist_bin == 2)
 dfc_vlbw$outer = as.numeric(dfc_vlbw$dist_bin == 3)
 dfc_vlbw$triangle = ifelse(dfc_vlbw$dus == "up", 1, ifelse(dfc_vlbw$dus == "down", 3, 4))
 
-dfc_side = dfc_vlbw[dfc_vlbw$triangle == 4, ]
-dfc_side3 = dfc_side
-dfc_side3$triangle = 2
-dfc_side3$n = floor(dfc_side3$n/2)
-dfc_side$n = ceiling(dfc_side$n/2)
-
-dfc_side = rbind(dfc_side, dfc_side3)
+# dfc_side = dfc_vlbw[dfc_vlbw$triangle == 4, ]
+# dfc_side3 = dfc_side
+# dfc_side3$triangle = 2
+# dfc_side3$n = floor(dfc_side3$n/2)
+# dfc_side$n = ceiling(dfc_side$n/2)
+# 
+# dfc_side = rbind(dfc_side, dfc_side3)
+# 
+# dfc_vlbw = dfc_vlbw %>% 
+#   dplyr::filter(triangle != 4) %>% 
+#   rbind(dfc_side) %>% 
+#   rbind(dfc_side3) %>% 
+#   ungroup()
 
 dfc_vlbw = dfc_vlbw %>% 
-  dplyr::filter(triangle != 4) %>% 
-  rbind(dfc_side) %>% 
-  rbind(dfc_side3) %>% 
   ungroup()
 
 for (l in 0:1){
@@ -89,7 +92,7 @@ fig = fig %>% right_join(dfc_vlbw %>%
 
 
 
-fig$nb = ifelse(fig$vlbw == "1", as.numeric(fig$n), floor(as.numeric(fig$n)/100))
+fig$nb = ifelse(fig$vlbw == "1", as.numeric(fig$n), ceiling(as.numeric(fig$n)/100))
 
 
 
@@ -115,20 +118,25 @@ for (i in 1:nrow(fig)) {
 
 points_sf = do.call(rbind, points_list)
 
-fig$vlbw = ifelse(fig$vlbw == "1", "Yes", "No")
 points_sf$vlbw = ifelse(points_sf$vlbw == "1", "Yes", "No")
 points_sf$vlbw = factor(points_sf$vlbw, levels = c("Yes", "No"))
 
 fig1_bin = ggplot() +
   geom_sf(data = fig, fill = NA, color = "black") +  # Plot polygons
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.75, size = 3) +  # Plot points
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.75, size = 8) +  # Plot points
   scale_color_manual(values = c("No" = "blue", "Yes" = "red")) +  # Define custom colors
-  theme_minimal() + labs(color = "Very Low Birthweight") + 
-  geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.3, "inches")), color = "black", size = 1) +
+  theme_void() + labs(color = "Very Low-Birthweight") + 
+  geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.5, "inches")), color = "black", size = 1) +
   theme(axis.text = element_blank(), 
         axis.title = element_blank(),
-        legend.text = element_text(size= 28, face = "bold"), 
-        legend.title = element_text(size= 28, face = "bold")) + 
-  guides(color = guide_legend(override.aes = list(size = 6)))
+        legend.text = element_text(size= 60), 
+        legend.title = element_text(size= 60)) + 
+  guides(color = guide_legend(override.aes = list(size = 8))) + 
+  geom_segment(aes(x = 0, y = 0, xend = -5, yend = 0), 
+               linetype = "dotted", 
+               color = "black", size = 1) + 
+  annotate("text", x = -0.6, y = 0.08, label = "1km", hjust = 0.5, vjust = 0, size = 20) +  # Add "1km" label
+  annotate("text", x = -2, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) +  # Add "3km" label
+  annotate("text", x = -4, y = 0.08, label = "5km", hjust = 0.5, vjust = 0, size = 20)
 
-ggsave("Figures/Figure1/figure1_bindata.png", fig1_bin)
+ggsave("Figures/Figure1/figure1_bindata.png", fig1_bin, scale = 2)

@@ -52,43 +52,47 @@ middle_radius = 3
 circle = st_buffer(st_point(c(0, 0)), dist = middle_radius)
 
 #create first triangle (this creats a larger triangle and intersects with the circle to get the nice arc shape)
-t1 = list(rbind(c(0, 0), 
+mt1 = list(rbind(c(0, 0), 
                 c(middle_radius, middle_radius), 
                 c(-middle_radius, middle_radius), 
                 c(0, 0))) %>% 
   st_polygon() 
 
-t1 = st_intersection(circle, t1)
+mt1 = st_difference(mt1, t1)
+mt1 = st_intersection(circle, mt1)
 
-t2 = list(rbind(c(0, 0), 
+mt2 = list(rbind(c(0, 0), 
                 c(-middle_radius, middle_radius), 
                 c(-middle_radius, -middle_radius), 
                 c(0, 0))) %>% 
   st_polygon()
 
-t2 = st_intersection(circle, t2)
+mt2 = st_difference(mt2, t2)
+mt2 = st_intersection(circle, mt2)
 
-t3 = list(rbind(c(0, 0), 
+mt3 = list(rbind(c(0, 0), 
                 c(-middle_radius, -middle_radius), 
                 c(middle_radius, -middle_radius), 
                 c(0, 0))) %>% 
   st_polygon()
 
-t3 = st_intersection(circle, t3)
+mt3 = st_difference(mt3, t3)
+mt3 = st_intersection(circle, mt3)
 
-t4 = list(rbind(c(0, 0), 
+mt4 = list(rbind(c(0, 0), 
                 c(middle_radius, middle_radius), 
                 c(middle_radius, -middle_radius), 
                 c(0, 0))) %>% 
   st_polygon()
 
-t4 = st_intersection(circle, t4)
+mt4 = st_difference(mt4, t4)
+mt4 = st_intersection(circle, mt4)
 
 middle_t = data.frame(id = c("mt1", "mt2", "mt3", "mt4"))
 middle_t$outer = rep(0, 4)
 middle_t$middle = rep(1, 4)
 middle_t$triangle = 1:4
-middle_t$geometry = list(t1, t2, t3, t4)
+middle_t$geometry = list(mt1, mt2, mt3, mt4)
 middle_t = st_as_sf(middle_t)
 
 #make outer shapes
@@ -105,6 +109,7 @@ ot1 = list(rbind(c(0, 0),
   st_polygon() 
 
 ot1 = st_difference(ot1, t1)
+ot1 = st_difference(ot1, mt1)
 ot1 = st_intersection(circle, ot1)
 
 
@@ -115,6 +120,7 @@ ot2 = list(rbind(c(0, 0),
   st_polygon() 
 
 ot2 = st_difference(ot2, t2)
+ot2 = st_difference(ot2, mt2)
 ot2 = st_intersection(circle, ot2)
 
 ot3 = list(rbind(c(0, 0), 
@@ -124,6 +130,7 @@ ot3 = list(rbind(c(0, 0),
   st_polygon() 
 
 ot3 = st_difference(ot3, t3)
+ot3 = st_difference(ot3, mt3)
 ot3 = st_intersection(circle, ot3)
 
 
@@ -134,6 +141,7 @@ ot4 = list(rbind(c(0, 0),
   st_polygon() 
 
 ot4 = st_difference(ot4, t4)
+ot4 = st_difference(ot4, mt4)
 ot4 = st_intersection(circle, ot4)
 
 #combine the outer triangles

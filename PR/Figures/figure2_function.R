@@ -43,16 +43,12 @@ figure2_fun = function(data, category, keep_x, header, ti){
   # }
   
   # wrangle results into pre-plotting table form
-  res_plot <- data %>%
-    # round estimates and 95% CIs to 2 decimal places for journal specifications
+  res_plot <-data %>%
+    # Round estimates and 95% CIs to 2 decimal places for journal specifications
+    # Ensure that a decimal point is included, even if there are only zeros after it
     dplyr::mutate(across(
-      c(Estimate, d_lower, d_upper),
-      ~ str_pad(
-        round(.x, 4),
-        width = 6,
-        pad = "0",
-        side = "right"
-      )
+      .cols = c(Estimate, d_lower, d_upper),
+      .fns = ~ sprintf("%0.2f", round(.x, 2))
     ),
     # add an "-" between HR estimate confidence intervals
     estimate_lab = paste0(Estimate, " (", d_lower, "-", d_upper, ")")) %>%
@@ -85,19 +81,19 @@ figure2_fun = function(data, category, keep_x, header, ti){
         pval = "p-value"
       )
     ) 
-    res_plot$Check = factor(res_plot$Check, c("Contamination Source FE", "No Medical Controls", 
-                                            "No Demographics", "Relaxed Upgradient Def", 
+    res_plot$Check = factor(res_plot$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                            "No Demographics", "Relaxed Upgradient Definition", 
                                             "Drop Cont. Sources w/in 5km of State Border", 
                                              "Drop After 2015",
-                                            "Drop w/in 1km", "Baseline" , "Model"
+                                            "Drop within 1km", "Baseline" , "Model"
     ))
     res_plot$model = res_plot$Check
   }else{
-    res_plot$Check = factor(res_plot$Check, c("Contamination Source FE", "No Medical Controls", 
-                                              "No Demographics", "Relaxed Upgradient Def", 
+    res_plot$Check = factor(res_plot$Check, c("Contamination Source Fixed Effect", "No Medical Controls", 
+                                              "No Demographics", "Relaxed Upgradient Definition", 
                                               "Drop Cont. Sources w/in 5km of State Border", 
                                                "Drop After 2015",
-                                              "Drop w/in 1km", "Baseline"
+                                              "Drop within 1km", "Baseline"
     ))
     res_plot$model = res_plot$Check
   }
@@ -175,13 +171,13 @@ figure2_fun = function(data, category, keep_x, header, ti){
     layout = c(
       area(t = 0, l = 0, b = 30, r = 25), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
       area(t = 3.7, l = 26, b = 30, r = 45), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 46, b = 30, r = 70) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 46, b = 30, r = 60) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }else{
     layout = c(
       area(t = 0, l = 0, b = 30, r = 25), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
       area(t = 0, l = 26, b = 30, r = 45), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 46, b = 30, r = 70) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 46, b = 30, r = 60) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     )
   }
   # final plot arrangement
