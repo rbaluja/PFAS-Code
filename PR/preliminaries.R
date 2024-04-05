@@ -6,6 +6,7 @@ code_check = FALSE
 redo_GIS = FALSE
 rerun_fs_clean = FALSE
 rerun_bs = FALSE
+n_cores = 1
 #create GIS objects
 source("PFAS-Code/PR/GIS/gis_head.R")
 

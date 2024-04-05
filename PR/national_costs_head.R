@@ -37,7 +37,7 @@ if (nb_cbg == TRUE){
 
 #get watershed for each cont site
 if (nat_run_cont_ws == TRUE){
-  source("Code/PR/National Costs/nat_watersheds.R")  
+  source("PFAS-Code/PR/National Costs/nat_watersheds.R")  
 }else{
   #load in watersheds
   load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData"))

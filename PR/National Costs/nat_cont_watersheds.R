@@ -36,10 +36,10 @@ csite_buff = cont_sites %>%
 
 
 #create necessary directories
-dir.create("Data_Verify/GIS/nat_cont")
-dir.create("Data_Verify/GIS/nat_cont/cont_pp")
-dir.create("Data_Verify/GIS/nat_cont/cont_watershed")
-dir.create("Data_Verify/GIS/nat_cont/cont_watershed/Shapes")
+dir.create(modify_path("Data_Verify/GIS/nat_cont"))
+dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_pp"))
+dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed"))
+dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"))
 
 cont_sites$index = 1:nrow(cont_sites)
 
@@ -65,7 +65,7 @@ cont_ws = function(state, states11){
   
   #get dem for state
   e = get_elev_raster(states[which(states$NAME == state), ]$geometry, z = 9)
-  writeRaster(e, paste0("Data_Verify/GIS/National/", state, "dem.tif"), overwrite = TRUE)
+  writeRaster(e, modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), overwrite = TRUE)
   
   #fill the dem sinks
   wbt_breach_depressions(modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")))
@@ -121,4 +121,4 @@ n_cont_ws = n_cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select
 save(n_cont_ws, file = modify_path("Data_Verify/RData/nat_cont_watershed.RData"))
 
 #delete intermediate files
-unlink("Data_Verify/GIS/nat_cont/", recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS/nat_cont/"), recursive = TRUE)

@@ -175,4 +175,4 @@ lbw_cost
 
 p_costs = p_costs + guides(pattern = "none")
 figure_s7 = p_costs / lbw_cost
-ggsave("Figures/National Costs/figure_s7.png", figure_s7)
+ggsave(modify_path3("Figures/National Costs/figure_s7.png"), figure_s7)

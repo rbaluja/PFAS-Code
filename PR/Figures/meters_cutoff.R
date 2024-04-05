@@ -49,7 +49,7 @@ fa_resid = FALSE
 drop_states = FALSE
 relaxed_up = FALSE
 code_check = FALSE
-n_cores = 3
+n_cores = 1
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
 index = 1

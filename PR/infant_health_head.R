@@ -30,7 +30,7 @@ census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 tables = TRUE
 figures = TRUE
 code_check = FALSE
-n_cores = 4
+n_cores = 1
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")

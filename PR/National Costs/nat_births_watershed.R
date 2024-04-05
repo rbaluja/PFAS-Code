@@ -19,10 +19,10 @@ states = tigris::states() %>%
   dplyr::filter(GEOID %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55"))
 
 #create necessary directories
-dir.create("Data_Verify/GIS/nat_births")
-dir.create("Data_Verify/GIS/nat_births/cont_pp")
-dir.create("Data_Verify/GIS/nat_births/cont_watershed")
-dir.create("Data_Verify/GIS/nat_births/cont_watershed/Shapes")
+dir.create(modify_path("Data_Verify/GIS/nat_births"))
+dir.create(modify_path("Data_Verify/GIS/nat_births/cont_pp"))
+dir.create(modify_path("Data_Verify/GIS/nat_births/cont_watershed"))
+dir.create(modify_path("Data_Verify/GIS/nat_births/cont_watershed/Shapes"))
 inner_cbg_ws = function(i, state_cbgs, state){
   point_sf = state_cbgs$geometry[i]
   temp_point_path = tempfile(fileext = ".shp")
@@ -83,4 +83,4 @@ well_ws = function(f){
 wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
 save(wells_ws, file = modify_path("Data_Verify/GIS/nat_cbg_watershed.RData"))
 
-unlink("Data_Verify/GIS/nat_births", recursive = T)
+unlink(modify_path("Data_Verify/GIS/nat_births"), recursive = T)

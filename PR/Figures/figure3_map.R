@@ -60,5 +60,5 @@ figure3_map = ((state_maps[["ME"]])/
 
 figure3_map = figure3_map + plot_annotation(theme = theme(legend.position = "bottom"))
 
-ggsave("Figures/Figure3/costs_map.png", figure3_map, scale = 3)
+ggsave(modify_path3("Figures/Figure3/costs_map.png"), figure3_map, scale = 3)
  

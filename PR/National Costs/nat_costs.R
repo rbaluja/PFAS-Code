@@ -208,4 +208,4 @@ lbw_cost = lbw_cost + geom_text(aes(label=se,
 
 p_costs = p_costs + guides(pattern = "none")
 figure_3 = p_costs / lbw_cost
-ggsave(modify_path("Figures/Figure3/costs_bar.png"), figure_3, scale = 2, device = "png")
+ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale = 2, device = "png")

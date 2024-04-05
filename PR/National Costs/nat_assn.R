@@ -2,7 +2,7 @@
 births$state = stringr::str_sub(births$county, 1, 2)
 
 births$geoid = paste0(births$county, as.numeric(births$tract), births$cbg)
-fwrite(births %>% dplyr::select(geoid, lng, lat), "Data_Verify/National/cbg_ll.csv")
+fwrite(births %>% dplyr::select(geoid, lng, lat), modify_path("Data_Verify/National/cbg_ll.csv"))
 
 births = births %>% 
   st_as_sf(coords = c("lng", "lat"), crs = 4326)
