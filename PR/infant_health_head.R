@@ -9,7 +9,7 @@ source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus, ggpattern)
+             units, tidycensus, ggpattern, forcats)
 options(modelsummary_format_numeric_latex = "mathmode")
 options(tigris_use_cache = TRUE)
 
@@ -24,49 +24,25 @@ domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
-rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
-GIS_create = FALSE #recreate watershed shapes?
-create_figures = FALSE #output figures?
-nat_run_cont_ws = FALSE#recreate national watershed shapes?
-nat_reassn = FALSE #reassign national CBGs to release sites?
-nat_redo_soil = FALSE #recalculate soil stats for national data?
-nb_cbg = FALSE
-oster_robust = FALSE #run Oster (2019) selection on unobservables?
-false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+tables = TRUE
+figures = TRUE
 code_check = FALSE
+n_cores = 4
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
 
-if (GIS_create == TRUE){
-  source("PFAS-Code/PR/GIS/gis_head.R")
-}
-
 #main analysis
 source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
 
-#Tables
-source("PFAS-Code/PR/Tables/tables.R")
-
-#Oster Coefficient - \delta in paper (Table S-5)
-if (oster_robust == TRUE){
-  source("PFAS-Code/PR/Robustness/oster_selection.R")
+if (tables){
+  source("PFAS-Code/PR/Tables/tables.R")
 }
 
-#bootstrap standard errors for all results using first stage - Table 2, Figure 3, Table S4, Figure S3, Table S9, Figure S5
-source("PFAS-Code/PR/Main Analysis/bootstrap_iv.R")
-
-#figures
-source("PFAS-Code/PR/Figures/figures_head.R")
-
-#national costs
-source("PFAS-Code/PR/National Costs/national_costs_head.R")
-
-#Falsification Test (Table S-6)
-if (false_test == TRUE){
-  source("PFAS-Code/PR/Robustness/Placebo/placebo_head.R") 
+if (figures){
+  source("PFAS-Code/PR/Figures/figures_head.R") 
 }
 

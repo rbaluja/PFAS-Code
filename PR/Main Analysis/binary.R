@@ -82,7 +82,7 @@ down_well_dist = function(w){
 }
 
 #apply down_well_dist (well to site matching, for down) to all wells with a cont site in its watershed
-down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist))
+down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
 
 ######################
 ##### Upgradient matching
@@ -146,7 +146,7 @@ up_well_dist = function(w){
   return(uw)
 }
 #apply up_well_dist (well to site matching, for up) to all wells which are in the watershed of a cont site
-up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist))
+up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = n_cores))
 
 #bind wells with down_wells and up_wells to obtain the relevant up/down variables
 wells = wells %>% 
@@ -184,7 +184,7 @@ well_dist = function(i){
   
   
 }
-wells1 = dplyr::bind_rows(pblapply(1:nrow(wells), well_dist))
+wells1 = dplyr::bind_rows(pblapply(1:nrow(wells), well_dist, cl = n_cores))
 
 
 #fill in down, up, side variables
@@ -255,7 +255,7 @@ well_assgn = function(i, drop_far_down, drop_far_up){
 
 }
 
-wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, drop_far_up))
+wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, drop_far_up, cl = n_cores))
 
 df = df %>% 
   left_join(wells2 %>% 

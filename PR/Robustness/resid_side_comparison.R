@@ -38,7 +38,7 @@ code_check = FALSE
 source("PFAS-Code/PR/Data/data_head.R")
 
 if (GIS_create == TRUE){
-  source("Code/PR/GIS/df_watershed.R") #mothers residence - NOTE: This takes a long time to run 
+  source("PFAS-Code/PR/GIS/df_watershed.R") #mothers residence - NOTE: This takes a long time to run 
 }else if (!code_check){
   #read in natality dataset with binary, flow accumulation, and catchment areas 
   load(paste0(natality_path ,"/[UA Box Health] natality_ws.RData"))

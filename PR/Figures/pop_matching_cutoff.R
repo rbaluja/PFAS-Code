@@ -1,3 +1,5 @@
+#clear memory
+rm(list = ls())
 #set working directory
 setwd("~/Dropbox/PFAS Infants")
 
@@ -142,4 +144,4 @@ figure_s2b = ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) +
         axis.title = element_text(size = 20, face = "bold")) + 
   scale_x_continuous(breaks = 1:10)
 
-ggsave("Figures/figure_s2b.png", figure_s2b)
+ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b)

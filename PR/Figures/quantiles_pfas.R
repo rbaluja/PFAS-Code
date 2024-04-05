@@ -1,43 +1,43 @@
 #set up quantiles and pfas in ppb (pred_pfas_level)
-df$pred_pfas_level = sinh(df$pred_pfas)/1000
+df$pred_pfas_level = sinh(df$pred_pfas)/1000    
 df_nn = df[which(!is.na(df$pred_pfas)), ]
 quantiles = quantile(df_nn$pred_pfas, c(0, 0.2, 0.4, 0.6, 0.8, 1))
 df_nn$quant_pfas = as.integer(cut(df_nn$pred_pfas, breaks = quantiles, include.lowest = TRUE, labels = 1:5))
 
-preterm = fixest::feols(preterm ~ as.factor(quant_pfas) + asinh(pfas) + 
+preterm = fixest::feols(gestation < 37 ~ as.factor(quant_pfas) + asinh(pfas) +
                           n_sites + wind_exposure + 
                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn )
 
 
-lpreterm = fixest::feols(I(gestation < 37 & gestation >= 32) ~ as.factor(quant_pfas) + asinh(pfas) + 
+lpreterm = fixest::feols(I(gestation < 37 & gestation >= 32) ~ as.factor(quant_pfas) + asinh(pfas) +
                            n_sites + wind_exposure + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn )
 
 
-mpreterm = fixest::feols(I(gestation < 32 & gestation >= 28) ~ as.factor(quant_pfas) + asinh(pfas) + 
+mpreterm = fixest::feols(I(gestation < 32 & gestation >= 28) ~ as.factor(quant_pfas) + asinh(pfas) +
                            n_sites + wind_exposure + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn )
 
 
-vpreterm = fixest::feols(I(gestation < 28) ~ as.factor(quant_pfas) + asinh(pfas) + 
+vpreterm = fixest::feols(I(gestation < 28) ~ as.factor(quant_pfas) + asinh(pfas) +
                            n_sites + wind_exposure + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn )
 
 
 lbw = fixest::feols(I(bweight < 2500) ~  as.factor(quant_pfas) + asinh(pfas) + 
@@ -107,51 +107,55 @@ for (i in 2:5){
   
   index = index + 1
 }
-#save reg_data for bootstrap calculation
-save(reg_data, file = modify_path("Data_Verify/RData/quintiles_table.R"))
 
 #need to run bootstrap_iv.R to recreate these values
-load(modify_path("Data_Verify/RData/quintiles_iv_se.RData"))
-reg_data$pre_se[2] = p2_sd
-reg_data$pre_se[3] = p3_sd
-reg_data$pre_se[4] = p4_sd
-reg_data$pre_se[5] = p5_sd
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap_quant.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/bootstrap_quant.RData"))
 
-reg_data$lpre_se[2] = lp2_sd
-reg_data$lpre_se[3] = lp3_sd
-reg_data$lpre_se[4] = lp4_sd
-reg_data$lpre_se[5] = lp5_sd
+#calculate bootstrapped standard errors
+bs_se = quintile_bootstrap(boot_coefs, reg_data)
 
-reg_data$mpre_se[2] = mp2_sd
-reg_data$mpre_se[3] = mp3_sd
-reg_data$mpre_se[4] = mp4_sd
-reg_data$mpre_se[5] = mp5_sd
+reg_data$pre_se[2] = bs_se$p2_sd
+reg_data$pre_se[3] = bs_se$p3_sd
+reg_data$pre_se[4] = bs_se$p4_sd
+reg_data$pre_se[5] = bs_se$p5_sd
 
-reg_data$vpre_se[2] = vp2_sd
-reg_data$vpre_se[3] = vp3_sd
-reg_data$vpre_se[4] = vp4_sd
-reg_data$vpre_se[5] = vp5_sd
+reg_data$lpre_se[2] = bs_se$lp2_sd
+reg_data$lpre_se[3] = bs_se$lp3_sd
+reg_data$lpre_se[4] = bs_se$lp4_sd
+reg_data$lpre_se[5] = bs_se$lp5_sd
 
-reg_data$lbw_se[2] = lbw2_sd
-reg_data$lbw_se[3] = lbw3_sd
-reg_data$lbw_se[4] = lbw4_sd
-reg_data$lbw_se[5] = lbw5_sd
+reg_data$mpre_se[2] = bs_se$mp2_sd
+reg_data$mpre_se[3] = bs_se$mp3_sd
+reg_data$mpre_se[4] = bs_se$mp4_sd
+reg_data$mpre_se[5] = bs_se$mp5_sd
 
-reg_data$llbw_se[2] = llbw2_sd
-reg_data$llbw_se[3] = llbw3_sd
-reg_data$llbw_se[4] = llbw4_sd
-reg_data$llbw_se[5] = llbw5_sd
+reg_data$vpre_se[2] = bs_se$vp2_sd
+reg_data$vpre_se[3] = bs_se$vp3_sd
+reg_data$vpre_se[4] = bs_se$vp4_sd
+reg_data$vpre_se[5] = bs_se$vp5_sd
 
-reg_data$mlbw_se[2] = mlbw2_sd
-reg_data$mlbw_se[3] = mlbw3_sd
-reg_data$mlbw_se[4] = mlbw4_sd
-reg_data$mlbw_se[5] = mlbw5_sd
+reg_data$lbw_se[2] = bs_se$lbw2_sd
+reg_data$lbw_se[3] = bs_se$lbw3_sd
+reg_data$lbw_se[4] = bs_se$lbw4_sd
+reg_data$lbw_se[5] = bs_se$lbw5_sd
 
-reg_data$vlbw_se[2] = vlbw2_sd
-reg_data$vlbw_se[3] = vlbw3_sd
-reg_data$vlbw_se[4] = vlbw4_sd
-reg_data$vlbw_se[5] = vlbw5_sd
+reg_data$llbw_se[2] = bs_se$llbw2_sd
+reg_data$llbw_se[3] = bs_se$llbw3_sd
+reg_data$llbw_se[4] = bs_se$llbw4_sd
+reg_data$llbw_se[5] = bs_se$llbw5_sd
 
+reg_data$mlbw_se[2] = bs_se$mlbw2_sd
+reg_data$mlbw_se[3] = bs_se$mlbw3_sd
+reg_data$mlbw_se[4] = bs_se$mlbw4_sd
+reg_data$mlbw_se[5] = bs_se$mlbw5_sd
+
+reg_data$vlbw_se[2] = bs_se$vlbw2_sd
+reg_data$vlbw_se[3] = bs_se$vlbw3_sd
+reg_data$vlbw_se[4] = bs_se$vlbw4_sd
+reg_data$vlbw_se[5] = bs_se$vlbw5_sd
 
 #set first quantile values
 reg_data[1, "pre_coef"] = 0
@@ -382,44 +386,50 @@ figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5, width = 10, height = 10)
+ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5)
 
 
 #Copy these to paste into table S-10
-#Q2 preterm
-clipr::write_clip(round(as.numeric(reg_data[2, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[2, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+sink(modify_path("Tables/table_s10.tex"))
+print("Q2 preterm\n")
+print(round(as.numeric(reg_data[2, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[2, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("\n")
 
-#Q3 preterm
-clipr::write_clip(round(as.numeric(reg_data[3, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[3, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("Q3 preterm\n")
+print(round(as.numeric(reg_data[3, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[3, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("\n")
 
-#Q4 preterm
-clipr::write_clip(round(as.numeric(reg_data[4, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[4, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("Q4 preterm\n")
+print(round(as.numeric(reg_data[4, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[4, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("\n")
 
+print("Q5 preterm\n")
+print(round(as.numeric(reg_data[5, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[5, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("\n")
 
-#Q5 preterm
-clipr::write_clip(round(as.numeric(reg_data[5, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[5, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
+print("Q2 lbw\n")
+print(round(as.numeric(reg_data[2, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[2, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+print("\n")
 
+print("Q3 lbw\n")
+print(round(as.numeric(reg_data[3, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[3, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+print("\n")
 
-#Q2 lbw
-clipr::write_clip(round(as.numeric(reg_data[2, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[2, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+print("Q4 lbw\n")
+print(round(as.numeric(reg_data[4, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[4, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+print("\n")
 
-#Q3 lbw
-clipr::write_clip(round(as.numeric(reg_data[3, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[3, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
-
-#Q4 lbw
-clipr::write_clip(round(as.numeric(reg_data[4, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[4, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
-
-
-#Q5 lbw
-clipr::write_clip(round(as.numeric(reg_data[5, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
-clipr::write_clip(round(as.numeric(reg_data[5, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+print("Q5 lbw\n")
+print(round(as.numeric(reg_data[5, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[5, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
+sink()
 
 #to get right stars
 for (ot in c("pre", "lpre", "mpre", "vpre", "lbw", "llbw", "mlbw", "vlbw")){

@@ -1,4 +1,5 @@
 #robustness figure
+source("PFAS-Code/PR/Figures/figure2_function.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -1174,4 +1175,4 @@ fig2 = (pre_fig | lbw) /
   lplot + 
   plot_layout(heights = unit(c(100, 0.5), c('cm', 'cm'))) 
 
-ggsave("Figures/figure2.png", fig2, scale = 3.5, limitsize = F)
+ggsave(modify_path3("Figures/figure2.png"), fig2, scale = 3.5, limitsize = F)

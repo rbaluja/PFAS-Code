@@ -49,6 +49,7 @@ fa_resid = FALSE
 drop_states = FALSE
 relaxed_up = FALSE
 code_check = FALSE
+n_cores = 3
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
 index = 1
@@ -477,6 +478,6 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
 
 
 figure_s3 = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
-ggsave("Figures/Robustness/figure_s3.png", figure_s3)
+ggsave(modify_path3("Figures/Robustness/figure_s3.png"), figure_s3)
 
 

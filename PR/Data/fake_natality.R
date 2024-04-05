@@ -45,6 +45,7 @@ df$birth_race_dsc_1 = sample(c("White", "Chinese", "Other (Specify)",
 df$gestation = sample(20:40, nrow(df), replace = T)
 df$bweight = sample(500:4000, nrow(df), replace = T)
 df$preterm = as.numeric(df$gestation < 37)
+df$chld_dead_live = df$stillbrn =  sample(c(0, 1), nrow(df), replace = T)
 
 #read in blocks shapefile
 cbg_shape = tigris::block_groups("NH")

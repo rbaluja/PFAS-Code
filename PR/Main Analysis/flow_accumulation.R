@@ -13,4 +13,4 @@ df_inter_fa= df %>% as_tibble() %>%
 #get area weights and cell values for all cells that each row of df_inter_fa falls into
 df_fa = exactextractr::exact_extract(cont_fa, df_inter_fa)
 #for each residence, take the area weighted sum of flow accumulation cells 
-df = dplyr::bind_rows(pblapply(1:nrow(df), flowacc, df_fa, df, "resid")) 
+df = dplyr::bind_rows(pblapply(1:nrow(df), flowacc, df_fa, df, "resid", cl = n_cores)) 

@@ -1,3 +1,7 @@
+#read in bootstrap functions
+source("PFAS-Code/PR/Tables/bs_functions.R")
+
+
 ######################
 ###########Table 1
 #Preterm
@@ -104,7 +108,10 @@ sink()
 
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-load(modify_path("Data_Verify/RData/linear_iv_se.RData"))
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/bootstrap.RData"))
 
 #preterm
 table2_preterm = list()
@@ -153,6 +160,13 @@ t2_preterm = modelsummary::modelsummary(table2_preterm,
 sink(modify_path2("Tables/table2_preterm.tex"))
 print(t2_preterm)
 sink()
+
+#calculate bootstrapped standard errors
+preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
+lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Slightly"]])
+mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Moderately"]])
+vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Very"]])
+
 
 #marginal effect
 table2_preterm[["All"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
@@ -219,6 +233,12 @@ t2_lbw = modelsummary::modelsummary(table2_lbw,
 sink(modify_path2("Tables/table2_lbw.tex"))
 print(t2_lbw)
 sink()
+
+#calculate bootstrapped standard errors
+lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
+llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
+mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
+vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
 
 #marginal effects
 table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
@@ -404,7 +424,10 @@ sink()
 
 #####################
 ### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
-load(modify_path2("Data_Verify/RData/linear_iv_se_sb.RData"))
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap_sb.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/bootstrap_sb.RData"))
 still_table = list()
 
 still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
@@ -432,8 +455,12 @@ table_s4 = modelsummary::modelsummary(still_table,
   kable_styling(fixed_thead = T, position = "center") 
 
 sink(modify_path2("Tables/table_s4.tex"))
-print(table_s11)
+print(still_table)
 sink() 
+
+#stillborn standard error
+stillbrn_sd = linear_bootstrap(boot_coefs, "stillborn", still_table[["IV"]])
+
 
 
 ##########################
@@ -775,5 +802,24 @@ gof_map = c("nobs", "r.squared"),
   kable_styling(fixed_thead = T, position = "center") 
 
 sink(modify_path("Tables/table_s12.tex"))
-print(table_s12)
+print(table_s11)
 sink() 
+
+
+
+#Oster Coefficient - \delta in paper (Table S-5)
+source("PFAS-Code/PR/Robustness/oster_selection.R")
+sink(modify_path("Tables/table_s5.tex"))
+print(d_pre)
+print(d_lpre)
+print(d_mpre)
+print(d_vpre)
+print(d_lbw)
+print(d_llbw)
+print(d_mlbw)
+print(d_vlbw)
+sink() 
+
+
+#quintiles figure and table (table S-10)
+source("PFAS-Code/PR/Figures/quantiles_pfas.R")

@@ -21,3 +21,11 @@ modify_path2 = function(path) {
     return(path)
   }
 }
+
+modify_path3 = function(path) {
+  if(code_check) {
+    return(gsub("Figures", "Figures_Konan", path))
+  } else {
+    return(path)
+  }
+}

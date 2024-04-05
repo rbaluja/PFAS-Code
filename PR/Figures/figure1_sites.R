@@ -48,4 +48,4 @@ figure1_sites = nh_map_plot +
         text = element_text(family = "Helvetica")) + 
   guides(fill = "none")
 
-ggsave("Figures/Figure1/figure1_sites.png", figure1_sites, scale = 2)
+ggsave(modify_path3("Figures/Figure1/figure1_sites.png"), figure1_sites, scale = 2)

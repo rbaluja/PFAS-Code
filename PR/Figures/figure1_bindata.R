@@ -139,4 +139,4 @@ fig1_bin = ggplot() +
   annotate("text", x = -2, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) +  # Add "3km" label
   annotate("text", x = -4, y = 0.08, label = "5km", hjust = 0.5, vjust = 0, size = 20)
 
-ggsave("Figures/Figure1/figure1_bindata.png", fig1_bin, scale = 2)
+ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, scale = 2)

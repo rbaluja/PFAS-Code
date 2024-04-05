@@ -52,7 +52,7 @@ down_well_dist = function(w){
   return(dw)
 }
 
-down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = 3))
+down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
 up_wells = st_intersection(fs_cont %>% 
@@ -108,7 +108,7 @@ up_well_dist = function(w){
   return(uw)
 }     
 
-up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = 3))
+up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = n_cores))
 
 fs_cont = fs_cont %>% 
   left_join(down_wells, by = c("index")) %>% 
@@ -142,7 +142,7 @@ fs_cont_dist = function(i){
   
   
 }
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = 3))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = n_cores))
 
 #fill in down, up, side variables
 fs_cont_assgn = function(i, drop_far_down, drop_far_up){
@@ -211,7 +211,7 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   
 }
 
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up, cl = n_cores))
 
 ######
 ###Soil variables at the test well
@@ -227,14 +227,14 @@ sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
 
 fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
 
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp"))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp", cl = n_cores))
 
 #available water capacity
 awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
 
 fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
 
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc"))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc", cl = n_cores))
 
 
 ###############
@@ -267,12 +267,12 @@ wells_fa= wells %>%
 
 wells_sp = exactextractr::exact_extract(sp, wells_fa)
 
-wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp"))
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp", cl = n_cores))
 
 #available water capacity
 wells_awc = exactextractr::exact_extract(sp, wells_fa)
 
-wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc"))
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc", cl = n_cores))
 
 df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc)) 
 

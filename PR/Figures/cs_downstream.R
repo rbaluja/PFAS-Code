@@ -1,8 +1,3 @@
-#clear memory
-rm(list = ls())
-#restart R
-.rs.restartR()
-
 #fill sinks
 wbt_breach_depressions(modify_path("New Hampshire/Data/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"), modify_path("New Hampshire/Data/QGIS/filled_dem.tiff"))
 
@@ -35,7 +30,7 @@ cont_sites = cont_sites[which(!cont_sites$site %in% c("Former Aerotronic Site", 
 
 cont_sites$index = 1:nrow(cont_sites)
 
-cont_sites_buff = cont_sites %>% 
+cont_sites_buff10 = cont_sites %>% 
   st_transform(32110) %>% #NH meters projected CRS
   st_buffer(10000) %>% 
   st_transform(4326)
@@ -80,7 +75,7 @@ if (GIS_create == TRUE){
   
   watershed = function(i, n){
     
-    csb = cont_sites_buff[i, ]
+    csb = cont_sites_buff10[i, ]
     cs = cont_sites[i, ]
     
     spoints2 = st_as_sf(st_sample(csb$geometry[1], n))
@@ -141,4 +136,4 @@ figure_s1 = nh_map_plot +
         axis.ticks.y=element_blank(), 
         text=element_text(family="Helvetica"))
 
-ggsave("Figures/figure_s1.png", figure_s1)
+ggsave(modify_path3("Figures/figure_s1.png"), figure_s1)
