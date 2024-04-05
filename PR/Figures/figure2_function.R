@@ -169,16 +169,16 @@ figure2_fun = function(data, category, keep_x, header, ti){
   
   if (header){
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 25), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 3.7, l = 26, b = 30, r = 45), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 46, b = 30, r = 60) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 0, b = 30, r = 15), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 3.7, l = 12, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 36, b = 30, r = 45) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }else{
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 25), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 0, l = 26, b = 30, r = 45), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 46, b = 30, r = 60) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
-    )
+      area(t = 0, l = 0, b = 30, r = 15), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 0, l = 12, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 36, b = 30, r = 45) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+    ) 
   }
   # final plot arrangement
   f = p_left + pany1 + p_right + plot_layout(design = layout)
