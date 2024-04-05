@@ -9,37 +9,17 @@
 
 ### Code Summary
 
-#### Execution file: PR/infant_health_head.R  
-#### Parameters:
-- natality_path: File path to UA Box Drive folder
-- meters: Buffer for defining ``nearby sites''
-- wind_dist: Maximum distance assumed for wind transport from Saint Gobain Plastics
-- ppt: Lower threshold of PFOA + PFOS for a primary release site
-- run_cleaning: Reclean natality data
-- match_wells: Rematch residences to water wells
-- domestic: Include domestic wells?
-- drop_far_down: When a well is downgradient of a release site further than 'meters' away, drop them?
-- drop_far_up: When a well is upgradient of a release site further than 'meters' away, drop them?
-- IV: Run IV spec?
-- rerun_fs_clean: Clean first stage testing data?
-- drop_states: Remove all contamination sites within 'meters' of a state border? Used for robustness figure
-- relaxed_up: Remove upgradient classification? Used for robustness figure
-- GIS_create: Rebuild watersheds and flow accumulation files
-- create_figures: Build figures used in text
-- nat_run_cont_ws: Recreate national watershed files?
-- nat_reassn: Reassign CBG's to national release sites?
-- nat_redo_soil: Recalculate soil statistics for national data?
-- oster_robust: Run Oster (2019) selection on unobservables stats?
-- false_test: Run falsification test?
-- nb_cbg: Reclean national births (county -> cbg stats)
-- census_key: Census API key used for fetching tract and CBG-level covariates
+#### Prior to Running Execution file: PR/preliminaries.R
+#### Parameters  
+   * code_check
+   * redo_GIS
+   * rerun_fs_clean: Clean first stage testing data?
+   * rerun_bs: Run bootstrap (only matters if it has been run, and the output saved, previously)
 
-#### Files ran within the execution file (in order):
-##### PR/GIS/gis_head.R  
-
-1. **PR/GIS/cont_watershed.R**
-Note: This is only run if GIS_create is true
-    * **PR/GIS/cont_watershed.R**
+1. ##### PR/GIS/gis_head.R
+   Note: This only runs if either redo_GIS is true, or one of the (primary) outputs from the below files is missing from the working directory
+   **PR/GIS/cont_watershed.R**
+   Note: This is only run if GIS_create is true
     * Input: NH DEM, PFAS Lab contamination sites
     * Output: Shapefile of watersheds for all contamination sites ("Data_Verify/GIS/cont_watershed.RData"), crosswalk from site index to site name (Data_Verify/GIS/rs_ll_ws.csv)
     * This file creates the watershed shapes for all contamination sites in the data. To do so, it first reads in the DEM and fills in any sinks/depressions in the data. It uses this filled raster to calculate flow accumulation and direction rasters for the state. It then iterates through each site, snapping its point to the cell with highest flow accumulation within a 3 cell radius. It uses this snapped point, along with the flow direction raster, to calculate its watershed. The resulting raster is transformed to a polygon and saved to memory. After iterating through each site, all polygons are read into memory, combined into a single file, and saved to memory.  
@@ -57,8 +37,47 @@ Note: This is only run if GIS_create is true
     * **PR/GIS/cont_flowacc.R**
     * Input: PFAS Lab contamination sites, flow direction raster (Data_Verify/GIS/flow_dir.tiff), NH DEM
     * Weighted flow accumulation raster (Data_Verify/GIS/cont_fa_sum_buffed.tiff)
-    * This file first reads into memory the contamination sites. For each site, it uses the flow direction raster to calculate the direction that water would flow, when starting from that point. This information is stored as a raster, where cells off this path are labeled as NA and those on the path have a value of 1. The non-NA values are then buffered by 500 meters, and the values are replaced with the PFAS level at the relevant site. After this is completed for all sites, the individual rasters are read into memory, the NA values are replaced with zeros, and then the sum across all site-specific rasters is applied to obtain a single raster with the total weighted flow accumulation throughout space from all the 41 sites. 
-2. **PR/Data/data_head.R**
+    * This file first reads into memory the contamination sites. For each site, it uses the flow direction raster to calculate the direction that water would flow, when starting from that point. This information is stored as a raster, where cells off this path are labeled as NA and those on the path have a value of 1. The non-NA values are then buffered by 500 meters, and the values are replaced with the PFAS level at the relevant site. After this is completed for all sites, the individual rasters are read into memory, the NA values are replaced with zeros, and then the sum across all site-specific rasters is applied to obtain a single raster with the total weighted flow accumulation throughout space from all the 41 sites.
+   
+2. * **PR/Data/cont_cleaning.R**
+    Note: This only runs if rerun_fs_clean is true or Data_Verify/Contamination/cleaned_contwell.csv is missing
+    * Input: New Hampshire PFAS test results (Data_Verify/Contamination/NH_tests.csv), weather data (Data_Verify/Supplemental/nh_cbg_weather.csv), PM2.5 data (Data_Verify/Supplemental/nh_cbg_pm25.csv), NH DEM, TRI facilities (Data_Verify/Supplemental/tri_nh.csv)
+    * Output: first stage test data (Data_Verify/Contamination/cleaned_contwell.csv)
+    * This file begins by reading in the test well data (fs_cont) and translating all values to parts-per-trillion. It then imputes missing data by detection limit$/\sqrt2$. Remaining data with no value in the test are either non detects, below the detection limit with no listed limit, or just blank - all are put at zero. For each testing activity and contaminant, the maximum tested level is kept, and the dataframe is pivoted around the test events. For each unique test well, the maximal test is kept, with remaining duplicates being dealt with by taking the earlier test. After this, demographic and environmental covariates are added to fs_test.
+
+3. **PR/Bootstrap/bootstrap_iv.R**  
+   * This file creates three files: RData/bootstrap.RData, RData/bootstrap_quant.RData, RData/bootstrap_sb.RData. These files contain 10,000 rows, corresponding to bootsrap iterations of the IV specifications.
+   * The file first reads in all data (PR/Data/data_head.R), assigns downgradient, upgradient, and to-the-side for each birth (PR/Main Analysis/binary.R), calculates flow accumulation at the residence (PR/Main Analysis/flow_accumulation.R), and then assigns downgradient, upgradient, and to-the-side for each test well, along with their soil variables and wind exposure for the first stage regression. It then adds soil variables to the birth record data, through the location of their drinking water well
+
+### Execution file: PR/infant_health_head.R  
+### Parameters:
+- natality_path: File path to UA Box Drive folder
+- meters: Buffer for defining ``nearby sites''
+- wind_dist: Maximum distance assumed for wind transport from Saint Gobain Plastics
+- ppt: Lower threshold of PFOA + PFOS for a primary release site
+- run_cleaning: Reclean natality data
+- match_wells: Rematch residences to water wells
+- domestic: Include domestic wells?
+- drop_far_down: When a well is downgradient of a release site further than 'meters' away, drop them?
+- drop_far_up: When a well is upgradient of a release site further than 'meters' away, drop them?
+- IV: Run IV spec?
+- drop_states: Remove all contamination sites within 'meters' of a state border? Used for robustness figure
+- relaxed_up: Remove upgradient classification? Used for robustness figure
+- GIS_create: Rebuild watersheds and flow accumulation files
+- create_figures: Build figures used in text
+- nat_run_cont_ws: Recreate national watershed files?
+- nat_reassn: Reassign CBG's to national release sites?
+- nat_redo_soil: Recalculate soil statistics for national data?
+- false_test: Run falsification test?
+- nb_cbg: Reclean national births (county -> cbg stats)
+- census_key: Census API key used for fetching tract and CBG-level covariates
+- tables: Create tables?
+- figures: create figures?
+- n_cores: number of cores used to parallelize tasks
+
+#### Files ran within the execution file (in order):
+
+1. **PR/Data/data_head.R**
     * **PR/Data/pfas_lab_sites.R**
     * Input: PFAS Lab contamination sites
     * Output: cont_sites, cont_sites_buff
@@ -98,13 +117,8 @@ Note: This is only run if GIS_create is true
     * Output: natality data with matched well elevation and elevation at their residence (df)
     * This file reads in the DEM and extracts the elevation at the relevant cells for the drinking water wells and residence in the birth records. Both of these are added to the natality data (df). 
 
-    * **PR/Data/cont_cleaning.R**
-    Note: This only runs if IV and rerun_fs_clean are true
-    * Input: New Hampshire PFAS test results (Data_Verify/Contamination/NH_tests.csv), weather data (Data_Verify/Supplemental/nh_cbg_weather.csv), PM2.5 data (Data_Verify/Supplemental/nh_cbg_pm25.csv), NH DEM, TRI facilities (Data_Verify/Supplemental/tri_nh.csv)
-    * Output: first stage test data (Data_Verify/Contamination/cleaned_contwell.csv)
-    * This file begins by reading in the test well data (fs_cont) and translating all values to parts-per-trillion. It then imputes missing data by detection limit$/\sqrt2$. Remaining data with no value in the test are either non detects, below the detection limit with no listed limit, or just blank - all are put at zero. For each testing activity and contaminant, the maximum tested level is kept, and the dataframe is pivoted around the test events. For each unique test well, the maximal test is kept, with remaining duplicates being dealt with by taking the earlier test. After this, demographic and environmental covariates are added to fs_test. 
 
-3. **PR/Main Analysis/main_analy.R** 
+2. **PR/Main Analysis/main_analy.R** 
     * **PR/Main Analysis/binary.R**
     * Input: well watersheds (Data_Verify/GIS/wells_watershed.RData), crosswalk from well index to source and system id (Data_Verify/GIS/wells_ll_ws.csv), contamination site watersheds (Data_Verify/GIS/cont_watershed.RData), crosswalk from site index to site name (Data_Verify/GIS/rs_ll_ws.csv)
     * Output: Natality data with treatment assignment by drinking water well (used in binary spec)
@@ -119,25 +133,34 @@ Note: This is only run if GIS_create is true
     Note: This only runs if IV is true
     * Input: fs_cont (Data_Verify/Contamination/cleaned_contwell.csv), test well watersheds (Data_Verify/GIS/fs_test_watershed.RData), contamination site watersheds (cont_ws), soil porosity raster (Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif), available water capacity raster (Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif)
     * Output: First stage regression (w_reg), natality data with predicted PFAS level
-    * This file follows the same logic as in binary.R to assign contamination sites to test wells. After completing such exercise, it then assigns soil properties to each well and runs the first stage regressions. After this, it assigns soil properties to the water wells, merges this with the natality data by well identifier, and uses this information to assign predicted pfas to each birth record. 
+    * This file follows the same logic as in binary.R to assign contamination sites to test wells. After completing such exercise, it then assigns soil properties to each well and runs the first stage regressions. After this, it assigns soil properties to the water wells, merges this with the natality data by well identifier, and uses this information to assign predicted pfas to each birth record.
+  
+3. **PR/Tables/tables.R**
+   * This file needs the bootstrapped standard errors to have been calculated to run. It writes to file each of the tables used in the main text. The following files are ran within this file:
+   * PFAS-Code/PR/Robustness/oster_selection.R
+   * PFAS-Code/PR/Figures/quantiles_pfas.R
 
-4. **PR/National Costs/national_costs_head.R**
-    * **PR/National Costs/nat_births.R**
-    Note: This only runs if nb_cbg is true
-    * Input: Raw CDC Wonder natality data (Data_Verify/National/nat_births10.txt), state name to number crosswalk (https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv), Census CBG population counts
-    * Output: CBG by county population weighted births (Data_Verify/National/births_cbg_cleaned_2010.csv)
-    * This file uses CBG-level population counts to form CBG-county weights to downscale the county-level population counts to the CBG-level.
+4. **PR/Figures/figures_head.R**
+   * This file creates all figures in the main text and SI, outside of the national cost ones (see last section of README for prerequisites. 
 
-    * **PR/National Costs/nat_watersheds.R**
-    Note: This only runs if nat_run_cont_ws is true
-    * This file creates the watersheds of each CBG centroid and primary release site in the 11 states used in calculating national impact costs
+#### National Costs
+**PR/National Costs/national_costs_head.R**
+ * **PR/National Costs/nat_births.R**
+ Note: This only runs if nb_cbg is true
+ * Input: Raw CDC Wonder natality data (Data_Verify/National/nat_births10.txt), state name to number crosswalk (https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv), Census CBG population counts
+ * Output: CBG by county population weighted births (Data_Verify/National/births_cbg_cleaned_2010.csv)
+ * This file uses CBG-level population counts to form CBG-county weights to downscale the county-level population counts to the CBG-level.
 
-    * **PR/National Costs/nat_assn.R**
-    Note: This only runs if nat_reassn is true
-    * This file cleans up the identifiers in the births and contamination datasets, then call well_assn.R. well_assn.R follows the same logic as the primary specification (Main Analysis/binary.R) in assigning CBG centroids to contamination sites, and in assigning up, down, and side classifications. 
+ * **PR/National Costs/nat_watersheds.R**
+ Note: This only runs if nat_run_cont_ws is true
+ * This file creates the watersheds of each CBG centroid and primary release site in the 11 states used in calculating national impact costs
 
-    * **PR/National Costs/nat_costs**
-    * This file uses the assigned natality data, the estimated first stage equation (Main Analysis/first_stage.R), and the linear IV results to calculate estimated impacts at the CBG level. It then creates the primary cost figure. 
+ * **PR/National Costs/nat_assn.R**
+ Note: This only runs if nat_reassn is true
+ * This file cleans up the identifiers in the births and contamination datasets, then call well_assn.R. well_assn.R follows the same logic as the primary specification (Main Analysis/binary.R) in assigning CBG centroids to contamination sites, and in assigning up, down, and side classifications. 
+
+ * **PR/National Costs/nat_costs**
+ * This file uses the assigned natality data, the estimated first stage equation (Main Analysis/first_stage.R), and the linear IV results to calculate estimated impacts at the CBG level. It then creates the primary cost figure. 
 
 
 
@@ -148,15 +171,12 @@ Note: This is only run if GIS_create is true
 
 With the current setup:
 - To get cutoff figure (Figure S-3): run Figures/meters_cutoff.R
-- To get robustness figure (Figure S-4): First run infant_health_head.R through main analysis with drop_states = TRUE. Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R (this can take a while if GIS is false. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
+- To get robustness figure (Figure S-4): First run infant_health_head.R through main analysis with drop_states = TRUE (will want to set IV to FALSE to speed this up). Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R (this can take a while if GIS is true. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
 - To make national map: Run PR/National Costs/nat_map.R
 - To make primary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs.R
 - To make binary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs_binary.R
 - To get the ratio of the population in 11 states by that of the lower 48: Run PR/National Costs/Stats/frac_nat_pop.R
-- Table 1, S-2, S-3, S-6, S-7, S-8, and S-11 all come from PR/Tables/tables.R
-- Table 2 comes from PR/Tables/tables.R, with the standard errors calculated in Main Analysis/bootstrap_iv.R
-- Table S-10 and Figure S-5 come from PR/Figures/quantiles_pfas.R (standard errors also come from bootstrap_iv.R)
-- Table S-4 comes from PR/Robustness/oster.R 
+- Table 1, 2, S-2, S-3, S-4, S-10, S-6, S-7, S-8, S-11, and FigureS-5 all come from PR/Tables/tables.R
 
 
 
