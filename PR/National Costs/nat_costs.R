@@ -121,10 +121,10 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 50), 
-        axis.text.y = element_text(size = 50), 
-        legend.text = element_text(size = 50), 
-        axis.text.x = element_text(size = 50),
+        axis.title.y = element_text(size = 60), 
+        axis.text.y = element_text(size = 60), 
+        legend.text = element_text(size = 60), 
+        axis.text.x = element_text(size = 60),
         plot.title = element_text(hjust = 0.5, size = 22), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) +
@@ -135,12 +135,12 @@ p_costs = p_costs + geom_text(aes(label=round(Value, digits=2),
                                   y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 200),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
-                              size=16)
+                              size=20)
 p_costs = p_costs + geom_text(aes(label=se, 
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 80),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=14)
+                                size=18)
 
 
 
@@ -182,11 +182,12 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   theme_minimal() +
   theme(legend.position = "bottom",
+        legend.key.size = unit(4, "lines"),
         legend.title = element_blank(),
         axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 50),
-        axis.text.y = element_text(size = 50),
-        legend.text = element_text(size = 50),
+        axis.title.y = element_text(size = 60),
+        axis.text.y = element_text(size = 60),
+        legend.text = element_text(size = 60),
         axis.text.x = element_text(size = 50),
         plot.title = element_text(hjust = 0.5, size = 22), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
@@ -197,13 +198,13 @@ lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=2),
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 200),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=16)
+                                size=18)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 80),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=14)
+                                size=16)
 
 
 p_costs = p_costs + guides(pattern = "none")

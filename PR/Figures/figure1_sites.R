@@ -27,6 +27,9 @@ cont_sites_bufff = cont_sites %>%
 
 nh_map_data = map_data("state", region = "new hampshire")
 
+#get raster of predicted levels
+source("PFAS-Code/PR/Figures/Grid Contamination/cont_raster.R")
+
 # Create the NH map plot
 nh_map_plot = ggplot() +
   geom_polygon(data = nh_map_data, aes(x = long, y = lat, group = group), 
@@ -34,10 +37,29 @@ nh_map_plot = ggplot() +
   coord_fixed(1.3) + 
   theme_minimal()
 
+#load in cont buffer raster
+cont_rdf = as.data.frame(z_raster, xy=TRUE)
+names(cont_rdf) <- c("x", "y", "pfas")
+cont_rdf$pfas = sinh(cont_rdf$pfas)/1000
+
+cont_rdf2 = cont_rdf
+cont_rdf2$high = 0
+cont_rdf2[cont_rdf2$pfas > 0.15,  ]$high = 1
+cont_rdf2[cont_rdf2$pfas > 0.15,  ]$pfas = 0.15
+
+
 figure1_sites = nh_map_plot +
-  geom_point(data = cont_sites, aes(x = lng, y = lat), size = 0.5) +
-  geom_sf(data = cont_sites_buff, aes(fill = log(sum_pfoa_pfos)), alpha = 0.5, color = NA) + 
-  scale_fill_gradient(low = "yellow", high = "red") +
+  geom_tile(data = cont_rdf2, aes(x = x, y = y, fill = pfas)) + 
+  scale_fill_gradientn(colors = c("transparent", "yellow", "red"),
+                       values = scales::rescale(c(0, 0.01, 1)),
+                       guide = guide_colorbar(barwidth = 50, barheight = 1,
+                                               title = "Predicted PFAS (ppb)",
+                                               title.position = "top",
+                                               title.hjust = 0.5,
+                                               label.hjust = .5,
+                                               label.position = "bottom"),
+                       breaks = c(0.0, 0.05, 0.10, 0.15),
+                       labels = c("0.0", "0.05", "0.10", expression("\u2265 0.15"))) +
   theme_void() + 
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(),
@@ -45,7 +67,10 @@ figure1_sites = nh_map_plot +
         axis.title.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(), 
-        text = element_text(family = "Helvetica")) + 
-  guides(fill = "none")
-
+        text = element_text(family = "Helvetica"), 
+        legend.position = "bottom", 
+        legend.text = element_text(size = 44), 
+        legend.title = element_text(size = 50), 
+        legend.box.spacing = unit(-150, "pt"))  + 
+  labs(fill = "Predicted PFAS") 
 ggsave(modify_path3("Figures/Figure1/figure1_sites.png"), figure1_sites, scale = 2)

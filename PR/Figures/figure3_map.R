@@ -30,10 +30,16 @@ cmap = function(i, state_abb, states_keep){
   smap = ggplot() +
     geom_sf(data = states[states$NAME == states_keep[i], ], color = "black") + 
     geom_sf(data = cs_counties, aes(fill = cost), color = NA, alpha = 0.6) +
-    scale_fill_gradient(low = "white", high = "darkred", name = "Low-Birthweight Costs", limits = c(0, 0.4)) +
+    scale_fill_gradient(low = "white", high = "red", limits = c(0, 0.4), 
+                        guide = guide_colorbar(barwidth = 60, barheight = 1,
+                                               title = "Low-Birthweight Costs ($B)",
+                                               title.position = "top",
+                                               title.hjust = 0.5,
+                                               label.hjust = .5,
+                                               label.position = "bottom")) +
     geom_point(data = cont_sites %>% dplyr::filter(state == states_keep[i]), aes(x = lng, y = lat), alpha = 0.6, size = 8) + theme_void() + 
-    theme(legend.title = element_text(size = 40), 
-          legend.text = element_text(size = 40), 
+    theme(legend.title = element_text(size = 54), 
+          legend.text = element_text(size = 60), 
           legend.position = "bottom", 
           legend.key.height = unit(3, "cm"),
           legend.key.width = unit(3, "cm"))
