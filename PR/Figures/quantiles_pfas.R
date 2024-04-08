@@ -386,7 +386,7 @@ figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5)
+ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5,  width = 25, height = 20)
 
 
 #Copy these to paste into table S-10

@@ -13,15 +13,16 @@ states_keep = c("Michigan",
 
 states = tigris::states()
 
-cmap = function(i, state_abb, states_keep){
+bs_c = bs %>% 
+  dplyr::group_by(county) %>% 
+  dplyr::summarise(add_vlbw = sum(add_vlbw), 
+                   add_mlbw = sum(add_mlbw))
+
+bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^9
+
+cmap = function(i, state_abb, states_keep, bs_c){
   cs_counties = tigris::counties(state = state_abb[i])
   
-  bs_c = bs %>% 
-    dplyr::group_by(county) %>% 
-    dplyr::summarise(add_vlbw = sum(add_vlbw), 
-                     add_mlbw = sum(add_mlbw))
-  
-  bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^9
   
   cs_counties = cs_counties %>% left_join(bs_c %>% as_tibble() %>% dplyr::select(!geometry), by = c("GEOID" = "county"))
   cs_counties[is.na(cs_counties$cost), ]$cost = 0
@@ -53,15 +54,15 @@ for (i in 1:length(state_abb)) {
 }
 
 layout = c(
-  area(t = 0, b = 10, l = 21, r = 30), 
+  area(t = 0, b = 10, l = 16, r = 30), 
   area(t = 11, b = 20, l = 5, r = 30), 
-  area(t = 21, b = 30, l = 5, r = 30), 
+  area(t = 21, b = 30, l = 0, r = 33), 
   area(t = 31, b = 45, l = 0, r = 30)
 )
 
 figure3_map = ((state_maps[["ME"]])/
-  ( state_maps[["ND"]] + state_maps[["MN"]] + state_maps[["WI"]] + state_maps[["MI"]] + state_maps[["VT"]] + plot_layout(nrow = 1))/
-  (state_maps[["CO"]] + plot_spacer() + state_maps[["NH"]] + state_maps[["NY"]]+ plot_layout(nrow = 1))/
+  ( state_maps[["ND"]] + state_maps[["MN"]] + state_maps[["WI"]] + state_maps[["MI"]]  + plot_layout(nrow = 1))/
+  (state_maps[["CO"]] + state_maps[["VT"]] + state_maps[["NH"]] + state_maps[["NY"]]+ plot_layout(nrow = 1))/
   (state_maps[["CA"]] +plot_spacer() + state_maps[["FL"]] + plot_layout(nrow = 1))) + plot_layout(design = layout, guides = "collect")
 
 figure3_map = figure3_map + plot_annotation(theme = theme(legend.position = "bottom"))
