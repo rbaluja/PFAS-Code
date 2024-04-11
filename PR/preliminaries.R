@@ -29,11 +29,3 @@ if (!file.exists(modify_path("Data_Verify/Contamination/cleaned_contwell.csv")) 
 
 #create GIS objects
 source("PFAS-Code/PR/GIS/gis_head.R")
-
-#calculate bootstrapped standard errors
-if (!all(file.exists(modify_path("Data_Verify/RData/bootstrap.RData"),  
-                 modify_path("Data_Verify/RData/bootstrap_quant.RData"), 
-                 modify_path("Data_Verify/RData/bootstrap_sb.RData"))) | 
-    rerun_bs){
-  source("PFAS-Code/PR/Bootstrap/bootstrap_iv.R") 
-}
