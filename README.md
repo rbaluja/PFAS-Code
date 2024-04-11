@@ -9,7 +9,8 @@
 
 ### Code Summary
 
-#### Prior to Running Execution file: PR/preliminaries.R
+#### Prior to Running Execution file: 
+#### 1. PR/preliminaries.R
 #### Parameters  
    * code_check
    * redo_GIS
@@ -45,7 +46,7 @@
     * Output: first stage test data (Data_Verify/Contamination/cleaned_contwell.csv)
     * This file begins by reading in the test well data (fs_cont) and translating all values to parts-per-trillion. It then imputes missing data by detection limit$/\sqrt2$. Remaining data with no value in the test are either non detects, below the detection limit with no listed limit, or just blank - all are put at zero. For each testing activity and contaminant, the maximum tested level is kept, and the dataframe is pivoted around the test events. For each unique test well, the maximal test is kept, with remaining duplicates being dealt with by taking the earlier test. After this, demographic and environmental covariates are added to fs_test.
 
-3. **PR/Bootstrap/bootstrap_iv.R**  
+#### 2. PR/Bootstrap/bootstrap_iv.R  
    * This file creates three files: RData/bootstrap.RData, RData/bootstrap_quant.RData, RData/bootstrap_sb.RData. These files contain 10,000 rows, corresponding to bootsrap iterations of the IV specifications.
    * The file first reads in all data (PR/Data/data_head.R), assigns downgradient, upgradient, and to-the-side for each birth (PR/Main Analysis/binary.R), calculates flow accumulation at the residence (PR/Main Analysis/flow_accumulation.R), and then assigns downgradient, upgradient, and to-the-side for each test well, along with their soil variables and wind exposure for the first stage regression. It then adds soil variables to the birth record data, through the location of their drinking water well
 
