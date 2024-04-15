@@ -116,7 +116,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-pre_any = figure2_fun(data, "Any (<37 Weeks)", FALSE, TRUE, FALSE)
+pre_any = figure2_fun(data, "Any (<37 Weeks)", FALSE, TRUE, "Any (<37 Weeks)")
 
 
 #late preterm
@@ -221,7 +221,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-pre_late = figure2_fun(data, "Slightly (32-36 Weeks)", FALSE, FALSE, FALSE)
+pre_late = figure2_fun(data, "Slightly (32-36 Weeks)", FALSE, FALSE, "Slightly (32-36 Weeks)")
 
 
 #moderately preterm
@@ -374,7 +374,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-pre_mod = figure2_fun(data, "Moderately (28-31 Weeks)", FALSE, FALSE, FALSE)
+pre_mod = figure2_fun(data, "Moderately (28-31 Weeks)", FALSE, FALSE, "Moderately (28-31 Weeks)")
 
 
 
@@ -530,7 +530,7 @@ data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
 
-pre_very = figure2_fun(data, "Very (<28 Weeks)", TRUE, FALSE, "Preterm")
+pre_very = figure2_fun(data, "Very (<28 Weeks)", TRUE, FALSE, "Very (<28 Weeks)")
 
 pre_fig = pre_any/pre_late/pre_mod/pre_very
 
@@ -687,7 +687,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_all = figure2_fun(data, "Any (<2500g)", FALSE, TRUE, FALSE)
+lbw_all = figure2_fun(data, "Any (<2500g)", FALSE, TRUE, "Any (<2500g)")
 
 
 #late low birthweight
@@ -841,7 +841,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_slight = figure2_fun(data, "Slightly (1500-2499g)", FALSE, FALSE, FALSE)
+lbw_slight = figure2_fun(data, "Slightly (1500-2499g)", FALSE, FALSE, "Slightly (1500-2499g)")
 
 
 
@@ -996,7 +996,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_mod = figure2_fun(data, "Moderately (1000-1499g)", FALSE, FALSE, FALSE)
+lbw_mod = figure2_fun(data, "Moderately (1000-1499g)", FALSE, FALSE, "Moderately (1000-1499g)")
 
 
 #very low birthweight
@@ -1151,7 +1151,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_very = figure2_fun(data, "Very (<1000g)", TRUE, FALSE, "Low-Birthweight")
+lbw_very = figure2_fun(data, "Very (<1000g)", TRUE, FALSE, "Very (<1000g)")
 
 
 lbw = lbw_all/lbw_slight/lbw_mod/lbw_very
@@ -1171,8 +1171,17 @@ lplot = ggplot(legend_data) +
 
 
 # Combine your plots using patchwork syntax and apply the layout
-fig2 = (pre_fig | lbw) / 
-  lplot + 
-  plot_layout(heights = unit(c(100, 0.5), c('cm', 'cm'))) 
+ptplot = ggplot() +
+  labs(title = "Preterm") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.56, size = 46, face = "bold"))
+btplot = ggplot() +
+  labs(title = "Low-Birthweight") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.57, size = 46, face = "bold"))
 
-ggsave(modify_path3("Figures/figure2.png"), fig2, scale = 3.5, limitsize = F)
+fig2 = ((ptplot | btplot)  / (pre_fig | lbw)) + plot_layout(heights = c(1, 40))
+# /
+#   lplot
+
+ggsave(modify_path3("Figures/figure2.png"), fig2, scale = 7, limitsize = F)

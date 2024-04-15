@@ -21,8 +21,8 @@ figure2_fun = function(data, category, keep_x, header, ti){
             axis.text.y= element_blank(),
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 40), 
-            axis.title.x = element_text(size = 48)) + 
-      guides(color = "none") + xlim(c(-400, 400)) + xlab(ti)
+            axis.title.x = element_text(size = 38)) + 
+      guides(color = "none") + xlim(c(-400, 400)) + xlab("% Increase of Mean Occurrence Rate")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
@@ -122,8 +122,11 @@ figure2_fun = function(data, category, keep_x, header, ti){
   
   p_left =
     p_left +
-    theme_void() +
-    coord_cartesian(xlim = c(0, 10))
+    coord_cartesian(xlim = c(0, 10)) + labs(y = ti, x = "") + 
+    theme(panel.background = element_rect(fill = 'white', colour = 'white'), 
+          axis.ticks = element_blank(), 
+          axis.text = element_blank(), 
+          axis.title.y = element_text(face = "bold", size = 36))
   
   if (!header){
     p_right = res_plot %>%
@@ -169,15 +172,15 @@ figure2_fun = function(data, category, keep_x, header, ti){
   
   if (header){
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 20), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 3.7, l = 19, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 36, b = 30, r = 50) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 0, b = 60, r = 60), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 3.7, l = 61, b = 60, r = 90), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 91, b = 60, r = 135) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }else{
     layout = c(
-      area(t = 0, l = 0, b = 30, r = 20), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
-      area(t = 0, l = 19, b = 30, r = 35), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
-      area(t = 0, l = 36, b = 30, r = 50) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
+      area(t = 0, l = 0, b = 60, r = 60), # left plot, starts at the top of the page (0) and goes 30 units down and 3 units to the right
+      area(t = 0, l = 61, b = 60, r = 90), # middle plot starts a little lower (t=1) because there's no title. starts 1 unit right of the left plot (l=4, whereas left plot is r=3), goes to the bottom of the page (30 units), and 6 units further over from the left plot (r=9 whereas left plot is r=3)
+      area(t = 0, l = 91, b = 60, r = 135) # right most plot starts at top of page, begins where middle plot ends (l=9, and middle plot is r=9), goes to bottom of page (b=30), and extends two units wide (r=11)
     ) 
   }
   # final plot arrangement

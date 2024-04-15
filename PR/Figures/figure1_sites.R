@@ -33,19 +33,19 @@ source("PFAS-Code/PR/Figures/Grid Contamination/cont_raster.R")
 # Create the NH map plot
 nh_map_plot = ggplot() +
   geom_polygon(data = nh_map_data, aes(x = long, y = lat, group = group), 
-               color = 'black', fill = "transparent") +
+               color = 'black', fill = "lightgrey") +
   coord_fixed(1.3) + 
   theme_minimal()
 
 #load in cont buffer raster
 cont_rdf = as.data.frame(z_raster, xy=TRUE)
 names(cont_rdf) <- c("x", "y", "pfas")
-cont_rdf$pfas = sinh(cont_rdf$pfas)/1000
+cont_rdf$pfas = sinh(cont_rdf$pfas)
 
 cont_rdf2 = cont_rdf
 cont_rdf2$high = 0
-cont_rdf2[cont_rdf2$pfas > 0.15,  ]$high = 1
-cont_rdf2[cont_rdf2$pfas > 0.15,  ]$pfas = 0.15
+cont_rdf2[cont_rdf2$pfas > 0.15 * 1000,  ]$high = 1
+cont_rdf2[cont_rdf2$pfas > 0.15* 1000,  ]$pfas = 0.15* 1000
 
 
 figure1_sites = nh_map_plot +
@@ -53,13 +53,13 @@ figure1_sites = nh_map_plot +
   scale_fill_gradientn(colors = c("transparent", "yellow", "red"),
                        values = scales::rescale(c(0, 0.01, 1)),
                        guide = guide_colorbar(barwidth = 50, barheight = 1,
-                                               title = "Predicted PFAS (ppb)",
+                                               title = "Predicted PFAS (ppt)",
                                                title.position = "top",
                                                title.hjust = 0.5,
                                                label.hjust = .5,
                                                label.position = "bottom"),
-                       breaks = c(0.0, 0.05, 0.10, 0.15),
-                       labels = c("0.0", "0.05", "0.10", expression("\u2265 0.15"))) +
+                       breaks = c(0.0, 50, 100, 150),
+                       labels = c("0", "50", "100", expression("\u2265 150"))) +
   theme_void() + 
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(),
@@ -71,6 +71,7 @@ figure1_sites = nh_map_plot +
         legend.position = "bottom", 
         legend.text = element_text(size = 44), 
         legend.title = element_text(size = 50), 
-        legend.box.spacing = unit(-150, "pt"))  + 
+        legend.box.spacing = unit(-150, "pt"), 
+        plot.margin = unit(c(0, -2, 0, -2), "cm"))  + 
   labs(fill = "Predicted PFAS") 
-ggsave(modify_path3("Figures/Figure1/figure1_sites.png"), figure1_sites, scale = 2)
+ggsave(modify_path3("Figures/Figure1/figure1_sites.png"), figure1_sites,  limitsize = F, scale = 2)

@@ -123,8 +123,8 @@ points_sf$vlbw = factor(points_sf$vlbw, levels = c("Yes", "No"))
 
 fig1_bin = ggplot() +
   geom_sf(data = fig, fill = NA, color = "black") +  
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.75, size = 8) + 
-  scale_color_manual(values = c("No" = "blue", "Yes" = "red"), 
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.6, size = 8) + 
+  scale_color_manual(values = c("No" = "dodgerblue3", "Yes" = "firebrick4"), 
                      guide = guide_colorsteps(title.position = "top", 
                                               title = "Very Low-Birthweight")) + 
   theme_void() + labs(color = "Very Low-Birthweight") + 
@@ -142,4 +142,4 @@ fig1_bin = ggplot() +
   annotate("text", x = -2, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) + 
   annotate("text", x = -4, y = 0.08, label = "5km", hjust = 0.5, vjust = 0, size = 20)
 
-ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, scale = 2)
+ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, scale = 2.5)
