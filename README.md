@@ -145,7 +145,7 @@
    * This file creates all figures in the main text and SI, outside of the national cost ones (see last section of README for prerequisites. 
 
 #### National Costs
-**PR/National Costs/national_costs_head.R**
+**PR/national_costs_head.R**
  * **PR/National Costs/nat_births.R**
  Note: This only runs if nb_cbg is true
  * Input: Raw CDC Wonder natality data (Data_Verify/National/nat_births10.txt), state name to number crosswalk (https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv), Census CBG population counts
@@ -161,7 +161,16 @@
  * This file cleans up the identifiers in the births and contamination datasets, then call well_assn.R. well_assn.R follows the same logic as the primary specification (Main Analysis/binary.R) in assigning CBG centroids to contamination sites, and in assigning up, down, and side classifications. 
 
  * **PR/National Costs/nat_costs**
- * This file uses the assigned natality data, the estimated first stage equation (Main Analysis/first_stage.R), and the linear IV results to calculate estimated impacts at the CBG level. It then creates the primary cost figure.
+ * This file uses the assigned natality data, the estimated first stage equation (Main Analysis/first_stage.R), and the linear IV results to calculate estimated impacts at the CBG level. It then creates Figure 3a
+
+ * **PR/Figures/figure3_map.R**
+ * This file creates and saves to disk Figure 3b
+
+ * **PR/National Costs/nat_map.R**
+ * This file creates and saves to disk Figure S-6
+
+ * **PR/National Costs/nat_costs_binary.R**
+ * This file recreates Figure 3a with the binary downgradient estimates. It creates and saves Figure S-7
 
 
 
