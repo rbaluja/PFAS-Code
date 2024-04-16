@@ -75,6 +75,7 @@
 - tables: Create tables?
 - figures: create figures?
 - n_cores: number of cores used to parallelize tasks
+- rob_app_fig: Create and save Figure S-4
 
 #### Files ran within the execution file (in order):
 
