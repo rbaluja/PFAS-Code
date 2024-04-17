@@ -39,7 +39,7 @@ nh_map_plot = ggplot() +
 
 #load in cont buffer raster
 cont_rdf = as.data.frame(z_raster, xy=TRUE)
-names(cont_rdf) <- c("x", "y", "pfas")
+names(cont_rdf) = c("x", "y", "pfas")
 cont_rdf$pfas = sinh(cont_rdf$pfas)
 
 cont_rdf2 = cont_rdf

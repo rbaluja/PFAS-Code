@@ -24,6 +24,7 @@ nat_redo_soil = FALSE #recalculate soil stats for national data?
 nb_cbg = FALSE
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 code_check = FALSE
+n_cores = 1
 
 
 #clean raw births data

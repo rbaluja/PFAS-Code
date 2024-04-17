@@ -1,55 +1,45 @@
 #getting impacts in states with initiatives
-add_vpre = sum(bs[which(bs$down == 1), ]$births) * 0.0047 # 92.33542
-add_vpre
-#very preterm cost:  92.33542 * 204083 =  18844090/10^9
+vpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0047 # 92.33542
+vpre_cost = (vpre_births * 204083)/10^9
 #standard error: 
-add_vpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
-add_vpre_se
-#cost se: 35.3625 *204083 = 7216885/10^9
+vpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
+vpre_cost_se = (vpre_births_se * 204083)/10^9
 
-add_mpre = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
-add_mpre
-#m preterm cost se: 49.11458 * 205041  =  10070503/10^9
+mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
+mpre_cost = (mpre_births * 205041)/10^9
 #standard error: 
-add_mpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
-add_mpre_se
-#cost se: 53.04375 * 205041  = 10876144/10^9
+mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
+mpre_cost_se = (mpre_births_se *  205041)/10^9
 
-add_lpre = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
-add_lpre
-#late preterm cost:  149.3083 * 36728.05 = 5483803/10^9
+lpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
+lpre_cost = (lpre_births * 36728)/10^9
 #standard error: 
-add_lpre_se =sum(bs[which(bs$down == 1), ]$births) * 0.0079 #155.2021
-add_lpre_se
-#cost se:155.2021 * 36728.05 = 5700270/10^9
-
+lpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0079 #155.2021
+lpre_cost_se = (lpre_births_se * 36728)/10^9
 
 
 #birthweight
-add_vlbw = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #119.8396
-add_vlbw
-#very lbw cost:119.8396 * 5133739.83 = 615225328/10^9
+vlbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #119.8396
+vlbw_cost = (vlbw_births * 5133739.83)/10^9
 #standard error: 
-add_vlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
-add_vlbw_se
-#cost se: 41.25625 * 5133739.83 = 211798854/10^9
+vlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
+vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 
-add_mlbw = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
-add_mlbw
-#mod lbw cost: -0.9822917* 1634411.22 = -1605469/10^9
+mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
+mlbw_cost = (mlbw_births * 1634411.22)/10^9
 #standard error: 
-add_mlbw_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
-add_mlbw_se
-#cost se: 36.34479 * 1634411.22 = 59402333/10^9
+mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
+mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
 
 #social cost figure
 data = data.frame(
   Weeks = factor(rep(c("Very", "Moderately", "Slightly"), 2), 
                  levels = c("Very", "Moderately", "Slightly")),
-  Value = c(92, 49, 149, 0.02, 0.01, 0.005), # Combined values for both axes
-  Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")), # Axis assignment
-  se = c("(35)", "(53)", "(155)", "(0.007)", "(0.01)", "(0.006)")
+  Value = c(round(vpre_births), round(mpre_births), round(lpre_births), round(vpre_cost, digits = 2), round(mpre_cost, digits = 2), round(lpre_cost, digits = 2)), 
+  Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
+  se = c(paste0("(", round(vpre_births_se), ")"), paste0("(", round(mpre_births_se), ")"), paste0("(", round(lpre_births_se), ")"), 
+         paste0("(", round(vpre_cost_se, digits = 2), ")"), paste0("(", round(mpre_cost_se, digits = 2), ")"), paste0("(", round(lpre_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor for right axis values
@@ -113,9 +103,10 @@ p_costs
 data_bw = data.frame(
   Weeks = factor(rep(c("Very", "Moderately"), 2), 
                  levels = c("Very", "Moderately")),
-  Value = c(120, -1, 0.62, -0.002),
-  Axis = factor(c("Left", "Left", "Right", "Right")), 
-  se = c("(41)", "(36)", "(0.21)", "(0.06)")
+  Value = c(round(vlbw_births), round(mlbw_births), round(vlbw_cost, digits = 2), round(mlbw_cost, digits = 2)), 
+  Axis = factor(c("Left", "Left", "Right", "Right")),
+  se = c(paste0("(", round(vlbw_births_se), ")"), paste0("(", round(mlbw_births_se), ")"), 
+         paste0("(", round(vlbw_cost_se, digits = 2), ")"), paste0("(", round(mlbw_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor for right axis values

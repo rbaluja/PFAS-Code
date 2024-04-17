@@ -7,10 +7,22 @@ one_sp = function(tval, pval){
     return(pval/2)
   }
 }
-#preterm
+if (!file.exists(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))){
+  stop("Need to run drop nearby states robustness: run infant_health_head through main_analysis with drop states true")
+}
+
+if (!file.exists(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))){
+  stop("Need to run relaxed upgradient robustness: run infant_health_head through main_analysis with relaxed_up true")
+}
+
+if (!file.exists(modify_path("Data_Verify/Robustness/side_robustness.RData"))){
+  stop("Need to run PR/GIS/df_watershed.R and then Robustness/resid_side_comparison.R")
+}
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
+
+#preterm
 
 full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -1245,5 +1257,5 @@ figure_s4 = wrap_plots(list(preterm_robustness, lbw_robustness, lpreterm_robustn
                             llbw_robustness, mpreterm_robustness, mlbw_robustness, 
                             vpreterm_robustness, vlbw_robustness), nrow = 4)
 
-ggsave("Figures/Robustness/figure_s4.png", figure_s4)
+ggsave(modify_path3("Figures/Robustness/figure_s4.png"), figure_s4)
 

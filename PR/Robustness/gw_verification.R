@@ -1,46 +1,45 @@
 #set working directory
-if (file.exists('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH')){
-  setwd('~/Documents/Projects/Current_Projects/PFAS Infant Health/NH') 
-}else{
-  setwd('/Users/robert/Library/Mobile Documents/com~apple~CloudDocs/Documents/Projects/Current_Projects/PFAS Infant Health/NH')
-}
+setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("Code/Primary/env_functions.R")
-source("Code/Primary/Watersheds/watershed_functions.R")
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox)
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus, ggpattern, forcats)
 options(modelsummary_format_numeric_latex = "mathmode")
+options(tigris_use_cache = TRUE)
 
 #set up environment
-meters = 5000
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE #needs to be false if calculating se on difference in theta
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
+meters = 5000 #buffer for base spec
+wind_dist= dist_allow = 10000 #wind distance cutoff
+ppt = 1000 #cutoff for primary contamination site
+run_cleaning = FALSE #clean natality data?
+match_wells = FALSE #Re match natality data to wells?
+domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
-IV = TRUE
-fa_resid = TRUE
-soil_well = TRUE #get soil properties at well?
-drop_states = FALSE
+IV = FALSE #Run IV spec?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+tables = TRUE
+figures = TRUE
+code_check = FALSE
+n_cores = 1
 
-#obtain theta info for Northeastern contamination data
-source("/Users/robert/Documents/GitHub/PFAS_IH/Primary/Watersheds/groundwater_algorithm.R")
+#data cleaning
+source("PFAS-Code/PR/Data/data_head.R")
 
 #read in and set cont site watersheds 
-load("New Hampshire/Data/RData/cont_watershed.RData")
+load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
 
 #read in sites_ll to get right site number
-rs_ll = fread("New Hampshire/Data/rs_ll.csv")
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
 rs_ll$index = 1:nrow(rs_ll)
 
 cont_ws = cont_ws %>% 
@@ -48,7 +47,7 @@ cont_ws = cont_ws %>%
 
 
 #well data
-gw_level = read.delim('Data/Groundwater/nh_gwlevels') %>%
+gw_level = read.delim(modify_path('Data_Verify/Groundwater/nh_gwlevels')) %>%
   dplyr::select(agency = agency_cd, 
                 site = site_no, 
                 gw_level = sl_lev_va, 
@@ -62,7 +61,7 @@ gw_level = read.delim('Data/Groundwater/nh_gwlevels') %>%
 
 
 #load latitude/longitude information for well id
-gw_loc = read_delim('Data/Groundwater/nh_gwloc', 
+gw_loc = read_delim(modify_path('Data_Verify/Groundwater/nh_gwloc'), 
                     delim = "\t", escape_double = FALSE, 
                     trim_ws = TRUE)
 gw_loc = gw_loc[-1, ]
@@ -102,7 +101,6 @@ cont_sites$gw_level = gw$gw_level[cont_sites$wmin_dist]
 cont_ws = cont_ws[which(cont_ws$site %in% cont_sites$site), ]
 
 #function which grabs the gw elevations within 5km
-
 ver_reg = function(i){
   
   ind = cont_ws$index[i]
@@ -149,3 +147,5 @@ for (i in 1:length(v)){
 }
 mean(x)
 median(x)
+
+sum(x > 0)/length(x)

@@ -1,5 +1,3 @@
-#clear memory
-rm(list = ls())
 #set working directory
 setwd("~/Dropbox/PFAS Infants")
 
@@ -31,6 +29,7 @@ rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
 code_check = FALSE
+n_cores = 1
 
 
 

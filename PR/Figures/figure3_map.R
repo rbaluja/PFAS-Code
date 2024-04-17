@@ -18,7 +18,9 @@ bs_c = bs %>%
   dplyr::summarise(add_vlbw = sum(add_vlbw), 
                    add_mlbw = sum(add_mlbw))
 
-bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^9
+bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^6
+
+bs_c[which(bs_c$cost > 150), ]$cost = 150
 
 cmap = function(i, state_abb, states_keep, bs_c){
   cs_counties = tigris::counties(state = state_abb[i])
@@ -29,43 +31,107 @@ cmap = function(i, state_abb, states_keep, bs_c){
   
   
   smap = ggplot() +
-    geom_sf(data = states[states$NAME == states_keep[i], ], color = "black") + 
-    geom_sf(data = cs_counties, aes(fill = cost), color = NA, alpha = 0.6) +
-    scale_fill_gradient(low = "white", high = "red", limits = c(0, 0.4), 
-                        guide = guide_colorbar(barwidth = 60, barheight = 1,
-                                               title = "Low-Birthweight Costs ($B)",
+    geom_sf(data = states[states$NAME == states_keep[i], ], color = "black", fill = "transparent") + 
+    geom_sf(data = cs_counties, aes(fill = cost), color = NA, alpha = 0.8) +
+    scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 150), 
+                        breaks = c(0, 50, 100, 150),
+                        labels = c("$0", "$50M", "$100M", expression("> $150M")),
+                        guide = guide_colorbar(barwidth = 40, barheight = 1,
+                                               title = "Annual Low-Birthweight Costs",
                                                title.position = "top",
                                                title.hjust = 0.5,
                                                label.hjust = .5,
                                                label.position = "bottom")) +
-    geom_point(data = cont_sites %>% dplyr::filter(state == states_keep[i]), aes(x = lng, y = lat), alpha = 0.6, size = 8) + theme_void() + 
-    theme(legend.title = element_text(size = 54), 
-          legend.text = element_text(size = 60), 
+    geom_point(data = cont_sites %>% dplyr::filter(state == states_keep[i]), aes(x = lng, y = lat), alpha = 0.2, size = 4) + theme_void() + 
+    theme(legend.title = element_text(size = 26), 
+          legend.text = element_text(size = 26), 
           legend.position = "bottom", 
-          legend.key.height = unit(3, "cm"),
-          legend.key.width = unit(3, "cm"))
+          legend.key.height = unit(2, "cm"),
+          legend.key.width = unit(2, "cm")) 
+  
+  if (state_abb[i] == "CA"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.1,  y=0.9, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "NH"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.1,  y=0.9, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "ME"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.35,  y=0.8, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "NY"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.58,  y=0.83, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "FL"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.5,  y=0.85, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "WI"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.4,  y=0.68, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "MI"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.2,  y=0.8, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "CO"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.5,  y=0.85, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "ND"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.5,  y=0.85, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else if (state_abb[i] == "VT"){
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.5,  y=0.85, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))
+  }else{
+    grob = grid::grobTree(grid::textGrob(state_abb[i], x=0.5,  y=0.9, hjust=0,
+                                         gp=grid::gpar(col="black", fontsize=18)))  
+  }
+  
+  
+  smap = smap + annotation_custom(grob)
   
   return(smap)
 }
 
 state_maps = list()
 for (i in 1:length(state_abb)) {
-  state_maps[[state_abb[i]]] = cmap(i, state_abb, states_keep)
+  state_maps[[state_abb[i]]] = cmap(i, state_abb, states_keep, bs_c)
 }
 
-layout = c(
-  area(t = 0, b = 10, l = 16, r = 30), 
-  area(t = 11, b = 20, l = 5, r = 30), 
-  area(t = 21, b = 30, l = 0, r = 33), 
-  area(t = 31, b = 45, l = 0, r = 30)
+
+
+plot_for_legend = state_maps$FL
+g = ggplotGrob(plot_for_legend)
+legend = gtable::gtable_filter(g, "guide-box")
+
+convert = function(p) p / 100
+
+viewports = list(
+  viewport(x = convert(71+7),  y = convert(100-12.5), width = convert(14), height = convert(25)),  # MI
+  viewport(x = convert(41+7),  y = convert(100-12.5), width = convert(14), height = convert(25)),  # MN
+  viewport(x = convert(86+7),   y = convert(100-34.5), width = convert(14), height = convert(20)), # NH
+  viewport(x = convert(50+10),  y = convert(100-35), width = convert(20), height = convert(20)),   # NY
+  viewport(x = convert(26+7),   y = convert(100-40), width = convert(14), height = convert(20)),   # CO
+  viewport(x = convert(86+7),  y = convert(100-12.5), width = convert(14), height = convert(25)),  # ME
+  viewport(x = convert(71+7),   y = convert(100-35), width = convert(14), height = convert(20)),   # VT
+  viewport(x = convert(0+12.5), y = convert(100-50), width = convert(25), height = convert(50)),   # CA
+  viewport(x = convert(75+12.5), y = convert(100-70), width = convert(25), height = convert(25)), # FL
+  viewport(x = convert(26+7), y = convert(100-12.5), width = convert(14), height = convert(25)),  # ND
+  viewport(x = convert(56+7),  y = convert(100-12.5), width = convert(14), height = convert(25))  # WI
 )
 
-figure3_map = ((state_maps[["ME"]])/
-  ( state_maps[["ND"]] + state_maps[["MN"]] + state_maps[["WI"]] + state_maps[["MI"]]  + plot_layout(nrow = 1))/
-  (state_maps[["CO"]] + state_maps[["VT"]] + state_maps[["NH"]] + state_maps[["NY"]]+ plot_layout(nrow = 1))/
-  (state_maps[["CA"]] +plot_spacer() + state_maps[["FL"]] + plot_layout(nrow = 1))) + plot_layout(design = layout, guides = "collect")
+# Now plot each map in its respective viewport
+pdf(modify_path3("Figures/Figure3/costs_map_2.pdf"), width = 12, height = 8)
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(1, 1)))
+for (i in seq_along(viewports)) {
+  state_maps[[i]] = state_maps[[i]] + guides(fill = "none")
+  pushViewport(viewports[[i]])
+  print(state_maps[[names(state_maps)[i]]], newpage = FALSE)
+  popViewport()
+}
 
-figure3_map = figure3_map + plot_annotation(theme = theme(legend.position = "bottom"))
+# Draw the legend at the bottom
+bottom_vp = viewport(x = 0.5, y = 0.01, width = 0.6, height = 0.05, just = c("center", "bottom"))
+pushViewport(bottom_vp)
+grid.draw(legend)
+popViewport()
 
-ggsave(modify_path3("Figures/Figure3/costs_map.png"), figure3_map, scale = 3)
- 
+dev.off()

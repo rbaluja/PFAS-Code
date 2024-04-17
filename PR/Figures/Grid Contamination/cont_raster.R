@@ -38,8 +38,12 @@ fs_awc = exactextractr::exact_extract(awc,ll)
 ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc,fs_awc,ll, "awc", cl = n_cores))
 
 
-#get up and down
-load(modify_path("Data_Verify/GIS/grid_ll_watershed.RData"))
+#get up and down for grid points
+if (!file.exists(modify_path("Data_Verify/GIS/grid_ll_watershed.RData"))){
+  source("PFAS-Code/PR/Figures/Grid Contamination/grid_cont_gis.R")
+}else{
+  load(modify_path("Data_Verify/GIS/grid_ll_watershed.RData")) 
+}
 
 #This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
 #it instead looks at test wells. For any questions on code, see relevant comments in binary.R
