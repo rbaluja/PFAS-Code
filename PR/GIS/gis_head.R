@@ -4,7 +4,7 @@ if (!file.exists(modify_path("Data_Verify/GIS/cont_watershed.RData")) | redo_GIS
 }
 
 if (!file.exists(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))| redo_GIS){
-  source("PFAS-Code/PR/GIS/test_wells_watershed.R") #first stage test wells- NOTE: This takes a long time to run 
+  source("PFAS-Code/PR/GIS/test_wells_watershed.R") #first stage test wells
 }
 
 if (!file.exists(modify_path("Data_Verify/GIS/wells_watershed.RData"))| redo_GIS){

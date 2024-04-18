@@ -1,6 +1,3 @@
-#clear memory
-rm(list = ls())
-
 #set working directory
 setwd("~/Dropbox/PFAS Infants")
 
