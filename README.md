@@ -16,6 +16,11 @@
    * redo_GIS
    * rerun_fs_clean: Clean first stage testing data?
    * rerun_bs: Run bootstrap (only matters if it has been run, and the output saved, previously)
+   * ppt (used to determine which contamination site cutoff to use to select which watersheds to build)
+   * wind_dist
+   * meters
+   * drop_states (drop sources near state border - Always keep FALSE for preliminaries)
+   * census_key: Census API key
 
 1. ##### PR/GIS/gis_head.R
    Note: This only runs if either redo_GIS is true, or one of the (primary) outputs from the below files is missing from the working directory
