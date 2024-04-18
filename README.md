@@ -203,13 +203,8 @@ Note: These should each be run with a clean environment
 
 
 With the current setup:
-- To get cutoff figure (Figure S-3): run Figures/meters_cutoff.R
 - To get robustness figure (Figure S-4): First run infant_health_head.R through main analysis with drop_states = TRUE (will want to set IV to FALSE to speed this up). Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R (this can take a while if GIS is true. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
-- To make national map: Run PR/National Costs/nat_map.R
-- To make primary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs.R
-- To make binary cost figure: Run PR/National Costs/national_cost_head.R through nat_costs_binary.R
 - To get the ratio of the population in 11 states by that of the lower 48: Run PR/National Costs/Stats/frac_nat_pop.R
-- Table 1, 2, S-2, S-3, S-4, S-10, S-6, S-7, S-8, S-11, and FigureS-5 all come from PR/Tables/tables.R
 
 
 
