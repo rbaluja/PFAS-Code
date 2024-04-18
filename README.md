@@ -186,7 +186,7 @@ Note: These should each be run with a clean environment
   * This calculates the statistics from Appendix M  
 * **PR/GIS/df_watershed.R**
   * NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
-  * This calculated the watersheds for each residence. They are used to calculate the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
+  * This calculates the watersheds shapes for each residence. They are used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
 * **PR/Robustness/resid_side_comparison.R**
   * This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
 * **PR/Robustness/New York/Groundwater_NY.R**
