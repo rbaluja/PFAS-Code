@@ -178,22 +178,22 @@
 #### Supplemental files  
 Note: These should each be run with a clean environment  
 * **PR/Robustness/gw_verification.R**
-* This calculates the statistics from Appendix M  
+  * This calculates the statistics from Appendix M  
 * **PR/GIS/df_watershed.R**
-* NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
-* This calculated the watersheds for each residence. They are used to calculate the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
+  * NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
+  * This calculated the watersheds for each residence. They are used to calculate the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
 * **PR/Robustness/resid_side_comparison.R**
-* This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
+  * This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
 * **PR/Robustness/New York/Groundwater_NY.R**
-* This calculates the results used for the New York section (Appendix N)
+  * This calculates the results used for the New York section (Appendix N)
 * **PR/Placebo/placebo_head.R**
-* This calculates the number of false positives under the placebo test (Table S-8)
+  * This calculates the number of false positives under the placebo test (Table S-8)
 * **PR/GIS/cs_downstream.R**
-* This directly calculates the necessary GIS files and creates Figure S-1
+  * This directly calculates the necessary GIS files and creates Figure S-1
 * **PR/Figures/pop_matching_cutoff.R**
-* This creates Figure s-2b
+  * This creates Figure s-2b
 * **PR/Figures/meters_cutoff.R**
-* This creates Figure S-3
+  * This creates Figure S-3
 
 
 
