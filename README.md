@@ -143,7 +143,7 @@
     * This file follows the same logic as in binary.R to assign contamination sites to test wells. After completing such exercise, it then assigns soil properties to each well and runs the first stage regressions. After this, it assigns soil properties to the water wells, merges this with the natality data by well identifier, and uses this information to assign predicted pfas to each birth record.
   
 3. **PR/Tables/tables.R**
-   * This file needs the bootstrapped standard errors to have been calculated to run. It writes to file each of the tables used in the main text. The following files are ran within this file:
+   * This file needs the bootstrapped standard errors to have been calculated to run, as well as the robustness checks (drop_states, relaxed_up in main_analy.R and PR/Robustness/resid_side_comparison.R). It writes to file each of the tables used in the main text. The following files are ran within this file:
    * PFAS-Code/PR/Robustness/oster_selection.R
    * PFAS-Code/PR/Figures/quantiles_pfas.R
 
