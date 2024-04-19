@@ -63,7 +63,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9
   ) +
-  scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
+  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
     "Annual Additional Preterm Births",
     sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
@@ -71,12 +71,13 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   )  +
   theme_minimal() + 
   theme(legend.position = "bottom", 
+        legend.key.size = unit(4, "lines"),
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 20, face = "bold"), 
-        axis.text.y = element_text(size = 20, face = "bold"), 
-        legend.text = element_text(size = 20, face = "bold"), 
-        axis.text.x = element_text(size = 20, face = "bold"),
+        axis.title.y = element_text(size = 60, face = "bold"), 
+        axis.text.y = element_text(size = 60, face = "bold"), 
+        legend.text = element_text(size = 60, face = "bold"), 
+        axis.text.x = element_text(size = 50, face = "bold"),
         plot.title = element_text(hjust = 0.5, size = 22, face = "bold"), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) +
@@ -87,13 +88,13 @@ p_costs = p_costs + geom_text(aes(label=round(Value, digits=3),
                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 25), 
                              position=position_dodge(width=0.9), 
                              vjust=0, 
-                             size=7, 
+                             size=18, 
                              fontface = "bold")
 p_costs = p_costs + geom_text(aes(label=se, 
                                   y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5), 
                               position=position_dodge(width=0.9), 
                               vjust=0, 
-                              size=5, 
+                              size=18, 
                               fontface = "bold")
 p_costs
 
@@ -129,7 +130,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9
   ) +
-  scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
+  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
     "Annual Additional Low-Birthweight Births",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"),
@@ -137,12 +138,13 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   theme_minimal() +
   theme(legend.position = "bottom",
+        legend.key.size = unit(4, "lines"),
         legend.title = element_blank(),
         axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 20, face = "bold"),
-        axis.text.y = element_text(size = 20, face = "bold"),
-        legend.text = element_text(size = 20, face = "bold"),
-        axis.text.x = element_text(size = 20, face = "bold"),
+        axis.title.y = element_text(size = 60, face = "bold"),
+        axis.text.y = element_text(size = 60, face = "bold"),
+        legend.text = element_text(size = 60, face = "bold"),
+        axis.text.x = element_text(size = 50, face = "bold"),
         plot.title = element_text(hjust = 0.5, size = 22, face = "bold"), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25)) + 
@@ -152,18 +154,18 @@ lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=3),
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 25),
                                 position=position_dodge(width=0.9), 
                                 vjust=0,
-                                size=7, 
+                                size=18, 
                                 fontface = "bold")
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
                                     y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 5),
                                 position=position_dodge(width=0.9), 
                                 vjust=0,
-                                size=5, 
+                                size=18, 
                                 fontface = "bold")
 
 lbw_cost
 
 p_costs = p_costs + guides(pattern = "none")
 figure_s7 = p_costs / lbw_cost
-ggsave(modify_path3("Figures/National Costs/figure_s7.png"), figure_s7)
+ggsave(modify_path3("Figures/National Costs/figure_s7.png"), figure_s7, width = 10416, height = 11291, units = "px", device = "png")

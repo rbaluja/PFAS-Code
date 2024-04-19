@@ -265,6 +265,18 @@ table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(
 
 #######################
 ####Table S-2 (balance table)
+if (code_check){
+  df$max_educ = max(df$m_educ, df$f_educ)
+  df$n_prenatal = sample(1:20, nrow(df), replace = T)
+  df$cig = sample(0:1, nrow(df), replace = T)
+  df$white = sample(0:1, nrow(df), replace = T)
+  df$m_months_res = sample(1:20, nrow(df), replace = T)
+  df$mr_23 = sample(0:1, nrow(df), replace = T)
+  df$mr_04 = sample(0:1, nrow(df), replace = T)
+  df$mr_18 = sample(0:1, nrow(df), replace = T)
+  df$mr_08 = sample(0:1, nrow(df), replace = T)
+  df$mr_10 = sample(0:1, nrow(df), replace = T)
+}
 df$college = ifelse(df$max_educ >= 6, 1, 0)
 df[which(df$n_prenatal == 99), ]$n_prenatal = NA
 df$ind_prenatal = ifelse(df$n_prenatal >= 15 & !is.na(df$n_prenatal), 1, 0)
@@ -609,7 +621,7 @@ tables7_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *
 table_s6_preterm = modelsummary::modelsummary(tables7_preterm, 
                                               stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                               fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
+                                              coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
                                               gof_map = c("nobs", "r.squared"), 
                                               output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
@@ -668,7 +680,7 @@ tables7_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(p
 table_s6_lbw = modelsummary::modelsummary(tables7_lbw, 
                                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                           fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                          coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
+                                          coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
                                           gof_map = c("nobs", "r.squared"), 
                                           output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
@@ -809,7 +821,7 @@ sink()
 
 #Oster Coefficient - \delta in paper (Table S-5)
 source("PFAS-Code/PR/Robustness/oster_selection.R")
-sink(modify_path("Tables/table_s5.tex"))
+sink(modify_path2("Tables/table_s5.tex"))
 print(d_pre)
 print(d_lpre)
 print(d_mpre)
@@ -819,7 +831,3 @@ print(d_llbw)
 print(d_mlbw)
 print(d_vlbw)
 sink() 
-
-
-#quintiles figure and table (table S-10)
-source("PFAS-Code/PR/Figures/quantiles_pfas.R")

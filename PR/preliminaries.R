@@ -10,7 +10,6 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
 code_check = TRUE
 redo_GIS = FALSE
 rerun_fs_clean = FALSE
-rerun_bs = FALSE
 n_cores = 1
 ppt = 1000
 wind_dist = 10000

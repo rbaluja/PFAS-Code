@@ -21,6 +21,9 @@ source("PFAS-Code/PR/Figures/figure2.R")
 #well distance density (Figure S2a)
 source("PFAS-Code/PR/Figures/distance_density.R")
 
+#DEM figure 1
+source("PFAS-Code/PR/Figures/figure1_dem.R")
+
 if (rob_app_fig){
   source("PFAS-Code/PR/Figures/robustness_figure.R")
 }

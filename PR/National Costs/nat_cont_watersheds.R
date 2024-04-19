@@ -71,10 +71,10 @@ cont_ws = function(state, states11){
   wbt_breach_depressions(modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")))
   
   #flow accumulation
-  wbt_d8_flow_accumulation(modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National", state, "flow_acc.tif")))
+  wbt_d8_flow_accumulation(modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")))
   
   #flow direction
-  wbt_d8_pointer(paste0(modify_path("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")))
+  wbt_d8_pointer(modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")))
   
   #########
   ##Calculate watershed
@@ -87,7 +87,7 @@ cont_ws = function(state, states11){
     
     # Run snap pour points
     wbt_snap_pour_points(pour_pts = temp_point_path, 
-                         flow_accum = modify_path(paste0("Data_Verify/GIS/National", state, "flow_acc.tif")), 
+                         flow_accum = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")), 
                          output = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "pp.shp")),
                          snap_dist = 0.007569 * 5)
     
@@ -116,7 +116,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-n_cont_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+n_cont_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 n_cont_ws = n_cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index))
 save(n_cont_ws, file = modify_path("Data_Verify/RData/nat_cont_watershed.RData"))
 

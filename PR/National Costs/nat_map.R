@@ -90,4 +90,4 @@ figure_s6 = ggplot() +
         plot.margin = margin(0, 0, 0, 0)) + 
   xlab("") + ylab("")
 
-ggsave(modify_path3("Figures/National Costs/nat_map.png"), figure_s6)
+ggsave(modify_path3("Figures/National Costs/nat_map.png"), figure_s6, width = 2694, height = 2355, units = "px")

@@ -1,12 +1,6 @@
 #set working directory
 setwd("~/Dropbox/PFAS Infants")
 
-dir.create("Data_Verify/GIS/df")
-dir.create("Data_Verify/GIS/df/df_pp")
-dir.create("Data_Verify/GIS/df/df_watershed")
-dir.create("Data_Verify/GIS/df/df_watershed/Shapes")
-
-
 #load in helper functions
 source("PFAS-Code/PR/env_functions.R")
 source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
@@ -40,19 +34,24 @@ nat_redo_soil = FALSE #recalculate soil stats for national data?
 oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-code_check = FALSE
+n_cores = 1
+code_check = TRUE
+
+dir.create(modify_path("Data_Verify/GIS/df"))
+dir.create(modify_path("Data_Verify/GIS/df/df_pp"))
+dir.create(modify_path("Data_Verify/GIS/df/df_watershed"))
+dir.create(modify_path("Data_Verify/GIS/df/df_watershed/Shapes"))
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
-
-if (GIS_create == TRUE){
-  source("PFAS-Code/PR/GIS/gis_head.R")
-}
 
 #main analysis
 source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
 
 #subset df to only those used in estimation
+if (code_check){#if checking code, populate id (birth id variable)
+  df$id = 1:nrow(df)
+}
 df = df[which(!is.na(df$dist) & df$dist <= 5000), ]
 df = df %>% 
   dplyr::filter(!is.na(gestation) & 
@@ -85,7 +84,7 @@ df = df %>%
                   !is.na(wic))
 
 df$index = 1:nrow(df)
-fwrite(df %>% as_tibble() %>% dplyr::select(id, index), modify_path("Data_Verify/GIS/natality_id_ws.csv"))
+fwrite(df %>% as_tibble() %>% dplyr::select(id, index), modify_path("Data_Verify/GIS/natality_id_ws.csv")) #use this crosswalk to assign back to full df
 
 df = df %>% st_as_sf(coords = c("lng", "lat"), crs = 4326)
 
@@ -116,7 +115,7 @@ df_watershed = function(i){
   
 }
 
-pblapply(1:nrow(df), df_watershed, cl = 4)
+pblapply(1:nrow(df), df_watershed, cl = n_cores)
 
 
 files = list.files(modify_path("Data_Verify/GIS/df/df_watershed/Shapes/"), pattern = "*.shp", recursive = T, full.names = T)
@@ -133,7 +132,7 @@ df = df %>% as_tibble() %>% dplyr::select(!geometry) %>% left_join(df_ws)
 if (!code_check){
   save(df, file = paste0(natality_path, "[UA Box Health] natality_ws.RData"))  
 }else{
-  save(df, "Data_Verify_Konan/GIS/fake_natality_ws.RData")
+  save(df, file = "Data_Verify_Konan/GIS/fake_natality_ws.RData")
 }
 
 

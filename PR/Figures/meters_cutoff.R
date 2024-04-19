@@ -41,11 +41,11 @@ drop_dups = TRUE #needs to be false if calculating se on difference in theta
 drop_far_down = TRUE
 drop_far_up = FALSE
 well_fd = test_fd = FALSE #flow line distance?
-IV = TRUE
+IV = FALSE
 fa_resid = FALSE
 drop_states = FALSE
 relaxed_up = FALSE
-code_check = FALSE
+code_check = TRUE
 n_cores = 1
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
@@ -53,15 +53,26 @@ index = 1
 if (code_check == FALSE){
   load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData"))  
 }else{
-  load("Data_Verify/fake_natality.RData")
+  cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
+    dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
+    dplyr::select(site = `Site name`, lat = Latitude, 
+                  date = `Date Sampled`, lng = Longitude, industry = Industry, 
+                  sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`) %>%
+    dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>% #cut to 1000ppt by Bo meeting 4/21/23
+    st_as_sf(coords = c('lng', 'lat'), remove = F) %>% # transform into a spatial dataframe
+    st_set_crs('+proj=longlat +datum=WGS84')
+  
+  #two sites are repeated, remove them
+  cont_sites = cont_sites[which(!cont_sites$site %in% c("Former Aerotronic Site", "Gilson Road Site")), ]
+  
+  load(modify_path("Data_Verify/fake_natality.RData"))
+  
   #get covariates for birth records
   source("PFAS-Code/PR/Data/birth_covars.R")
   
+  #well location and service area data (NHDES)
+  source("PFAS-Code/PR/Data/NHDES_PWS.R")
   #match residences to water wells
-  source("PFAS-Code/PR/Data/natality_wells.R")
-  
-  #get elevation at relevant well and residence
-  source("PFAS-Code/PR/Data/elev_setup.R")
   source("PFAS-Code/PR/Data/natality_wells.R")
   
   #get elevation at relevant well and residence
@@ -69,6 +80,9 @@ if (code_check == FALSE){
 }
 #get flow accumulation at residence
 # #read in flow accumulation raster
+if (!file.exists(modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))){
+  stop("Need to run preliminaries first to get flow accumulation raster")
+}
 cont_fa = terra::rast(modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))
 df_inter_fa= df %>% as_tibble() %>%  
   dplyr::select(!geometry) %>% 
@@ -474,7 +488,7 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   scale_x_continuous(breaks = 1:10) + ylim(c(-0.02, 0.12))
 
 
-figure_s3 = wrap_plots(list(p_combined, lbw_combined, lp_combined, llbw_combined, mp_combined, vlbw_combined, vp_combined, elbw_combined), ncol = 2)
-ggsave(modify_path3("Figures/Robustness/figure_s3.png"), figure_s3)
+figure_s3 = (p_combined | lbw_combined) / (lp_combined | llbw_combined) / (mp_combined | vlbw_combined) / (vp_combined | elbw_combined)
+ggsave(modify_path3("Figures/Robustness/figure_s3.png"), figure_s3, width = 7000, height = 5000, units = "px", dpi = 300)
 
 

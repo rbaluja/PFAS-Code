@@ -12,10 +12,10 @@ placebo = function(i, df, wells){
   
 
   #create directories for watershed calculation
-  dir.create("Data_Verify/GIS/placebo")
-  dir.create("Data_Verify/GIS/placebo/cont_pp")
-  dir.create("Data_Verify/GIS/placebo/cont_watershed")
-  dir.create("Data_Verify/GIS/placebo/cont_watershed/Shapes")
+  dir.create(modify_path("Data_Verify/GIS/placebo"))
+  dir.create(modify_path("Data_Verify/GIS/placebo/cont_pp"))
+  dir.create(modify_path("Data_Verify/GIS/placebo/cont_watershed"))
+  dir.create(modify_path("Data_Verify/GIS/placebo/cont_watershed/Shapes"))
   #calculate watershed for each placebo site
   lapply(1:nrow(psites), placebo_ws, psites)
   
@@ -46,7 +46,7 @@ placebo = function(i, df, wells){
   })
   
   #delete intermediate files
-  unlink("Data_Verify/GIS/placebo/", recursive = TRUE)
+  unlink(modify_path("Data_Verify/GIS/placebo/"), recursive = TRUE)
   
   return(regr)
   

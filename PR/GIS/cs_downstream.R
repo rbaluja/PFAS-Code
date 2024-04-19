@@ -11,7 +11,7 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              units, tidycensus, ggpattern, forcats)
 
-code_check = FALSE
+code_check = TRUE
 ppt = 1000 #cutoff for primary contamination site
 
 dir.create(modify_path("Data_Verify/GIS/cs_down"))

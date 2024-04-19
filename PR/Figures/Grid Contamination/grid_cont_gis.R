@@ -7,7 +7,7 @@ dir.create(modify_path("Data_Verify/GIS/grids/grids_watershed/Shapes"))
 grid_ll_watershed = function(i){
   
   #get location of test well i
-  point_sf = grid_ll[i, "geometry"] %>% 
+  point_sf = ll[i, "geometry"] %>% 
     st_transform(32110) %>%
     st_centroid() %>% 
     st_transform(4326)
@@ -34,7 +34,7 @@ grid_ll_watershed = function(i){
   
 }
 
-pblapply(1:nrow(grid_ll), grid_ll_watershed, cl = 3)
+pblapply(1:nrow(ll), grid_ll_watershed, cl = 3)
 
 
 files = list.files(modify_path("Data_Verify/GIS/grids/grids_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)

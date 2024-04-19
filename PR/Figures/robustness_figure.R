@@ -1257,5 +1257,5 @@ figure_s4 = wrap_plots(list(preterm_robustness, lbw_robustness, lpreterm_robustn
                             llbw_robustness, mpreterm_robustness, mlbw_robustness, 
                             vpreterm_robustness, vlbw_robustness), nrow = 4)
 
-ggsave(modify_path3("Figures/Robustness/figure_s4.png"), figure_s4)
+ggsave(modify_path3("Figures/Robustness/figure_s4.png"), figure_s4, scale = 3)
 

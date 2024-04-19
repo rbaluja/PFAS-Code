@@ -30,7 +30,7 @@ inner_cbg_ws = function(i, state_cbgs, state){
   
   # Run snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
-                       flow_accum = modify_path(paste0("Data_Verify/GIS/National", state, "flow_acc.tif")), 
+                       flow_accum = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")), 
                        output = modify_path(paste0("Data_Verify/GIS/nat_births/cbg_", state_cbgs$geoid[i], "pp.shp")),
                        snap_dist = 0.007569 * 5)
   
@@ -80,7 +80,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+wells_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 save(wells_ws, file = modify_path("Data_Verify/GIS/nat_cbg_watershed.RData"))
 
 unlink(modify_path("Data_Verify/GIS/nat_births"), recursive = T)

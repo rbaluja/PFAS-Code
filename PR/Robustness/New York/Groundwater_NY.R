@@ -1,31 +1,15 @@
-#load packages
-library(tidyverse)
-library(zipcodeR)
-library(geosphere)
-library(elevatr)
-library(ggmap)
-library(httr)
-library(jsonlite)
-library(censusapi)
-library(MazamaLocationUtils)
-library(ggplot2)
-library(tigris)
-library(sp)
-library(tidycensus)
-library(readxl)
-library(lmtest)
-library(stargazer)
-library(sandwich)
-library(sf)
-library(raster)
-library(plyr)
-library(fixest)
-library(ggpubr)
-library(pbapply)
-library(modelsummary)
+#set working directory
+setwd("~/Dropbox/PFAS Infants/")
 
-#set your working directory
-setwd('/Users/robert/Dropbox/PFAS Infants/New York/')
+#load in helper functions
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
+
+#load necessary packages
+load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
+             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus, ggpattern, forcats, zipcodeR)
 #set options
 all_wells = T
 population_weighted = T
@@ -36,10 +20,12 @@ rerun_epa_well = F
 rerun_weather = F
 rerun_pollution = F
 rerun_birthdata = F
+code_check = F
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 
 
 #read in the water measurement data
-gw_level = read.delim('Data/Groundwater/gwlevels_ny')
+gw_level = read.delim('New York/Data/Groundwater/gwlevels_ny')
 gw_level$sl_lev_va = as.numeric(gw_level$sl_lev_va)
 gw_level = gw_level %>% tidyr::drop_na(sl_lev_va) #gets rid of missing data
 gw_level = gw_level %>% 
@@ -57,7 +43,7 @@ if (all_wells == F){
 }
 
 #load latitude/longitude information for well id
-gw_loc = read_delim('Data/Groundwater/gwlevels_tabbed', 
+gw_loc = read_delim('New York/Data/Groundwater/gwlevels_tabbed', 
                     delim = "\t", escape_double = FALSE, 
                     trim_ws = TRUE)
 gw_loc = gw_loc[-1, ] #drop first row
@@ -74,7 +60,7 @@ gw = gw_loc %>%
 
 #load and combine vitality data 2010-1018
 if (rerun_birthdata == T){
-  gw_ny = read_csv('Data/Births/ny_birth10-12.csv', 
+  gw_ny = read_csv('New York/Data/Births/ny_birth10-12.csv', 
                    col_types = cols(...1 = col_skip(), `Out of Wedlock` = col_skip(), 
                                     `Medicaid or Self-pay` = col_skip(),
                                     `Infant Deaths Rate` = col_skip(), 
@@ -83,7 +69,7 @@ if (rerun_birthdata == T){
   colnames(gw_ny) = c('zip', 'total_birth', 'percent_premature', 'percent_all_low','percent_late_care', 'infant_deaths', 'neonatal_deaths')
   gw_ny$year = '2010-2012'
   
-  df = read_csv('Data/Births/ny_birth13-15.csv', 
+  df = read_csv('New York/Data/Births/ny_birth13-15.csv', 
                 col_types = cols(...1 = col_skip(), 
                                  `Medicaid or Self-pay` = col_skip(), 
                                  `Infant Deaths Rate` = col_skip(), 
@@ -95,7 +81,7 @@ if (rerun_birthdata == T){
   gw_ny = rbind(gw_ny, df)
   
   
-  df = read_csv('Data/Births/ny_birth16-18.csv', 
+  df = read_csv('New York/Data/Births/ny_birth16-18.csv', 
                 col_types = cols(...1 = col_skip(),  
                                  `Medicaid or Self-pay` = col_skip(), 
                                  `Infant Deaths Rate` = col_skip(), 
@@ -106,7 +92,7 @@ if (rerun_birthdata == T){
   
   gw_ny = rbind(gw_ny, df)
 }else{
-  gw_ny = read.csv('Data/Births/ny_with_nearest_well_pop_full_run.csv')
+  gw_ny = read.csv('New York/Data/Births/ny_with_nearest_well_pop_full_run.csv')
   gw_ny = subset(gw_ny, select = - X)
 }
 
@@ -160,7 +146,7 @@ if(rerun_birthdata == T){
     gw_ny$lat[is.na(gw_ny$lat)] = 43.800
     gw_ny$lng[is.na(gw_ny$lng)] = -76.12
   }else{
-    pop_weighted_location = read_csv('Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv') %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
+    pop_weighted_location = read_csv('New York/Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv') %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
       dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PREF_STATE_1221, lng = LGT, lat = LAT) %>% 
       dplyr::filter(state == "NY") %>% 
       dplyr::select(!state)
@@ -175,7 +161,7 @@ if(rerun_birthdata == T){
 
 
 
-gw_ny_contaminated = read_excel('/Users/robert/Dropbox/PFAS Infants/US Data/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+gw_ny_contaminated = read_excel("New York/Data/Pollution/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx", sheet = 2) %>% 
   dplyr::filter(State == "New York" & `Matrix Type` == "Groundwater") %>% 
   dplyr::select(name = `Site name`, 
                 lng = Longitude,
@@ -205,12 +191,7 @@ e1 = raster::extract(ny_dem, b_ll)
 gw_ny$elevation = e1
   
 
-#water level algorithms (these take forever to run)
-
-# if nearest measurement is within 1 mile
-#   water table depth = nearest measurement depth
-# else
-#   water table depth = weighted average of nearby measurements
+#water level algorithms
 
 gw_ny = gw_ny %>% 
   st_as_sf(coords = c("lng", "lat"), remove = F, crs = 4326) %>% 
@@ -259,7 +240,7 @@ gw_ny_contaminated = dplyr::bind_rows(pblapply(1:nrow(gw_ny_contaminated), gw_as
 
 
 #assigning ZCTA to dataset
-ZiptoZcta_Crosswalk_2021 = read_excel('Data/Supplemental/ZiptoZcta_Crosswalk_2021.xlsx', #these are the 2021 codes. Should instead use earlier version. These data come from udsmapper.org
+ZiptoZcta_Crosswalk_2021 = read_excel('New York/Data/Supplemental/ZiptoZcta_Crosswalk_2021.xlsx', #These data come from udsmapper.org
                                       col_types = c("text", "skip", "text", 
                                                     "skip", "text", "skip")) %>% 
   dplyr::select(zip = ZIP_CODE, 
@@ -272,7 +253,7 @@ gw_ny = gw_ny %>%
 #####################################
 ####Bringing in Demographic Data#####
 #####################################
-census_api_key("9f59b9fec9cffa85b5740734df3d81e7b617cf82") #probably shouldn't share this...
+census_api_key(census_key) #probably shouldn't share this...
 
 #race
 race_variables = c('total' = 'B02001_001', 'white' = 'B02001_002',
@@ -285,7 +266,7 @@ race = get_acs(geography =  'zcta',
                year = 2013,
                state = 'NY')
 race = subset(race, select = -moe)
-race = spread(race, variable, estimate)
+race = tidyr::spread(race, variable, estimate)
 
 #calculate demographic data
 race$percent_white = race$white/race$total
@@ -307,7 +288,7 @@ demographic = get_acs(geography =  'zcta',
                       state = 'NY')
 
 demographic = subset(demographic, select = -moe)
-demographic = spread(demographic, variable, estimate)
+demographic = tidyr::spread(demographic, variable, estimate)
 
 demographic$percent_employed = demographic$employed/demographic$labor_force
 demographic[is.na(demographic)] = NA
@@ -326,7 +307,7 @@ insurance= get_acs(geography =  'zcta',
                    year = 2013,
                    state = 'NY')
 insurance = subset(insurance, select = -moe)
-insurance = spread(insurance, variable, estimate)
+insurance = tidyr::spread(insurance, variable, estimate)
 
 insurance$percent_insured_u18 = insurance$under18_one/insurance$total_under18 + insurance$under18_two/insurance$total_under18
 insurance$percent_insured_1834 = insurance$`1834_one`/insurance$total_1834 + insurance$`1834_two`/insurance$total_1834
@@ -345,7 +326,7 @@ industry_data = get_acs(
   year = 2013,
   state = 'NY')
 industry_data = subset(industry_data, select = -c(moe, NAME))
-industry_data = spread(industry_data, variable, estimate)
+industry_data = tidyr::spread(industry_data, variable, estimate)
 industry_data$percent_manufacturing = industry_data$manufacturing/industry_data$total 
 industry_data$percent_farming = industry_data$farming/industry_data$total
 
@@ -380,13 +361,13 @@ gw_ny = gw_ny %>%
 if (rerun_pollution == T){
   ny_shapefile = zctas(year = 2010, state = 'NY')
   ny_shapefile$geometry = st_transform(ny_shapefile$geometry, crs = '+proj=longlat +datum=WGS84')
-  space_pm25 = raster('Pollution/2010.tif')
+  space_pm25 = raster('New York/Data/Pollution/2010.tif')
   space_pm25.value = raster::extract(space_pm25, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
   d = as.data.frame(space_pm25.value)
   d = subset(d, select = c(ZCTA5CE10, X2010))
   colnames(d) = c('zcta', 'mean_pm25_2010')
   for (i in c('2011', '2012', '2013', '2014', '2015', '2016')){
-    path = paste0('Pollution/' , i, '.tif')
+    path = paste0('New York/Data/Pollution/' , i, '.tif')
     space_pm25_i = raster(path)
     space_pm25_i.value = raster::extract(space_pm25_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
     d_i = as.data.frame(space_pm25_i.value)
@@ -395,9 +376,9 @@ if (rerun_pollution == T){
     d = merge(d, d_i, by = 'zcta')
   }
   pollution = d
-  write.csv(pollution, 'Pollution/ny_pop_weighted_pm25.csv')
+  write.csv(pollution, 'New York/Data/Pollution/ny_pop_weighted_pm25.csv')
 }else{
-  pollution = read.csv('Data/Pollution/ny_pop_weighted_pm25.csv')
+  pollution = read.csv('New York/Data/Pollution/ny_pop_weighted_pm25.csv')
   pollution = pollution[, -1] #removes X
 }
 pollution$mean_pm25_12 = rowMeans(pollution[, c(2, 3, 4)])
@@ -409,13 +390,13 @@ gw_ny$mean_pm25 = ifelse(gw_ny$year == "2010-2012", gw_ny$mean_pm25_12, ifelse(g
 
 #bringing in temperature data
 if (rerun_weather == T){
-  weather = raster('Temperature/PRISM_tmean_stable_4kmM3_2010_bil.bil')
+  weather = raster('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_2010_bil.bil')
   weather.value = raster::extract(weather, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
   d = as.data.frame(weather.value)
   d = d[, c(2, ncol(d))]
   colnames(d) = c('zcta', 'temp_2010') 
   for (i in c('2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018')){
-    path = paste0('Temperature/PRISM_tmean_stable_4kmM3_' , i, '_bil.bil')
+    path = paste0('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_' , i, '_bil.bil')
     weather_i = raster(path)
     weather_i.value = raster::extract(weather_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
     d_i = as.data.frame(weather_i.value)
@@ -424,9 +405,9 @@ if (rerun_weather == T){
     d = merge(d, d_i, by = 'zcta')
   }
   weather = d
-  write.csv(weather,  'Temperature/ny_pop_weighted_temp.csv')
+  write.csv(weather,  'New York/Data/Temperature/ny_pop_weighted_temp.csv')
 }else{
-  weather = read.csv('Data/Temperature/ny_pop_weighted_temp.csv')
+  weather = read.csv('New York/Data/Temperature/ny_pop_weighted_temp.csv')
   weather = weather[, -1]
 }
 weather$mean_temp_13 = rowMeans(weather[, c(2, 3, 4)])
@@ -520,35 +501,38 @@ gw_ny$treatment = as.factor(gw_ny$treatment)
 
 
 #regressions
-reg_prim1 = feols(percent_premature  ~ 
+reg_prim1 = fixest::feols(percent_premature  ~ 
                     treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg_prim1)
 
-reg_prim2 = feols(percent_all_low  ~ 
+reg_prim2 = fixest::feols(percent_all_low  ~ 
                     treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg_prim2)
 
 
-reg1_c = feols(percent_premature  ~ 
+reg1_c = fixest::feols(percent_premature  ~ 
                     treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg1_c)
 
-reg2_c = feols(percent_all_low  ~ 
+reg2_c = fixest::feols(percent_all_low  ~ 
                     treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg2_c)
 
-modelsummary::modelsummary(list(reg_prim1, reg1_c, reg_prim2, reg2_c), 
-                           stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+ny_table = modelsummary::modelsummary(list(reg_prim1, reg1_c, reg_prim2, reg2_c), 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #one-sided stars 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("treatment1", "treatment1:I(contaminated_amount/10^3)"),
                            gof_map = c("nobs", "r.squared"), 
                            output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
+  kable_styling(fixed_thead = T, position = "center")
+sink(modify_path2("Tables/table_NY.tex"))
+print(ny_table)
+sink()

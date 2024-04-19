@@ -111,7 +111,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9 
   ) +
-  scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
+  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
     "Annual Additional Preterm Births",
     sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
@@ -174,7 +174,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9 
   ) +
-  scale_fill_manual(values=c("↑ Births" = "blue", "Cost" = "red")) +
+  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
     "Annual Additional Low-Birthweight Births",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
@@ -209,4 +209,4 @@ lbw_cost = lbw_cost + geom_text(aes(label=se,
 
 p_costs = p_costs + guides(pattern = "none")
 figure_3 = p_costs / lbw_cost
-ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale = 2, device = "png")
+ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 10416, height = 11291, device = "png", units = "px")

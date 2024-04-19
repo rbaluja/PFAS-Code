@@ -28,7 +28,7 @@ n_cores = 1
 
 
 #clean raw births data
-if (nb_cbg == TRUE){
+if (nb_cbg){
   source("PFAS-Code/PR/National Costs/nat_births.R") 
   births = cbg_births
   rm(cbg_births)
@@ -37,7 +37,7 @@ if (nb_cbg == TRUE){
 }
 
 #get watershed for each cont site
-if (nat_run_cont_ws == TRUE){
+if (nat_run_cont_ws){
   source("PFAS-Code/PR/National Costs/nat_watersheds.R")  
 }else{
   #load in watersheds
@@ -47,7 +47,7 @@ if (nat_run_cont_ws == TRUE){
 }
 
 #assign cbg to sites
-if (nat_reassn == TRUE){
+if (nat_reassn){
   source("PFAS-Code/PR/National Costs/nat_assn.R")
 }else{
   load(modify_path("Data_Verify/National/births_sites_assigned5.RData"))

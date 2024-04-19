@@ -74,4 +74,4 @@ figure1_sites = nh_map_plot +
         legend.box.spacing = unit(-150, "pt"), 
         plot.margin = unit(c(0, -2, 0, -2), "cm"))  + 
   labs(fill = "Predicted PFAS") 
-ggsave(modify_path3("Figures/Figure1/figure1_sites.png"), figure1_sites,  limitsize = F, scale = 2)
+ggsave(modify_path3("Figures/Figure1/figure1_sites2.png"), figure1_sites,  limitsize = F, scale = 2)

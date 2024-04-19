@@ -1,5 +1,5 @@
 #read in birth data (this is the raw file from CDC Wonder)
-births = fread(modify_path("Data_Verify/National/nat_births10.txt", sep = "\t")) #only for counties with at least 100,000 people
+births = fread(modify_path("Data_Verify/National/nat_births10.txt"), sep = "\t") #only for counties with at least 100,000 people
 
 births =births %>% 
   dplyr::select(!Notes) %>% 

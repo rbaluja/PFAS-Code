@@ -1,3 +1,48 @@
+#set working directory
+setwd("~/Dropbox/PFAS Infants")
+
+#load in helper functions
+source("PFAS-Code/PR/env_functions.R")
+source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
+
+#load necessary packages
+load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
+             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
+             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             units, tidycensus, ggpattern, forcats)
+options(modelsummary_format_numeric_latex = "mathmode")
+options(tigris_use_cache = TRUE)
+
+#set up environment
+natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
+meters = 5000 #buffer for base spec
+wind_dist= dist_allow = 10000 #wind distance cutoff
+ppt = 1000 #cutoff for primary contamination site
+run_cleaning = FALSE #clean natality data?
+match_wells = FALSE #Re match natality data to wells?
+domestic = FALSE #include individuals outside of PWS boundaries?
+drop_far_down = TRUE
+drop_far_up = FALSE
+IV = TRUE #Run IV spec?
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+tables = TRUE
+figures = TRUE
+code_check = FALSE
+n_cores = 1
+rob_app_fig = FALSE
+
+#data cleaning
+source("PFAS-Code/PR/Data/data_head.R")
+
+#main analysis
+source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
+
+source("PFAS-Code/PR/Tables/bs_functions.R")
+
+
+
 #set up quantiles and pfas in ppb (pred_pfas_level)
 df$pred_pfas_level = sinh(df$pred_pfas)/1000    
 df_nn = df[which(!is.na(df$pred_pfas)), ]
@@ -386,11 +431,11 @@ figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave(modify_path("Figures/IV/figure_s5.png"), figure_s5,  width = 25, height = 20)
+ggsave(modify_path3("Figures/IV/figure_s5.png"), figure_s5,  width = 25, height = 20)
 
 
 #Copy these to paste into table S-10
-sink(modify_path("Tables/table_s10.tex"))
+sink(modify_path2("Tables/table_s10.tex"))
 print("Q2 preterm\n")
 print(round(as.numeric(reg_data[2, c("pre_coef", "lpre_coef", "mpre_coef", "vpre_coef")]), digits = 4), breaks = " & ")
 print(round(as.numeric(reg_data[2, c("pre_se", "lpre_se", "mpre_se", "vpre_se")]), digits = 4), breaks = " & ")
@@ -429,7 +474,6 @@ print("\n")
 print("Q5 lbw\n")
 print(round(as.numeric(reg_data[5, c("lbw_coef", "llbw_coef", "mlbw_coef", "vlbw_coef")]), digits = 4), breaks = " & ")
 print(round(as.numeric(reg_data[5, c("lbw_se", "llbw_se", "mlbw_se", "vlbw_se")]), digits = 4), breaks = " & ")
-sink()
 
 #to get right stars
 for (ot in c("pre", "lpre", "mpre", "vpre", "lbw", "llbw", "mlbw", "vlbw")){
@@ -447,3 +491,4 @@ for (ot in c("pre", "lpre", "mpre", "vpre", "lbw", "llbw", "mlbw", "vlbw")){
     }
   }
 }
+sink()

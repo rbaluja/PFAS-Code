@@ -37,7 +37,8 @@ oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 rerun_placebos = TRUE
-code_check = FALSE
+code_check = TRUE
+n_cores = 1
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -47,7 +48,7 @@ nh_shape = tigris::states() %>%
   st_transform(32110)
 
 #read in placebo functions
-source("PFAS-Code/PR/Robustness/Placebo/placebo_functions.R")
+source("PFAS-Code/PR/Placebo/placebo_functions.R")
 
 if (rerun_placebos == TRUE){
   placebos_1 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
@@ -102,11 +103,11 @@ if (rerun_placebos == TRUE){
     }
   }
   
-  length(which(is.na(plac$preterm)))
+  n_na = length(which(is.na(plac$preterm)))
   plac = plac %>%
     tidyr::drop_na()
   #15 missing obs, fill those in
-  plac_na = dplyr::bind_rows(pblapply(1:15, placebo, df, wells))
+  plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
   
   plac = rbind(plac, plac_na)
   save(plac, file = modify_path("Data_Verify/RData/placebos.RData") )

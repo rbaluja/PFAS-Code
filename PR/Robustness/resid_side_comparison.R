@@ -32,7 +32,8 @@ drop_states = FALSE
 GIS_create = FALSE
 rerun_fs_clean = FALSE
 relaxed_up = FALSE
-code_check = FALSE
+code_check = TRUE
+n_cores = 1
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")
@@ -41,7 +42,11 @@ if (!code_check){
   load(paste0(natality_path ,"/[UA Box Health] natality_ws.RData"))
 }else{
   load("Data_Verify_Konan/GIS/fake_natality_ws.RData")
+  #run binary spec
+  source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
 }
+
+
 
 #read in and set cont site watersheds 
 load(modify_path("Data_Verify/GIS/cont_watershed.RData"))

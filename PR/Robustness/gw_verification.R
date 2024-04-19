@@ -145,7 +145,7 @@ x = rep(0, length(v))
 for (i in 1:length(v)){
   x[i] = v[[i]]$coefficients["cs_ws"]
 }
-mean(x)
+mean(x) 
 median(x)
 
-sum(x > 0)/length(x)
+sum(x > 0)/length(x) #percent of sites with positive coefficient on catchment indicator
