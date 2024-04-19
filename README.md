@@ -145,7 +145,6 @@
 3. **PR/Tables/tables.R**
    * This file needs the bootstrapped standard errors to have been calculated to run, as well as the robustness checks (drop_states, relaxed_up in main_analy.R and PR/Robustness/resid_side_comparison.R). It writes to file each of the tables used in the main text. The following files are ran within this file:
    * PFAS-Code/PR/Robustness/oster_selection.R
-   * PFAS-Code/PR/Figures/quantiles_pfas.R
 
 4. **PR/Figures/figures_head.R**
    * This file creates all figures in the main text and SI, outside of the national cost ones (see last section of README for prerequisites. 
@@ -196,9 +195,11 @@ Note: These should each be run with a clean environment
 * **PR/GIS/cs_downstream.R**
   * This directly calculates the necessary GIS files and creates Figure S-1
 * **PR/Figures/pop_matching_cutoff.R**
-  * This creates Figure s-2b
+  * This creates Figure S-2b
 * **PR/Figures/meters_cutoff.R**
   * This creates Figure S-3
+* **PFAS-Code/PR/Figures/quantiles_pfas.R**
+  * This creates Figure Figure S-5 and Table S-12
 
 
 
