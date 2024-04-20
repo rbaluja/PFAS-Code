@@ -18,6 +18,12 @@ if (!file.exists(modify_path("Data_Verify/Robustness/side_robustness.RData"))){
 }
 source("PFAS-Code/PR/Figures/figure2.R")
 
+#IV figure
+if (!file.exists(modify_path("Data_Verify/RData/linear_iv_se.RData"))) {
+  stop("Please run bootstrap_iv.R to generate the standard errors.")
+}
+source("PFAS-Code/PR/Figures/iv_figure.R")
+
 #well distance density (Figure S2a)
 source("PFAS-Code/PR/Figures/distance_density.R")
 
