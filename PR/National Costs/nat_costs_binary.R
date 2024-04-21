@@ -34,12 +34,12 @@ mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
 #social cost figure
 data = data.frame(
-  Weeks = factor(rep(c("Very", "Moderately", "Slightly"), 2), 
-                 levels = c("Very", "Moderately", "Slightly")),
-  Value = c(round(vpre_births), round(mpre_births), round(lpre_births), round(vpre_cost, digits = 2), round(mpre_cost, digits = 2), round(lpre_cost, digits = 2)), 
+  Weeks = factor(rep(c("Slightly", "Moderately", "Very"), 2), 
+                 levels = c("Slightly", "Moderately", "Very")),
+  Value = c(round(lpre_births), round(mpre_births), round(vpre_births), round(lpre_cost, digits = 2), round(mpre_cost, digits = 2), round(vpre_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
-  se = c(paste0("(", round(vpre_births_se), ")"), paste0("(", round(mpre_births_se), ")"), paste0("(", round(lpre_births_se), ")"), 
-         paste0("(", round(vpre_cost_se, digits = 2), ")"), paste0("(", round(mpre_cost_se, digits = 2), ")"), paste0("(", round(lpre_cost_se, digits = 2), ")"))
+  se = c(paste0("(", round(lpre_births_se), ")"), paste0("(", round(mpre_births_se), ")"), paste0("(", round(vpre_births_se), ")"), 
+         paste0("(", round(lpre_cost_se, digits = 2), ")"), paste0("(", round(mpre_cost_se, digits = 2), ")"), paste0("(", round(vpre_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor for right axis values
@@ -48,9 +48,8 @@ scale_factor = 500/1
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data$Weeks = factor(data$Weeks, 
-                    levels = c("Very", "Moderately", "Slightly"),
-                    labels = c("Very", "Moderately", "Slightly"))
-
+                    levels = c("Slightly", "Moderately", "Very"),
+                    labels = c("Slightly", "Moderately", "Very"))
 
 # Updated ggplot code
 p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
@@ -102,12 +101,12 @@ p_costs
 
 #Birthweight
 data_bw = data.frame(
-  Weeks = factor(rep(c("Very", "Moderately"), 2), 
-                 levels = c("Very", "Moderately")),
-  Value = c(round(vlbw_births), round(mlbw_births), round(vlbw_cost, digits = 2), round(mlbw_cost, digits = 2)), 
+  Weeks = factor(rep(c("Moderately", "Very"), 2), 
+                 levels = c("Moderately", "Very")),
+  Value = c(round(mlbw_births), round(vlbw_births), round(mlbw_cost, digits = 2), round(vlbw_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Right", "Right")),
-  se = c(paste0("(", round(vlbw_births_se), ")"), paste0("(", round(mlbw_births_se), ")"), 
-         paste0("(", round(vlbw_cost_se, digits = 2), ")"), paste0("(", round(mlbw_cost_se, digits = 2), ")"))
+  se = c(paste0("(", round(mlbw_births_se), ")"), paste0("(", round(vlbw_births_se), ")"), 
+         paste0("(", round(mlbw_cost_se, digits = 2), ")"), paste0("(", round(vlbw_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor for right axis values
@@ -115,8 +114,9 @@ scale_factor_bw = 500/1
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data_bw$Weeks = factor(data_bw$Weeks, 
-                       levels = c("Very", "Moderately"),
-                       labels = c("Very", "Moderately"))
+                       levels = c("Moderately", "Very"),
+                       labels = c("Moderately", "Very"))
+
 
 
 # Updated ggplot code

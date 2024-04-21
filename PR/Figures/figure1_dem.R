@@ -13,9 +13,18 @@ dem = dem %>%
 
 colnames(dem) = c("x", "y", "elev")
 
-plot_data = data.frame(x = c(-71.35, -71.25, -71.4), y = c(44.28, 44.3, 44.26), label = c("C", "\\omega_1", "\\omega_2"))
+plot_data = data.frame(x = c(-71.35, -71.25, -71.4, -71.32), y = c(44.28, 44.3, 44.26, 44.254), label = c("C", "\\omega_1", "\\omega_2", "\\omega_3"))
+#read in calculated watersheds for plot_data points
+if (!file.exists(modify_path("Data_Verify/GIS/f1_watershed.RData"))){
+  stop("Data not found. Please run PR/GIS/figure1_watershed.R first.")
+}
+load(modify_path("Data_Verify/GIS/f1_watershed.RData"))
+f1_ws = f1_ws %>% 
+  st_transform(4326) 
+f1_ws$site = c("C", "omega1", "omega2")
+f1_ws = f1_ws %>% purrr::map_df(rev) %>% st_as_sf()
 
-nh_map_plot + 
+f1 = nh_map_plot + 
   geom_raster(data = dem, aes(x = x, y = y, fill = elev)) +
   scale_fill_viridis_c(guide = guide_colorbar(barwidth = 25, barheight = 1,
                                               title = "",
@@ -26,24 +35,32 @@ nh_map_plot +
                        labels = c("0", "500m", "1000m", "1500m")) +
   theme(legend.position = "bottom") +
   ylim(44.1, 44.4) + xlim(-71.5, -71.1) +
-  annotate("point", x = -71.35, y = 44.28, color = "white", size = 4) +
-  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -0.5, color = "white", size = 10, family = "arial") +
-  annotate("point", x = -71.25, y = 44.3, color = "white", size = 4) +
-  annotate("text", x = -71.25, y = 44.3, label = "ω[1]", parse = TRUE, vjust = 1.5, color = "white", size = 10, family = "arial") +
+  annotate("point", x = -71.35, y = 44.28, color = "black", size = 4) +
+  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1, color = "black", size = 10, family = "arial") +
+  annotate("point", x = -71.25, y = 44.3, color = "cornsilk3", size = 4) +
+  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -0.5, color = "cornsilk3", size = 10, family = "arial") +
   annotate("point", x = -71.4, y = 44.26, color = "white", size = 4) +
-  annotate("text", x = -71.4, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 1.5, color = "white", size = 10) + 
-  geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
-               arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
-               color = "white", size = 1, lineend = "round") + 
-  geom_segment(aes(x = -71.3, y = 44.27, xend = -71.36, yend = 44.26),
-               arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
-               color = "white", size = 1, lineend = "round") + 
+  annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
+  annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 3) +
+  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -0.4, color = "firebrick4", size = 10) + 
+  # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
+  #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
+  #              color = "white", size = 1, lineend = "round") +
+  # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.36, yend = 44.26),
+  #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
+  #              color = "white", size = 1, lineend = "round") +
   theme_void() +
   theme(legend.position = "bottom",  # Add legend below the plot
         legend.key = element_blank(),  # Optional: remove the legend key background
         legend.title = element_blank(),  # Optional: style the legend title
-        legend.text = element_text(size = 20), 
-        axis.text = element_blank(), 
+        legend.text = element_text(size = 20),
+        axis.text = element_blank(),
         axis.title = element_blank())
 
-ggsave(modify_path3("Figures/Figure1/figure1_dem.png"))
+#add geometry from f1_ws to f1
+f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), alpha = 0, fill = "transparent", linewidth = 1) +
+  scale_color_manual(values = c("C" = "black", "omega1" = "cornsilk3", "omega2" = "white"), guide = FALSE)
+  
+
+
+ggsave(modify_path3("Figures/Figure1/figure1_dem.png"), scale = 1.25)
