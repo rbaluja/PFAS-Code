@@ -36,13 +36,13 @@ f1 = nh_map_plot +
   theme(legend.position = "bottom") +
   ylim(44.1, 44.4) + xlim(-71.5, -71.1) +
   annotate("point", x = -71.35, y = 44.28, color = "black", size = 4) +
-  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1, color = "black", size = 10, family = "arial") +
+  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1.5, color = "black", size = 10, family = "arial") +
   annotate("point", x = -71.25, y = 44.3, color = "cornsilk3", size = 4) +
-  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -0.5, color = "cornsilk3", size = 10, family = "arial") +
+  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -0.7, color = "cornsilk3", size = 10, family = "arial") +
   annotate("point", x = -71.4, y = 44.26, color = "white", size = 4) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
   annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 3) +
-  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -0.4, color = "firebrick4", size = 10) + 
+  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -0.6, color = "firebrick4", size = 10) + 
   # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
   #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
   #              color = "white", size = 1, lineend = "round") +

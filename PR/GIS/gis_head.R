@@ -18,5 +18,5 @@ if (!file.exists(modify_path("Data_Verify/GIS/cont_fa_sum_buffed.tiff"))| redo_G
 
 if (!file.exists(modify_path("Data_Verify/GIS/f1_watershed.RData"))| redo_GIS){
   #calculate watersheds for figure 1
-  source("PFAS-Code/PR/GIS/f1_watershed.R") 
+  source("PFAS-Code/PR/GIS/figure1_watershed.R") 
 }

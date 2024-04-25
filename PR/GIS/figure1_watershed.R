@@ -4,7 +4,6 @@ dir.create(modify_path("Data_Verify/GIS/figure1/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed/Shapes"))
 
-#Create a spatial object with three sets of xy coordinates
 f1 = data.frame(x = c(-71.35, -71.25, -71.4), y = c(44.28, 44.3, 44.26)) %>% 
   st_as_sf(coords = c("x", "y"), crs = 4326)
 
