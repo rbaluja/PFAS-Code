@@ -21,12 +21,14 @@ if (!file.exists(modify_path("Data_Verify/GIS/f1_watershed.RData"))){
 load(modify_path("Data_Verify/GIS/f1_watershed.RData"))
 f1_ws = f1_ws %>% 
   st_transform(4326) 
-f1_ws$site = c("C", "omega1", "omega2")
+f1_ws$site = c("C", "omega1", "omega2", "omega3")
+f1_ws = f1_ws[c(1, 4, 3, 2), ]
+
 f1_ws = f1_ws %>% purrr::map_df(rev) %>% st_as_sf()
 
 f1 = nh_map_plot + 
   geom_raster(data = dem, aes(x = x, y = y, fill = elev)) +
-  scale_fill_viridis_c(guide = guide_colorbar(barwidth = 25, barheight = 1,
+  scale_fill_viridis_c(guide = guide_colorbar(barwidth = 30, barheight = 1,
                                               title = "",
                                               title.hjust = 0.5,
                                               label.hjust = .5,
@@ -34,15 +36,15 @@ f1 = nh_map_plot +
                        breaks = c(0.0, 500, 1000, 1500),
                        labels = c("0", "500m", "1000m", "1500m")) +
   theme(legend.position = "bottom") +
-  ylim(44.1, 44.4) + xlim(-71.5, -71.1) +
+  ylim(44.2, 44.35) + xlim(-71.45, -71.18) +
   annotate("point", x = -71.35, y = 44.28, color = "black", size = 4) +
-  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1.5, color = "black", size = 10, family = "arial") +
-  annotate("point", x = -71.25, y = 44.3, color = "cornsilk3", size = 4) +
-  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -0.7, color = "cornsilk3", size = 10, family = "arial") +
+  #annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1.5, color = "black", size = 10, family = "arial") +
+  annotate("point", x = -71.25, y = 44.3, color = "bisque3", size = 4) +
+  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = 1.4, color = "bisque3", size = 10, family = "arial") +
   annotate("point", x = -71.4, y = 44.26, color = "white", size = 4) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
   annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 3) +
-  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -0.6, color = "firebrick4", size = 10) + 
+  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -1.3, color = "firebrick4", size = 10) + 
   # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
   #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
   #              color = "white", size = 1, lineend = "round") +
@@ -58,8 +60,9 @@ f1 = nh_map_plot +
         axis.title = element_blank())
 
 #add geometry from f1_ws to f1
-f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), alpha = 0, fill = "transparent", linewidth = 1) +
-  scale_color_manual(values = c("C" = "black", "omega1" = "cornsilk3", "omega2" = "white"), guide = FALSE)
+f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
+             alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 0.5, 1)) +
+  scale_color_manual(values = c("C" = "black", "omega1" = "bisque3", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
   
 
 

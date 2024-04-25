@@ -4,7 +4,7 @@ dir.create(modify_path("Data_Verify/GIS/figure1/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed/Shapes"))
 
-f1 = data.frame(x = c(-71.35, -71.25, -71.4), y = c(44.28, 44.3, 44.26)) %>% 
+f1 = data.frame(x = c(-71.35, -71.25, -71.4, -71.32), y = c(44.28, 44.3, 44.26, 44.254)) %>% 
   st_as_sf(coords = c("x", "y"), crs = 4326)
 
 f1_watershed = function(i){
@@ -33,7 +33,7 @@ f1_watershed = function(i){
   
 }
 #apply watershed function over three points
-pblapply(1:3, f1_watershed, cl = 1)
+pblapply(1:4, f1_watershed, cl = 1)
 
 files = list.files(modify_path("Data_Verify/GIS/figure1/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
 
