@@ -23,4 +23,4 @@ cbg_ll = cbg_ll %>%
                          ifelse(nchar(county) == 2, paste0("0", county), county)))
 cbg_ll$county = paste0(cbg_ll$state, cbg_ll$county)
 
-fwrite(cbg_ll, "New Hampshire/Data/Supplemental/cbg_pop.csv")
+fwrite(cbg_ll, modify_path("Data_Verify/National/cbg_pop.csv"))
