@@ -34,3 +34,12 @@ if (rob_app_fig){
   source("PFAS-Code/PR/Figures/robustness_figure.R")
 }
 
+#Upgradient version of figure 2
+source("PFAS-Code/PR/Figures/figure2_upgradient.R")
+
+#stillborn version of figure 2
+source("PFAS-Code/PR/Figures/figure2_stillborn.R")
+
+#low birthweight amongst full term version of figure 2
+source("PFAS-Code/PR/Figures/figure2_lbw_ft.R")
+

@@ -80,6 +80,12 @@ bs$add_mlbw_se = bs$pred_pfas * bs$births *0.0005
 mlbw_births_se = sum(bs$add_mlbw_se)
 mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
+#lbw 
+bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
+lbw_births = sum(bs$add_lbw)
+bs$add_lbw_se = bs$pred_pfas * bs$births * 0.002
+lbw_births_se = sum(bs$add_lbw_se)
+
 
 #social cost figure
 data = data.frame(
@@ -91,8 +97,10 @@ data = data.frame(
          paste0("(", round(lpre_cost_se, digits = 2), ")"), paste0("(", round(mpre_cost_se, digits = 2), ")"), paste0("(", round(vpre_cost_se, digits = 2), ")"))
 )
 
+
+
 # Scaling factor for right axis values
-scale_factor = 3000/8
+scale_factor = 2000/6
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data$Weeks = factor(data$Weeks, 
@@ -113,11 +121,12 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
-    "Annual Additional Preterm Births",
-    sec.axis = sec_axis(~./scale_factor, name="Annual Cost ($ Billion)"), 
-    limits = c(NA, 3000) 
+    "Annual Additional Births",
+    sec.axis = sec_axis(~./scale_factor, name=""), 
+    limits = c(NA, 2000) 
   )  +
   theme_minimal() + 
+  ggtitle("Preterm Births") + 
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
@@ -125,19 +134,20 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.text.y = element_text(size = 60), 
         legend.text = element_text(size = 60), 
         axis.text.x = element_text(size = 60),
-        plot.title = element_text(hjust = 0.5, size = 22), 
+        plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
-        panel.grid.minor = element_line(color = "grey60", size = 0.25)) +
+        panel.grid.minor = element_line(color = "grey60", size = 0.25), 
+        axis.text.y.right = element_blank()) +
   guides(alpha = "none", fill = "none", pattern = "none") +
-  scale_pattern_manual(values = c("none", "stripe"))
+  scale_pattern_manual(values = c("none", "stripe")) 
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=2), 
-                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 200),
+                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 120),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
                               size=20)
 p_costs = p_costs + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 80),
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 60),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
@@ -146,21 +156,21 @@ p_costs = p_costs + geom_text(aes(label=se,
 
 #Birthweight
 data_bw = data.frame(
-  Weeks = factor(rep(c("Moderately", "Very"), 2), 
-                 levels = c("Moderately", "Very")),
-  Value = c(round(mlbw_births), round(vlbw_births), round(mlbw_cost, digits = 2), round(vlbw_cost, digits = 2)), 
-  Axis = factor(c("Left", "Left", "Right", "Right")),
-  se = c(paste0("(", round(mlbw_births_se), ")"), paste0("(", round(vlbw_births_se), ")"), 
-         paste0("(", round(mlbw_cost_se, digits = 2), ")"), paste0("(", round(vlbw_cost_se, digits = 2), ")"))
+  Weeks = factor(rep(c("Slightly", "Moderately", "Very"), 2), 
+                 levels = c("Slightly", "Moderately", "Very")),
+  Value = c(round(lbw_births), round(mlbw_births), round(vlbw_births), 0, round(mlbw_cost, digits = 2), round(vlbw_cost, digits = 2)), 
+  Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
+  se = c(paste0("(", round(lbw_births_se), ")"), paste0("(", round(mlbw_births_se), ")"), paste0("(", round(vlbw_births_se), ")"), 
+         "", paste0("(", round(mlbw_cost_se, digits = 2), ")"), paste0("(", round(vlbw_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor
-scale_factor_bw = 3000/8
+scale_factor_bw = 2000/6
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
 data_bw$Weeks = factor(data_bw$Weeks, 
-                       levels = c("Moderately", "Very"),
-                       labels = c("Moderately", "Very"))
+                       levels = c("Slightly", "Moderately", "Very"),
+                       labels = c("Slightly","Moderately", "Very"))
 
 
 # Updated ggplot code
@@ -176,37 +186,40 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
   scale_y_continuous(
-    "Annual Additional Low-Birthweight Births",
+    "",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
-    limits = c(NA, 3000) 
+    limits = c(NA, 2000) 
   ) +
+  ggtitle("Low-Birthweight Births") +
   theme_minimal() +
   theme(legend.position = "bottom",
         legend.key.size = unit(4, "lines"),
         legend.title = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 60),
-        axis.text.y = element_text(size = 60),
+        axis.text.y = element_blank(),
         legend.text = element_text(size = 60),
         axis.text.x = element_text(size = 50),
-        plot.title = element_text(hjust = 0.5, size = 22), 
+        plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
-        panel.grid.minor = element_line(color = "grey60", size = 0.25)) + 
+        panel.grid.minor = element_line(color = "grey60", size = 0.25),
+        axis.text.y.right = element_text(size = 60)) + 
   guides(alpha = "none") + # Adjust guide for patterns
-  scale_pattern_manual(values = c("none", "stripe"))
-lbw_cost = lbw_cost + geom_text(aes(label=round(Value, digits=2), 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 200),
+  scale_pattern_manual(values = c("none", "stripe")) 
+lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Cost", round(Value, digits=2), ""), 
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 120),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 80),
+                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) +60),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=16)
 
 
 p_costs = p_costs + guides(pattern = "none")
-figure_3 = p_costs / lbw_cost
-ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 10416, height = 11291, device = "png", units = "px")
+figure_3 = (p_costs | lbw_cost) + plot_layout(guides = "collect")& 
+  theme(legend.position = 'bottom')
+ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale= 3, device = "png", limitsize = FALSE)

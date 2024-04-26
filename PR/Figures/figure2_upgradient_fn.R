@@ -1,5 +1,5 @@
 figure2_fun = function(data, category, keep_x, header, ti, left){
-  if (category == "Stillborn" | category == "Any" | category == "Any Low-Birthweight (Full-Term)"){
+  if (category == "Any" | category == "Any"){
     col = "dodgerblue"
   }else if (category == "Slightly" | category == "Slightly"){
     col = "coral"
@@ -21,7 +21,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
             axis.text.y= element_blank(),
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 40), 
-            axis.title.x = element_text(size = 46)) + 
+            axis.title.x = element_text(size = 38)) + 
       guides(color = "none") + xlim(c(-400, 400)) + xlab("% Increase of Mean Occurrence Rate")
   }else{
     pany1 = data %>% 
@@ -69,35 +69,35 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
         side = "right"
       )
     )) 
-    
+  
   if (header){
     res_plot = res_plot %>%
-    bind_rows(
-      data.frame(
-        Check = "Model",
-        estimate_lab = "Estimate (95% CI)",
-        d_lower = "",
-        d_upper = "",
-        pval = "p-value"
-      )
-    ) 
+      bind_rows(
+        data.frame(
+          Check = "Model",
+          estimate_lab = "Estimate (95% CI)",
+          d_lower = "",
+          d_upper = "",
+          pval = "p-value"
+        )
+      ) 
     res_plot$Check = factor(res_plot$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                            "No Demographics", "Relaxed Upgradient Definition", 
-                                            "Drop Cont. Sites w/in 5km of State Border", 
-                                             "Drop After 2015",
-                                            "Drop within 1km", "Baseline" , "Model"
+                                              "No Demographics", 
+                                              "Drop Cont. Sites w/in 5km of State Border", 
+                                              "Drop After 2015",
+                                              "Drop within 1km", "Baseline" , "Model"
     ))
     res_plot$model = res_plot$Check
   }else{
     res_plot$Check = factor(res_plot$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                              "No Demographics", "Relaxed Upgradient Definition", 
+                                              "No Demographics", 
                                               "Drop Cont. Sites w/in 5km of State Border", 
-                                               "Drop After 2015",
+                                              "Drop After 2015",
                                               "Drop within 1km", "Baseline"
     ))
     res_plot$model = res_plot$Check
   }
-    
+  
   
   
   if (!header){
@@ -107,7 +107,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
     p_left = 
       p_left +
       geom_text(aes(x = 0, label = Check), hjust = 0, 
-                fontface = "plain", size = 16)
+                fontface = "plain", size = 14)
   }else{
     p_left =
       res_plot  %>%
@@ -115,7 +115,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
     p_left = 
       p_left +
       geom_text(aes(x = 0, label = Check), hjust = 0, 
-                fontface = ifelse(res_plot$model == "Model", "bold", "plain"), size = 16)
+                fontface = ifelse(res_plot$model == "Model", "bold", "plain"), size = 14)
   }
   
   
@@ -134,12 +134,12 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
       geom_text(
         aes(x = 0, y = model, label = estimate_lab),
         hjust = 0,
-        fontface = "plain", size = 16)
+        fontface = "plain", size = 14)
     p_right =  p_right + 
       geom_text(
         aes(x = 1.5, y = model, label = pval),
         hjust = 0,
-        fontface = "plain", size = 16) + 
+        fontface = "plain", size = 14) + 
       coord_cartesian(xlim = c(0, 2)) + 
       theme_void()+ 
       theme(axis.line.y = element_blank(),
@@ -152,14 +152,14 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
       geom_text(
         aes(x = 0, y = model, label = estimate_lab),
         hjust = 0,
-        fontface = ifelse(res_plot$estimate_lab == "Estimate (95% CI)", "bold", "plain"), size = 16
+        fontface = ifelse(res_plot$estimate_lab == "Estimate (95% CI)", "bold", "plain"), size = 14
       )
     p_right =  p_right + 
       geom_text(
         aes(x = 1.5, y = model, label = pval),
         hjust = 0,
         fontface = ifelse(res_plot$pval == "p-value", "bold", "plain"), 
-        size = 16
+        size = 14
       ) + 
       coord_cartesian(xlim = c(0, 2)) + 
       theme_void()+ 
@@ -172,28 +172,28 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   if (left){
     if (header){
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 20), 
-        area(t = 7, l = 21, b = 60, r = 50), 
-        area(t = 0, l = 51, b = 60, r = 75) 
+        area(t = 0, l = 0, b = 60, r = 60), 
+        area(t = 9, l = 61, b = 60, r = 90), 
+        area(t = 0, l = 91, b = 60, r = 150) 
       ) 
     }else{
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 20), 
-        area(t = 0, l = 21, b = 60, r = 50), 
-        area(t = 0, l = 51, b = 60, r = 75) 
+        area(t = 0, l = 0, b = 60, r = 60), 
+        area(t = 0, l = 61, b = 60, r = 90), 
+        area(t = 0, l = 91, b = 60, r = 150) 
       ) 
     }
     f = p_left + pany1 + p_right + plot_layout(design = layout) 
   }else{
     if (header){
       layout = c(
-        area(t = 7, l = 0, b = 60, r = 39), 
-        area(t = 0, l = 40, b = 60, r = 70) 
+        area(t = 9, l = 0, b = 60, r = 29), 
+        area(t = 0, l = 30, b = 60, r = 75) 
       ) 
     }else{
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 39), 
-        area(t = 0, l = 40, b = 60, r = 70) 
+        area(t = 0, l = 0, b = 60, r = 29), 
+        area(t = 0, l = 30, b = 60, r = 75) 
       ) 
     }
     f = pany1 + p_right + plot_layout(design = layout) 
@@ -203,4 +203,3 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   return(f)
   
 } 
-

@@ -1,8 +1,8 @@
 #robustness figure
-source("PFAS-Code/PR/Figures/figure2_function.R")
+source("PFAS-Code/PR/Figures/figure2_upgradient_fn.R")
 #function for one sided pvalue (upper)
-one_sp = function(tval, pval){
-  if (tval < 0){
+one_sp_up = function(tval, pval){
+  if (tval > 0){
     return(1 - pval/2)
   }else{
     return(pval/2)
@@ -73,38 +73,36 @@ no_med = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_site
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 37) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 37) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 37) * 100, pr_rside$coefficients["down"]/mean(df$gestation < 37) * 100,
-               p_all_ds$coefficients["down"]/mean(df$gestation < 37) * 100,  pr_rup$coefficients["down"]/mean(df$gestation < 37) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 37) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 37) * 100, site$coefficients["down"]/mean(df$gestation < 37) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 37) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 37) * 100, pre_2016$se["down"]/mean(df$gestation < 37) * 100, pr_rside$se["down"]/mean(df$gestation < 37) * 100,
-               p_all_ds$se["down"]/mean(df$gestation < 37) * 100, 
-               pr_rup$se["down"]/mean(df$gestation < 37) * 100,
-               no_pers$se["down"]/mean(df$gestation < 37) * 100, 
-               no_med$se["down"]/mean(df$gestation < 37) * 100, site$se["down"]/mean(df$gestation < 37) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pr_rside$coeftable["down", "t value"], pr_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(p_all_ds$coeftable["down", "t value"], p_all_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pr_rup$coeftable["down", "t value"], pr_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+             "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$gestation < 37) * 100, 
+               drop_close$coefficients["updown"]/mean(df$gestation < 37) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 37) * 100, pr_rside$coefficients["updown"]/mean(df$gestation < 37) * 100,
+               p_all_ds$coefficients["updown"]/mean(df$gestation < 37) * 100, 
+               no_pers$coefficients["updown"]/mean(df$gestation < 37) * 100, 
+               no_med$coefficients["updown"]/mean(df$gestation < 37) * 100, site$coefficients["updown"]/mean(df$gestation < 37) * 100),
+  StdError = c(full$se["updown"]/mean(df$gestation < 37) * 100, 
+               drop_close$se["updown"]/mean(df$gestation < 37) * 100, pre_2016$se["updown"]/mean(df$gestation < 37) * 100, pr_rside$se["updown"]/mean(df$gestation < 37) * 100,
+               p_all_ds$se["updown"]/mean(df$gestation < 37) * 100, 
+               no_pers$se["updown"]/mean(df$gestation < 37) * 100, 
+               no_med$se["updown"]/mean(df$gestation < 37) * 100, site$se["updown"]/mean(df$gestation < 37) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pr_rside$coeftable["updown", "t value"], pr_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(p_all_ds$coeftable["updown", "t value"], p_all_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -179,38 +177,36 @@ no_med = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               lp_ds$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,  lpr_rup$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               lp_ds$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               lpr_rup$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               no_pers$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               no_med$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lpr_rside$coeftable["down", "t value"], lpr_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lp_ds$coeftable["down", "t value"], lp_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lpr_rup$coeftable["down", "t value"], lpr_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
+               drop_close$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
+               lp_ds$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,  
+               no_pers$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
+               no_med$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
+  StdError = c(full$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
+               drop_close$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
+               lp_ds$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
+               no_pers$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
+               no_med$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$se["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(lpr_rside$coeftable["updown", "t value"], lpr_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(lp_ds$coeftable["updown", "t value"], lp_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -329,31 +325,29 @@ no_med_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               mp_ds$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,  mpr_rup$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               mp_ds$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               mpr_rup$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               no_pers$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               no_med$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mpr_rside$coeftable["down", "t value"], mpr_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mp_ds$coeftable["down", "t value"], mp_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mpr_rup$coeftable["down", "t value"], mpr_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               drop_close$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
+               mp_ds$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               no_pers$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               no_med$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
+  StdError = c(full$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               drop_close$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
+               mp_ds$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               no_pers$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
+               no_med$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$se["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(mpr_rside$coeftable["updown", "t value"], mpr_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(mp_ds$coeftable["updown", "t value"], mp_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 
@@ -361,7 +355,7 @@ data = data %>%
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -485,31 +479,29 @@ no_med_ymc = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 28) * 100, vpr_rside$coefficients["down"]/mean(df$gestation < 28) * 100,
-               vp_ds$coefficients["down"]/mean(df$gestation < 28) * 100,  vpr_rup$coefficients["down"]/mean(df$gestation < 28) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 28) * 100, site$coefficients["down"]/mean(df$gestation < 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 28) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 28) * 100, pre_2016$se["down"]/mean(df$gestation < 28) * 100, vpr_rside$se["down"]/mean(df$gestation < 28) * 100,
-               vp_ds$se["down"]/mean(df$gestation < 28) * 100, 
-               vpr_rup$se["down"]/mean(df$gestation < 28) * 100,
-               no_pers$se["down"]/mean(df$gestation < 28) * 100, 
-               no_med$se["down"]/mean(df$gestation < 28) * 100, site$se["down"]/mean(df$gestation < 28) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vpr_rside$coeftable["down", "t value"], vpr_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vp_ds$coeftable["down", "t value"], vp_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vpr_rup$coeftable["down", "t value"], vpr_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$gestation < 28) * 100, 
+               drop_close$coefficients["updown"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 28) * 100, vpr_rside$coefficients["updown"]/mean(df$gestation < 28) * 100,
+               vp_ds$coefficients["updown"]/mean(df$gestation < 28) * 100,
+               no_pers$coefficients["updown"]/mean(df$gestation < 28) * 100, 
+               no_med$coefficients["updown"]/mean(df$gestation < 28) * 100, site$coefficients["updown"]/mean(df$gestation < 28) * 100),
+  StdError = c(full$se["updown"]/mean(df$gestation < 28) * 100, 
+               drop_close$se["updown"]/mean(df$gestation < 28) * 100, pre_2016$se["updown"]/mean(df$gestation < 28) * 100, vpr_rside$se["updown"]/mean(df$gestation < 28) * 100,
+               vp_ds$se["updown"]/mean(df$gestation < 28) * 100, 
+               no_pers$se["updown"]/mean(df$gestation < 28) * 100, 
+               no_med$se["updown"]/mean(df$gestation < 28) * 100, site$se["updown"]/mean(df$gestation < 28) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(vpr_rside$coeftable["updown", "t value"], vpr_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(vp_ds$coeftable["updown", "t value"], vp_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 
@@ -517,7 +509,7 @@ data = data %>%
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -644,38 +636,36 @@ no_med_ymc = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 2500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500) * 100, lbw_rside$coefficients["down"]/mean(df$bweight < 2500) * 100,
-               lbw_all_ds$coefficients["down"]/mean(df$bweight < 2500) * 100,  lbw_rup$coefficients["down"]/mean(df$bweight < 2500) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 2500) * 100, site$coefficients["down"]/mean(df$bweight < 2500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 2500) * 100, pre_2016$se["down"]/mean(df$bweight < 2500) * 100, lbw_rside$se["down"]/mean(df$bweight < 2500) * 100,
-               lbw_all_ds$se["down"]/mean(df$bweight < 2500) * 100, 
-               lbw_rup$se["down"]/mean(df$bweight < 2500) * 100,
-               no_pers$se["down"]/mean(df$bweight < 2500) * 100, 
-               no_med$se["down"]/mean(df$bweight < 2500) * 100, site$se["down"]/mean(df$bweight < 2500) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lbw_rside$coeftable["down", "t value"], lbw_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lbw_all_ds$coeftable["down", "t value"], lbw_all_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(lbw_rup$coeftable["down", "t value"], lbw_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$bweight < 2500) * 100, 
+               drop_close$coefficients["updown"]/mean(df$bweight < 2500) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 2500) * 100, lbw_rside$coefficients["updown"]/mean(df$bweight < 2500) * 100,
+               lbw_all_ds$coefficients["updown"]/mean(df$bweight < 2500) * 100,  
+               no_pers$coefficients["updown"]/mean(df$bweight < 2500) * 100, 
+               no_med$coefficients["updown"]/mean(df$bweight < 2500) * 100, site$coefficients["updown"]/mean(df$bweight < 2500) * 100),
+  StdError = c(full$se["updown"]/mean(df$bweight < 2500) * 100, 
+               drop_close$se["updown"]/mean(df$bweight < 2500) * 100, pre_2016$se["updown"]/mean(df$bweight < 2500) * 100, lbw_rside$se["updown"]/mean(df$bweight < 2500) * 100,
+               lbw_all_ds$se["updown"]/mean(df$bweight < 2500) * 100, 
+               no_pers$se["updown"]/mean(df$bweight < 2500) * 100, 
+               no_med$se["updown"]/mean(df$bweight < 2500) * 100, site$se["updown"]/mean(df$bweight < 2500) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(lbw_rside$coeftable["updown", "t value"], lbw_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(lbw_all_ds$coeftable["updown", "t value"], lbw_all_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -797,31 +787,29 @@ no_med_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               llbw_ds$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,  llbw_rup$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               llbw_ds$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               llbw_rup$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               no_pers$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               no_med$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(llbw_rside$coeftable["down", "t value"], llbw_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(llbw_ds$coeftable["down", "t value"], llbw_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(llbw_rup$coeftable["down", "t value"], llbw_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               drop_close$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
+               llbw_ds$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               no_pers$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               no_med$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
+  StdError = c(full$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               drop_close$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
+               llbw_ds$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               no_pers$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
+               no_med$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$se["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(llbw_rside$coeftable["updown", "t value"], llbw_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(llbw_ds$coeftable["updown", "t value"], llbw_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 
@@ -829,7 +817,7 @@ data = data %>%
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -951,31 +939,29 @@ no_med_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               mlbw_ds$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,  mlbw_rup$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               mlbw_ds$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               mlbw_rup$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               no_pers$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               no_med$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mlbw_rside$coeftable["down", "t value"], mlbw_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mlbw_ds$coeftable["down", "t value"], mlbw_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(mlbw_rup$coeftable["down", "t value"], mlbw_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
+               drop_close$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
+               mlbw_ds$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,  
+               no_pers$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
+               no_med$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
+  StdError = c(full$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
+               drop_close$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
+               mlbw_ds$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
+               no_pers$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
+               no_med$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$se["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(mlbw_rside$coeftable["updown", "t value"], mlbw_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(mlbw_ds$coeftable["updown", "t value"], mlbw_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 
@@ -984,7 +970,7 @@ data = data %>%
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -1106,31 +1092,29 @@ no_med_ymc = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
             "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1000) * 100, vlbw_rside$coefficients["down"]/mean(df$bweight < 1000) * 100,
-               vlbw_ds$coefficients["down"]/mean(df$bweight < 1000) * 100,  vlbw_rup$coefficients["down"]/mean(df$bweight < 1000) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 1000) * 100, site$coefficients["down"]/mean(df$bweight < 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1000) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 1000) * 100, pre_2016$se["down"]/mean(df$bweight < 1000) * 100, vlbw_rside$se["down"]/mean(df$bweight < 1000) * 100,
-               vlbw_ds$se["down"]/mean(df$bweight < 1000) * 100, 
-               vlbw_rup$se["down"]/mean(df$bweight < 1000) * 100,
-               no_pers$se["down"]/mean(df$bweight < 1000) * 100, 
-               no_med$se["down"]/mean(df$bweight < 1000) * 100, site$se["down"]/mean(df$bweight < 1000) * 100),
-  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vlbw_rside$coeftable["down", "t value"], vlbw_rside$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vlbw_ds$coeftable["down", "t value"], vlbw_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(vlbw_rup$coeftable["down", "t value"], vlbw_rup$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+  Estimate = c(full$coefficients["updown"]/mean(df$bweight < 1000) * 100, 
+               drop_close$coefficients["updown"]/mean(df$bweight < 1000) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 1000) * 100, vlbw_rside$coefficients["updown"]/mean(df$bweight < 1000) * 100,
+               vlbw_ds$coefficients["updown"]/mean(df$bweight < 1000) * 100,  
+               no_pers$coefficients["updown"]/mean(df$bweight < 1000) * 100, 
+               no_med$coefficients["updown"]/mean(df$bweight < 1000) * 100, site$coefficients["updown"]/mean(df$bweight < 1000) * 100),
+  StdError = c(full$se["updown"]/mean(df$bweight < 1000) * 100, 
+               drop_close$se["updown"]/mean(df$bweight < 1000) * 100, pre_2016$se["updown"]/mean(df$bweight < 1000) * 100, vlbw_rside$se["updown"]/mean(df$bweight < 1000) * 100,
+               vlbw_ds$se["updown"]/mean(df$bweight < 1000) * 100, 
+               no_pers$se["updown"]/mean(df$bweight < 1000) * 100, 
+               no_med$se["updown"]/mean(df$bweight < 1000) * 100, site$se["updown"]/mean(df$bweight < 1000) * 100),
+  pval = c(one_sp_up(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(vlbw_rside$coeftable["updown", "t value"], vlbw_rside$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(vlbw_ds$coeftable["updown", "t value"], vlbw_ds$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           one_sp_up(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
   )
 )
 
@@ -1139,7 +1123,7 @@ data = data %>%
   dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
+                                  "No Demographics", 
                                   "Drop Cont. Sites w/in 5km of State Border", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
@@ -1183,8 +1167,8 @@ btplot = ggplot() +
 title = (ptplot | btplot)
 main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
 
-fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
+fig2_up = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 # /
 #   lplot
 
-ggsave(modify_path3("Figures/figure2.png"), fig2, scale = 8, limitsize = F)
+ggsave(modify_path3("Figures/figure2_upgradient.png"), fig2_up, scale = 8, limitsize = F)

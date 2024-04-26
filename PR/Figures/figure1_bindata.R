@@ -123,7 +123,7 @@ points_sf$vlbw = factor(points_sf$vlbw, levels = c("Yes", "No"))
 
 fig1_bin = ggplot() +
   geom_sf(data = fig, fill = NA, color = "black") +  
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.6, size = 8) + 
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.4, size = ifelse(points_sf$vlbw == "Yes", 10, 12)) + 
   scale_color_manual(values = c("No" = "dodgerblue3", "Yes" = "firebrick4"), 
                      guide = guide_colorsteps(title.position = "top", 
                                               title = "Very Low-Birthweight")) + 

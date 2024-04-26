@@ -48,6 +48,14 @@ llbw_rup = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down +  I(pfas/1
                                                m_height + tri5 + fa_resid + wind_exposure
                                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
+lbw_ft_rup = fixest::feols(I(bweight < 2500) ~  down + I(pfas/10^3) + dist  + n_sites + 
+                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                            m_height + tri5 + fa_resid + wind_exposure 
+                          |county + year^month + birth_race_dsc_1, data = df[df$gestation >= 37, ], warn = F, notes = F, cluster = c("site", "year^month"))
+
 mlbw_rup = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down +  I(pfas/10^3) + dist  + n_sites + 
                                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
@@ -64,6 +72,14 @@ vlbw_rup = fixest::feols(I(bweight < 1000) ~  down +  I(pfas/10^3) + dist  + n_s
                                                    m_height + tri5 + fa_resid+ wind_exposure
                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
+stillbrn_rup = fixest::feols(stillbrn ~  down +  I(pfas/10^3) + dist  + n_sites + 
+                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                              m_height + tri5 +fa_resid + wind_exposure 
+                            |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-save(lbw_rup, llbw_rup, mlbw_rup, vlbw_rup, pr_rup, lpr_rup, mpr_rup, vpr_rup, 
+
+save(lbw_rup, lbw_ft_rup, llbw_rup, mlbw_rup, vlbw_rup, pr_rup, lpr_rup, mpr_rup, vpr_rup, stillbrn_rup,
      file = modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))

@@ -59,6 +59,9 @@ source("PFAS-Code/PR/National Costs/nat_costs.R")
 #national costs map (figure 3 part 2)
 source("PFAS-Code/PR/Figures/figure3_map.R")
 
+#predicted PFAS map (figure 3 part 3)
+source("PFAS-Code/PR/Figures/figure3_predicted_pfas_map.R")
+
 #map of national release sites and pop density (Figure S4)
 source("PFAS-Code/PR/National Costs/nat_map.R")
 
