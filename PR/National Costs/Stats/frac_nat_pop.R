@@ -1,5 +1,5 @@
-cbg_pop = fread("Data_Verify/Supplemental/cbg_pop.csv")
-cbg_births = fread("New Hampshire/Data/Supplemental/births_cbg_cleaned_2010.csv")
+cbg_pop = fread(modify_path("Data_Verify/Supplemental/cbg_pop.csv"))  
+cbg_births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"))
 
 c = cbg_pop %>% left_join(cbg_births %>% dplyr::select(county, tract, cbg, births))
 
@@ -7,21 +7,9 @@ c = cbg_pop %>% left_join(cbg_births %>% dplyr::select(county, tract, cbg, birth
 sum(c[!is.na(c$births), ]$pop)/sum(c$pop)
 #cdc wonder covers 76% of US population
 
-#now check which fraction are within 5km of a site
-#load in births data
-births = read.csv("New Hampshire/Data/Supplemental/births_cbg_cleaned_2010.csv")
-#add state column to cbgs
-births$county = stringr::str_pad(as.character(births$county), 5, "left", "0")
-births$state = stringr::str_sub(births$county, 1, 2)
-
-births$geoid = paste0(births$county, births$tract, births$cbg)
-#fwrite(births %>% dplyr::select(geoid, lng, lat), "NH/New Hampshire/Data/Supplemental/cbg_ll.csv")
-
-births = births %>% 
-  st_as_sf(coords = c("lng", "lat"), crs = 4326)
-
-#load in contamination data
-cont_sites = read_xlsx('New Hampshire/Data/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx', sheet = 2) %>% 
+##########
+##Fraction of US pop living in 11 states who tested
+cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater' & State != "Alaska") %>% 
   dplyr::select(`Site name`, State, Latitude, Longitude, Industry, 
                 `Date Sampled`,`Max PFOA (ppt)`, `Max PFOS (ppt)`, 
@@ -44,16 +32,48 @@ csite_buff = cont_sites %>%
   st_transform(5070) %>% #get to albers projection for meters
   st_buffer(meters)
 
+#bring in cbg pops
+cbg_pop = fread(modify_path("Data_Verify/Supplemental/cbg_pop.csv"))  
+states = tigris::states() %>% 
+  as_tibble() %>% 
+  dplyr::select(state_name = NAME, state = GEOID) %>% 
+  dplyr::filter(state_name %in% c("Michigan", 
+                                  "Minnesota", 
+                                  "New Hampshire", 
+                                  "New York", 
+                                  "Colorado", 
+                                  "Maine", 
+                                  "Vermont", 
+                                  "California", 
+                                  "Florida", 
+                                  "North Dakota", 
+                                  "Wisconsin")) %>% 
+  dplyr::mutate(state = as.numeric(state))
+
+cbg_pop_sub = cbg_pop %>% 
+  left_join(states) %>% 
+  dplyr::filter(state_name %in% c("Michigan", 
+                                  "Minnesota", 
+                                  "New Hampshire", 
+                                  "New York", 
+                                  "Colorado", 
+                                  "Maine", 
+                                  "Vermont", 
+                                  "California", 
+                                  "Florida", 
+                                  "North Dakota", 
+                                  "Wisconsin"))
+
+
+
 #only keep cbgs within a buffer
-births = st_intersection(births %>% st_transform(5070), csite_buff)
+cbg_pops_close = st_intersection(cbg_pop_sub %>% st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(5070), csite_buff)
 
-#some cbgs are within the buffer of more than one site. Only need to know which are close, so keep unique
-births = births %>% 
-  dplyr::select(county, tract, cbg, births, state, geoid, geometry) %>% 
-  unique()
+#subset cbg_pop to not these states
+cbg_pop2 = cbg_pop %>% 
+  dplyr::filter(!state %in% unique(cbg_pops_close$state))
 
-#merge with cbg_pop
-c2 = cbg_pop %>% left_join(births %>% as_tibble() %>% dplyr::mutate(county = as.numeric(county)) %>% dplyr::select(county, tract, cbg, births))
+prop_close11 = sum(cbg_pops_close$pop)/sum(cbg_pop_sub$pop) #this is the prop of pop in 11 states within 5km of a site (0.0598043)
 
-sum(c2[!is.na(c2$births), ]$pop)/sum(c2$pop)
-                           
+
+sum(cbg_pop_sub$pop)/sum(cbg_pop$pop) #this is the prop of pop living in 11 states (0.3409937)
