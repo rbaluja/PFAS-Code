@@ -32,6 +32,7 @@ figures = TRUE
 code_check = FALSE
 n_cores = 1
 rob_app_fig = FALSE
+bs_cov = TRUE #bootstrap covariance matrix for IV
 
 #data cleaning
 source("PFAS-Code/PR/Data/data_head.R")

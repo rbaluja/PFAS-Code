@@ -56,3 +56,11 @@ quintile_bootstrap = function(boot_coefs, reg_data){
               mlbw2_sd = mlbw2_sd, mlbw3_sd = mlbw3_sd, mlbw4_sd = mlbw4_sd, mlbw5_sd = mlbw5_sd,
               vlbw2_sd = vlbw2_sd, vlbw3_sd = vlbw3_sd, vlbw4_sd = vlbw4_sd, vlbw5_sd = vlbw5_sd))
 }
+
+
+#linear covariance bootstrap
+cov_boot = function(boot_coefs, outcome1, reg1, outcome2, reg2){
+  #subtract off mean, divide by dof
+  bs_sd = sqrt(sum((boot_coefs[[outcome1]] - reg1$coefficients["pred_pfas"]) * (boot_coefs[[outcome2]] - reg2$coefficients["pred_pfas"]))/(nrow(boot_coefs) - 1))
+  return(bs_sd)
+}

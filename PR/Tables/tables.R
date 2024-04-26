@@ -185,6 +185,13 @@ table2_preterm[["Very"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred
 (table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 (table2_preterm[["Very"]]$coefficients["pred_pfas"] + 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 
+if(bs_cov){ #calculate and save covariance terms for national cost analysis
+  cov_pre_lm = cov_boot(boot_coefs, "lpreterm", table2_preterm[["Slightly"]], "mpreterm", table2_preterm[["Moderately"]])
+  cov_pre_lv = cov_boot(boot_coefs, "lpreterm", table2_preterm[["Slightly"]], "vpreterm", table2_preterm[["Very"]])
+  cov_pre_mv = cov_boot(boot_coefs, "mpreterm", table2_preterm[["Moderately"]], "vpreterm", table2_preterm[["Very"]])
+  save(cov_pre_lm, cov_pre_lv, cov_pre_mv, file = modify_path("Data_Verify/RData/cov_preterm.RData"))  
+}
+
 
 
 #lbw
@@ -256,6 +263,14 @@ table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh
 table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 (table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
 (table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
+
+if(bs_cov){ #calculate and save covariance terms for national cost analysis
+  cov_lbw_lm = cov_boot(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]], "mlbw", table2_lbw[["mLow Birthweight"]])
+  cov_lbw_lv = cov_boot(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
+  cov_lbw_mv = cov_boot(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
+  save(cov_lbw_lm, cov_lbw_lv, cov_lbw_mv, file = modify_path("Data_Verify/RData/cov_lbw.RData"))  
+}
+
 
 
 
