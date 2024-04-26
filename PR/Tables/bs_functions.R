@@ -61,6 +61,6 @@ quintile_bootstrap = function(boot_coefs, reg_data){
 #linear covariance bootstrap
 cov_boot = function(boot_coefs, outcome1, reg1, outcome2, reg2){
   #subtract off mean, divide by dof
-  bs_sd = sqrt(sum((boot_coefs[[outcome1]] - reg1$coefficients["pred_pfas"]) * (boot_coefs[[outcome2]] - reg2$coefficients["pred_pfas"]))/(nrow(boot_coefs) - 1))
+  bs_sd = sum((boot_coefs[[outcome1]] - reg1$coefficients["pred_pfas"]) * (boot_coefs[[outcome2]] - reg2$coefficients["pred_pfas"]))/(nrow(boot_coefs) - 1)
   return(bs_sd)
 }

@@ -36,13 +36,18 @@ bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down +
   -0.308053 * bs[nind, ]$updown + 
   -0.583208  * log(bs[nind, ]$dist) * bs[nind, ]$down
 
-
+#read in standard errors
+if (!file.exists(modify_path("Data_Verify/RData/preterm_sd.RData")) | !file.exists(modify_path("Data_Verify/RData/lbw_sd.RData"))){
+  stop("Run main analysis through tables.R before calculating national cost.")
+}
+load(modify_path("Data_Verify/RData/preterm_sd.RData"))
+load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 #getting impacts in states with initiatives
 #vpre
 bs$add_vpre = bs$pred_pfas * bs$births * 0.0027
 vpre_births = sum(bs$add_vpre) #664.3684
 vpre_cost = (vpre_births * 204083)/10^9
-bs$add_vpre_se = bs$pred_pfas * bs$births * 0.001
+bs$add_vpre_se = bs$pred_pfas * bs$births * vpreterm_sd
 vpre_births_se = sum(bs$add_vpre_se)
 vpre_cost_se = (vpre_births_se * 204083)/10^9
 
@@ -50,7 +55,7 @@ vpre_cost_se = (vpre_births_se * 204083)/10^9
 bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
 mpre_births = sum(bs$add_mpre) #339.5661
 mpre_cost = (mpre_births * 205041)/10^9
-bs$add_mpre_se = bs$pred_pfas * bs$births * 0.0004
+bs$add_mpre_se = bs$pred_pfas * bs$births * mpreterm_sd
 mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
 mpre_cost_se = (mpre_births_se *  205041)/10^9
 
@@ -58,7 +63,7 @@ mpre_cost_se = (mpre_births_se *  205041)/10^9
 bs$add_lpre = bs$pred_pfas * bs$births * 0.006
 lpre_births = sum(bs$add_lpre)
 lpre_cost = (lpre_births * 36728)/10^9
-bs$add_lpre_se = bs$pred_pfas * bs$births *  0.002
+bs$add_lpre_se = bs$pred_pfas * bs$births *  lpreterm_sd
 lpre_births_se = sum(bs$add_lpre_se)
 lpre_cost_se = (lpre_births_se * 36728)/10^9
 
@@ -68,7 +73,7 @@ lpre_cost_se = (lpre_births_se * 36728)/10^9
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
 vlbw_births = sum(bs$add_vlbw)
 vlbw_cost = (vlbw_births * 5133739.83)/10^9
-bs$add_vlbw_se = bs$pred_pfas * bs$births * 0.001
+bs$add_vlbw_se = bs$pred_pfas * bs$births * vlbw_sd
 vlbw_births_se = sum(bs$add_vlbw_se)
 vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 
@@ -76,14 +81,14 @@ vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
 mlbw_births = sum(bs$add_mlbw) 
 mlbw_cost = (mlbw_births * 1634411.22)/10^9
-bs$add_mlbw_se = bs$pred_pfas * bs$births *0.0005
+bs$add_mlbw_se = bs$pred_pfas * bs$births * mlbw_sd
 mlbw_births_se = sum(bs$add_mlbw_se)
 mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
 #lbw 
 bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
 lbw_births = sum(bs$add_lbw)
-bs$add_lbw_se = bs$pred_pfas * bs$births * 0.002
+bs$add_lbw_se = bs$pred_pfas * bs$births * llbw_sd
 lbw_births_se = sum(bs$add_lbw_se)
 
 
