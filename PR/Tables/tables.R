@@ -166,6 +166,7 @@ preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
 lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Slightly"]])
 mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Moderately"]])
 vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Very"]])
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd.RData"))
 
 
 #marginal effect
@@ -246,6 +247,7 @@ lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
 llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
 mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
 vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
+save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path("Data_Verify/RData/lbw_sd.RData"))
 
 #marginal effects
 table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas)/1000, na.rm = T)^2))
