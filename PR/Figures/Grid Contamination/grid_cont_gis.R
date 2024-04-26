@@ -34,7 +34,7 @@ grid_ll_watershed = function(i){
   
 }
 
-pblapply(1:nrow(ll), grid_ll_watershed, cl = 3)
+pblapply(1:nrow(ll), grid_ll_watershed, cl = n_cores)
 
 
 files = list.files(modify_path("Data_Verify/GIS/grids/grids_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
@@ -46,7 +46,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-grid_ll_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 3))
+grid_ll_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 save(grid_ll_ws, file = modify_path("Data_Verify/GIS/grid_ll_watershed.RData"))
 
 #delete intermediate files
