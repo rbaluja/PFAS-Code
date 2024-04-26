@@ -828,7 +828,7 @@ gof_map = c("nobs", "r.squared"),
                            output = "latex") %>% 
   kable_styling(fixed_thead = T, position = "center") 
 
-sink(modify_path("Tables/table_s12.tex"))
+sink(modify_path2("Tables/table_s12.tex"))
 print(table_s11)
 sink() 
 
