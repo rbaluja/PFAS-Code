@@ -200,13 +200,13 @@ ggplot() +
   scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4")) +
   labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +1000 ppt PFAS)", color = "Birth Outcome") +
   theme_minimal() +
-  theme(axis.text = element_text(size = 30), 
-        axis.title = element_text(size = 32), 
+  theme(axis.text = element_text(size = 50), 
+        axis.title = element_text(size = 52), 
         legend.position = "bottom",   
         legend.box = "horizontal",   
         legend.title.align = 0.5, 
-        legend.text = element_text(size = 30), 
-        legend.title = element_text(size = 32), 
+        legend.text = element_text(size = 50), 
+        legend.title = element_text(size = 52), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         legend.key.size = unit(5, "lines")) + 

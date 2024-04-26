@@ -28,7 +28,7 @@ drop_far_up = FALSE
 rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
-code_check = TRUE
+code_check = FALSE
 n_cores = 1
 
 
@@ -146,11 +146,11 @@ figure_s2b = ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) +
   ylab('Sample Size') + 
   xlab('Buffer (km)') + 
   theme_minimal() + guides(color = "none") + 
-  annotate("text", x = 6, y = 13500, label = "Total Sample", angle = 20, size = 10) + 
-  annotate("text", x = 4.4, y = 7600, label = "Downgradient", angle = 2, size = 10)+ 
-  annotate("text", x = 8.5, y = 7200, label = "Upgradient", angle = 8, size = 10) + 
-  theme(axis.text = element_text(size = 20, face = "bold"), 
-        axis.title = element_text(size = 20, face = "bold")) + 
+  annotate("text", x = 6, y = 13500, label = "Total Sample", angle = 25, size = 16) + 
+  annotate("text", x = 5.4, y = 8000, label = "Downgradient", angle = 5, size = 16)+ 
+  annotate("text", x = 7.6, y = 3100, label = "Upgradient", angle = 0, size = 16) + 
+  theme(axis.text = element_text(size = 30, face = "bold"), 
+        axis.title = element_text(size = 30, face = "bold")) + 
   scale_x_continuous(breaks = 1:10)
 
-ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b)
+ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b, scale = 2)

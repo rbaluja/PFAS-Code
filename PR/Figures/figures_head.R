@@ -1,5 +1,8 @@
-#figure1 contamination sites
-source("PFAS-Code/PR/Figures/figure1_sites.R")
+#predicted PFAS map
+source("PFAS-Code/PR/Figures/pred_pfas_map.R")
+
+#figure1 sitemap
+source("PFAS-Code/PR/Figures/figure1_sitemap.R")
 
 #figure1 binned data
 source("PFAS-Code/PR/Figures/figure1_bindata.R")
