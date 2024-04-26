@@ -192,10 +192,10 @@ r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.2  # Shift right
 ggplot() +
   geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10) +
   geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) +
-  geom_text(data = r_coefs_jittered1, aes(x = sev_num, y = upper_es, label = p_value_s, vjust = -2), size = 16) +
+  geom_text(data = r_coefs_jittered1, aes(x = sev_num, y = upper_es, label = p_value_s, vjust = -2), size = 12) +
   geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10) +
   geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) +
-  geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, label = p_value_s, vjust = -2), size = 16) +
+  geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, label = p_value_s, vjust = -2), size = 12) +
   scale_x_continuous(breaks = 1:4, labels = levels(as.factor(r_coefs$sev))) +
   scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4")) +
   labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +1000 ppt PFAS)", color = "Birth Outcome") +
