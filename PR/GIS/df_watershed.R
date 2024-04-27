@@ -127,7 +127,7 @@ well_ws = function(f){
   return(w_ws1)
 }
 
-df_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = 4))
+df_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 df = df %>% as_tibble() %>% dplyr::select(!geometry) %>% left_join(df_ws)
 if (!code_check){
   save(df, file = paste0(natality_path, "[UA Box Health] natality_ws.RData"))  

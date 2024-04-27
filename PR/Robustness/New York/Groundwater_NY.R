@@ -22,6 +22,7 @@ rerun_pollution = F
 rerun_birthdata = F
 code_check = F
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
+n_cores = 1
 
 
 #read in the water measurement data
@@ -231,7 +232,7 @@ gw_assn = function(i, df, gw){
   return(d)
 }
 
-gw_ny = dplyr::bind_rows(pblapply(1:nrow(gw_ny), gw_assn, gw_ny, gw, cl = 4))
+gw_ny = dplyr::bind_rows(pblapply(1:nrow(gw_ny), gw_assn, gw_ny, gw, cl = n_cores))
 
 gw_ny_contaminated = gw_ny_contaminated %>% 
   st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
