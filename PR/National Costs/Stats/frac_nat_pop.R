@@ -5,7 +5,7 @@ c = cbg_pop %>% left_join(cbg_births %>% dplyr::select(county, tract, cbg, birth
 
 #population from cdc wonder births:
 sum(c[!is.na(c$births), ]$pop)/sum(c$pop)
-#cdc wonder covers 76% of US population
+#cdc wonder covers 76% of total US population
 
 ##########
 ##Fraction of US pop living in 11 states who tested
@@ -33,7 +33,11 @@ csite_buff = cont_sites %>%
   st_buffer(meters)
 
 #bring in cbg pops
-cbg_pop = fread(modify_path("Data_Verify/Supplemental/cbg_pop.csv"))  
+cbg_pop = fread(modify_path("Data_Verify/Supplemental/cbg_pop.csv"), colClasses = c("state" = "character"))  
+
+cbg_pop = cbg_pop %>% 
+  dplyr::filter(!(state %in% c("02", "15")))
+
 states = tigris::states() %>% 
   as_tibble() %>% 
   dplyr::select(state_name = NAME, state = GEOID) %>% 
@@ -47,8 +51,7 @@ states = tigris::states() %>%
                                   "California", 
                                   "Florida", 
                                   "North Dakota", 
-                                  "Wisconsin")) %>% 
-  dplyr::mutate(state = as.numeric(state))
+                                  "Wisconsin")) 
 
 cbg_pop_sub = cbg_pop %>% 
   left_join(states) %>% 
@@ -76,4 +79,4 @@ cbg_pop2 = cbg_pop %>%
 prop_close11 = sum(cbg_pops_close$pop)/sum(cbg_pop_sub$pop) #this is the prop of pop in 11 states within 5km of a site (0.0598043)
 
 
-sum(cbg_pop_sub$pop)/sum(cbg_pop$pop) #this is the prop of pop living in 11 states (0.3409937)
+sum(cbg_pop_sub$pop)/sum(cbg_pop$pop) #this is the prop of pop living in 11 states compared to lower 48 (0.3409937)
