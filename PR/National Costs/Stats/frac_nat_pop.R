@@ -35,6 +35,7 @@ csite_buff = cont_sites %>%
 #bring in cbg pops
 cbg_pop = fread(modify_path("Data_Verify/Supplemental/cbg_pop.csv"), colClasses = c("state" = "character"))  
 
+#remove Hawaii and Alaska
 cbg_pop = cbg_pop %>% 
   dplyr::filter(!(state %in% c("02", "15")))
 
@@ -79,4 +80,5 @@ cbg_pop2 = cbg_pop %>%
 prop_close11 = sum(cbg_pops_close$pop)/sum(cbg_pop_sub$pop) #this is the prop of pop in 11 states within 5km of a site (0.0598043)
 
 
-sum(cbg_pop_sub$pop)/sum(cbg_pop$pop) #this is the prop of pop living in 11 states compared to lower 48 (0.3409937)
+prop = sum(cbg_pop_sub$pop)/sum(cbg_pop$pop) #this is the prop of pop living in 11 states compared to lower 48 (0.3409937)
+1/prop #this is the factor to multiply by to get the lower 48 US pop 
