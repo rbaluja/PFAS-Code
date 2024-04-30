@@ -43,13 +43,13 @@ cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
   geom_bar_pattern(
     stat="identity", 
     position=position_dodge(),
-    aes(y=costs, alpha = 0.7, pattern = geo),
+    aes(y=costs, pattern = as.factor(geo)),
     pattern_fill = "black", 
     pattern_density = 0.1, 
     pattern_spacing = 0.02, 
-    pattern_key_scale_factor = 0.9 
+    pattern_key_scale_factor = 0.3, 
+    alpha = 0.8
   ) + 
-  geom_bar(stat = "identity", position = position_dodge(width = 0.9), alpha=0.7) +
   labs(y = "Annual Costs ($ Billion)",
        fill = "") +
   scale_fill_manual(name = "", 
@@ -57,8 +57,7 @@ cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
                     labels = c("11 States", "National")) + 
   scale_pattern_manual(name = "", 
                        values = c(`11 States` = "none", National = "stripe"), 
-                       labels = c("11 States", "National"), 
-                       guide = "none") + 
+                       labels = c("11 States", "National")) + 
   xlab("") + 
   theme_minimal() +
   theme(legend.position = "bottom",
@@ -84,4 +83,4 @@ cost_hist +
             vjust = -0.25,
             size = 14)
 
-ggsave(modify_path3("Figures/Figure3/full_cost.png"), scale = 3)
+ggsave(modify_path3("Figures/Figure3/full_cost.png"), scale = 2, limitsize = FALSE)

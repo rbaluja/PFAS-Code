@@ -28,7 +28,7 @@ drop_far_up = FALSE
 rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
-code_check = FALSE
+code_check = TRUE
 n_cores = 1
 
 
