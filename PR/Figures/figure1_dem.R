@@ -39,12 +39,12 @@ f1 = nh_map_plot +
   ylim(44.18, 44.4) + xlim(-71.5, -71.15) +
   annotate("point", x = -71.35, y = 44.28, color = "black", size = 4) +
   #annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1.5, color = "black", size = 10, family = "arial") +
-  annotate("point", x = -71.25, y = 44.3, color = "bisque3", size = 4) +
-  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = 1.4, color = "bisque3", size = 10, family = "arial") +
+  annotate("point", x = -71.25, y = 44.3, color = "tan4", size = 4) +
+  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = 1., vjust = -0.3, color = "tan4", size = 10, family = "arial") +
   annotate("point", x = -71.4, y = 44.26, color = "white", size = 4) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
   annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 3) +
-  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -1.5, color = "firebrick4", size = 10) + 
+  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -1, color = "firebrick4", size = 10) + 
   # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
   #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
   #              color = "white", size = 1, lineend = "round") +
@@ -61,8 +61,8 @@ f1 = nh_map_plot +
 
 #add geometry from f1_ws to f1
 f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
-             alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 0.5, 1)) +
-  scale_color_manual(values = c("C" = "black", "omega1" = "bisque3", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
+             alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 2, 3)) +
+  scale_color_manual(values = c("C" = "black", "omega1" = "tan4", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
   
 
 

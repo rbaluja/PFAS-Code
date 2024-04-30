@@ -1,6 +1,7 @@
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-load(modify_path("Data_Verify/RData/bootstrap.RData"))
+load(modify_path("Data_Verify/RData/preterm_sd.RData"))
+load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
