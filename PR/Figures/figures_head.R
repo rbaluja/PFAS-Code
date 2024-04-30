@@ -38,7 +38,9 @@ if (rob_app_fig){
 }
 
 #Upgradient version of figure 2
-source("PFAS-Code/PR/Figures/figure2_upgradient.R")
+if (!code_check){ #code_check natality data does not have "up" data
+  source("PFAS-Code/PR/Figures/figure2_upgradient.R") 
+}
 
 #stillborn version of figure 2
 source("PFAS-Code/PR/Figures/figure2_stillborn.R")

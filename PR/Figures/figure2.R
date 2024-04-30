@@ -13,7 +13,7 @@ load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
-full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -21,7 +21,7 @@ full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites 
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-site  = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -29,7 +29,7 @@ site  = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -37,7 +37,7 @@ no_fe = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -45,7 +45,7 @@ drop_close = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(preterm ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -54,7 +54,7 @@ pre_2016 = fixest::feols(preterm ~ updown + down +  I(pfas/10^3) + dist  + n_sit
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(preterm ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -63,7 +63,7 @@ no_pers = fixest::feols(preterm ~ updown + down +  I(pfas/10^3) + dist  + n_site
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
@@ -120,7 +120,7 @@ pre_any = figure2_fun(data, "Any", FALSE, TRUE, "Any", TRUE)
 
 
 #late preterm
-full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -129,7 +129,7 @@ full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(p
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-site  = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -137,7 +137,7 @@ site  = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -145,7 +145,7 @@ no_fe = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -153,7 +153,7 @@ drop_close = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(gestation < 37 & gestation >= 32) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -162,7 +162,7 @@ pre_2016 = fixest::feols(I(gestation < 37 & gestation >= 32) ~ updown + down +  
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(gestation < 37 & gestation >= 32) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -171,7 +171,7 @@ no_pers = fixest::feols(I(gestation < 37 & gestation >= 32) ~ updown + down +  I
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
@@ -225,7 +225,7 @@ pre_late = figure2_fun(data, "Slightly", FALSE, FALSE, "Slightly", TRUE)
 
 
 #moderately preterm
-full = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -233,7 +233,7 @@ full = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(p
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -241,7 +241,7 @@ year_county = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -249,7 +249,7 @@ year_countym = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + dow
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -257,7 +257,7 @@ site  = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -265,7 +265,7 @@ no_fe = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -273,7 +273,7 @@ drop_close = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -282,7 +282,7 @@ pre_2016 = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -291,13 +291,13 @@ no_pers = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  I
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -306,13 +306,13 @@ no_pers_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -321,7 +321,7 @@ no_pers_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ updown + down 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -379,7 +379,7 @@ pre_mod = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", TRUE)
 
 
 #very preterm
-full = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -387,7 +387,7 @@ full = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -395,7 +395,7 @@ year_county = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) +
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -403,7 +403,7 @@ year_countym = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -411,7 +411,7 @@ site  = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -419,7 +419,7 @@ no_fe = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -427,7 +427,7 @@ drop_close = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -436,7 +436,7 @@ pre_2016 = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dis
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -445,13 +445,13 @@ no_pers = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dist
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -460,13 +460,13 @@ no_pers_yc = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + d
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -475,7 +475,7 @@ no_pers_ymc = fixest::feols(I(gestation < 28) ~ updown + down +  I(pfas/10^3) + 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -538,7 +538,7 @@ pre_fig = pre_any/pre_late/pre_mod/pre_very
 
 ####Birthweight
 #low birthweight
-full = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -546,7 +546,7 @@ full = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -554,7 +554,7 @@ year_county = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) +
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -562,7 +562,7 @@ year_countym = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -570,7 +570,7 @@ site  = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -578,7 +578,7 @@ no_fe = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -586,7 +586,7 @@ drop_close = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -595,7 +595,7 @@ pre_2016 = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dis
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -604,13 +604,13 @@ no_pers = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dist
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -619,13 +619,13 @@ no_pers_yc = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + d
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -634,7 +634,7 @@ no_pers_ymc = fixest::feols(I(bweight < 2500) ~ updown + down +  I(pfas/10^3) + 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -691,7 +691,7 @@ lbw_all = figure2_fun(data, "Any", FALSE, TRUE, "Any", FALSE)
 
 
 #late low birthweight
-full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -699,7 +699,7 @@ full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(p
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -707,7 +707,7 @@ year_county = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -715,7 +715,7 @@ year_countym = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + dow
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -723,7 +723,7 @@ site  = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -731,7 +731,7 @@ no_fe = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -739,7 +739,7 @@ drop_close = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -748,7 +748,7 @@ pre_2016 = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -757,13 +757,13 @@ no_pers = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  I
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -772,13 +772,13 @@ no_pers_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -787,7 +787,7 @@ no_pers_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ updown + down 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -846,7 +846,7 @@ lbw_slight = figure2_fun(data, "Slightly", FALSE, FALSE, "Slightly", FALSE)
 
 
 #moderatelty low birthweight
-full = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -854,7 +854,7 @@ full = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(p
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -862,7 +862,7 @@ year_county = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -870,7 +870,7 @@ year_countym = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + dow
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -878,7 +878,7 @@ site  = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -886,7 +886,7 @@ no_fe = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -894,7 +894,7 @@ drop_close = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -903,7 +903,7 @@ pre_2016 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -912,13 +912,13 @@ no_pers = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  I
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -927,13 +927,13 @@ no_pers_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -942,7 +942,7 @@ no_pers_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ updown + down 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -1000,7 +1000,7 @@ lbw_mod = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", FALSE)
 
 
 #very low birthweight
-full = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1008,7 +1008,7 @@ full = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1016,7 +1016,7 @@ year_county = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) +
                               m_height + tri5 + fa_resid
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1024,7 +1024,7 @@ year_countym = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1032,7 +1032,7 @@ site  = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1040,7 +1040,7 @@ no_fe = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist 
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1048,7 +1048,7 @@ drop_close = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + 
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1057,7 +1057,7 @@ pre_2016 = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dis
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1066,13 +1066,13 @@ no_pers = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dist
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1081,13 +1081,13 @@ no_pers_yc = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + d
                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1096,7 +1096,7 @@ no_pers_ymc = fixest::feols(I(bweight < 1000) ~ updown + down +  I(pfas/10^3) + 
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
