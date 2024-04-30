@@ -133,7 +133,7 @@ well_dist = function(i){
   #if neither down, nor up, set pfas as that at the nearest site
   w$pfas_near = cont_sites$sum_pfoa_pfos[ind]
   #get number of nearby sites
-  w$n_sites_meters = length(which(dists <= 5010))
+  w$n_sites_meters = length(which(dists <= 5100))
   
   w$site_near = cont_sites$site[ind]
   

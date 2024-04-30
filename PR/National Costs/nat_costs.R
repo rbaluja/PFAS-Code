@@ -107,24 +107,23 @@ data = data.frame(
 # Scaling factor for right axis values
 scale_factor = 2000/6
 
-data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
+data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data$Weeks = factor(data$Weeks, 
                     levels = c("Slightly", "Moderately", "Very"),
                     labels = c("Slightly", "Moderately", "Very"))
 
 
-# Updated ggplot code
 p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   geom_bar_pattern( 
     stat="identity", 
     position=position_dodge(), 
-    aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor), alpha = 0.5, pattern = Axis),
-    pattern_fill = "white", 
+    aes(y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor), alpha = 0.5, pattern = Axis),
+    pattern_fill = "black", 
     pattern_density = 0.1, 
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9 
   ) +
-  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
+  scale_fill_manual(values=c("↑ Births (Left Axis)" = "dodgerblue3", "Costs (Right Axis)" = "firebrick4")) +
   scale_y_continuous(
     "Annual Additional Births",
     sec.axis = sec_axis(~./scale_factor, name=""), 
@@ -147,12 +146,12 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) 
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=2), 
-                                  y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 120),
+                                  y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 120),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
                               size=20)
 p_costs = p_costs + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor) + 60),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 60),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
@@ -172,7 +171,7 @@ data_bw = data.frame(
 # Scaling factor
 scale_factor_bw = 2000/6
 
-data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births", "Cost"))
+data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_bw$Weeks = factor(data_bw$Weeks, 
                        levels = c("Slightly", "Moderately", "Very"),
                        labels = c("Slightly","Moderately", "Very"))
@@ -183,13 +182,13 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   geom_bar_pattern(
     stat="identity", 
     position=position_dodge(),
-    aes(y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw), alpha = 0.5, pattern = Axis),
+    aes(y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw), alpha = 0.5, pattern = Axis),
     pattern_fill = "black", 
     pattern_density = 0.1, 
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.9 
   ) +
-  scale_fill_manual(values=c("↑ Births" = "dodgerblue3", "Cost" = "firebrick4")) +
+  scale_fill_manual(values=c("↑ Births (Left Axis)" = "dodgerblue3", "Costs (Right Axis)" = "firebrick4")) +
   scale_y_continuous(
     "",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
@@ -208,17 +207,18 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_text(size = 60)) + 
+        axis.text.y.right = element_text(size = 60), 
+        legend.spacing.x = unit(1, 'cm')) + 
   guides(alpha = "none") + # Adjust guide for patterns
   scale_pattern_manual(values = c("none", "stripe")) 
-lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Cost", round(Value, digits=2), ""), 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) + 120),
+lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 120),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births", Value, Value * scale_factor_bw) +60),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +60),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=16)
@@ -227,4 +227,4 @@ lbw_cost = lbw_cost + geom_text(aes(label=se,
 p_costs = p_costs + guides(pattern = "none")
 figure_3 = (p_costs | lbw_cost) + plot_layout(guides = "collect")& 
   theme(legend.position = 'bottom')
-ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale= 3, device = "png", limitsize = FALSE)
+ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale= 5, device = "png", limitsize = FALSE)

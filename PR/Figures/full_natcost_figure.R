@@ -40,28 +40,42 @@ cost_d$bout = factor(cost_d$bout, levels = c("Preterm", "Low-Birthweight"))
 
 # Create the bar chart using ggpattern
 cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.9), alpha=0.8) +
-  labs(y = "Annual Cost ($ Billion)",
+  geom_bar_pattern(
+    stat="identity", 
+    position=position_dodge(),
+    aes(y=costs, alpha = 0.7, pattern = geo),
+    pattern_fill = "black", 
+    pattern_density = 0.1, 
+    pattern_spacing = 0.02, 
+    pattern_key_scale_factor = 0.9 
+  ) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), alpha=0.7) +
+  labs(y = "Annual Costs ($ Billion)",
        fill = "") +
+  scale_fill_manual(name = "", 
+                    values=c(`11 States` = "orchid4", National = "seagreen4"), 
+                    labels = c("11 States", "National")) + 
+  scale_pattern_manual(name = "", 
+                       values = c(`11 States` = "none", National = "stripe"), 
+                       labels = c("11 States", "National"), 
+                       guide = "none") + 
   xlab("") + 
   theme_minimal() +
   theme(legend.position = "bottom",
         legend.key.size = unit(4, "lines"),
         legend.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 60),
-        axis.text.y = element_blank(),
+        axis.title = element_text(size = 60),
         legend.text = element_text(size = 60),
-        axis.text.x = element_text(size = 50),
+        axis.text = element_text(size = 50),
         plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_text(size = 60)
-        ) + 
-  scale_fill_manual(values=c("11 States" = "dodgerblue3", "National" = "firebrick4"))
+        legend.spacing.x = unit(1, 'cm')
+  ) + 
+  guides(alpha = "none")
 
 cost_hist +
-  geom_text(aes(label = costs, y = costs + 0.6), 
+  geom_text(aes(label = costs, y = costs + 0.8), 
             position = position_dodge(width = 0.9), 
             vjust = -0.25,
             size = 16) +
