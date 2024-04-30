@@ -22,7 +22,7 @@ if (!file.exists(modify_path("Data_Verify/Robustness/side_robustness.RData"))){
 source("PFAS-Code/PR/Figures/figure2.R")
 
 #IV figure
-if (!file.exists(modify_path("Data_Verify/RData/linear_iv_se.RData"))) {
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
   stop("Please run bootstrap_iv.R to generate the standard errors.")
 }
 source("PFAS-Code/PR/Figures/iv_figure.R")
