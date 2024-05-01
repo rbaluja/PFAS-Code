@@ -55,6 +55,29 @@
    * This file creates three files: RData/bootstrap.RData, RData/bootstrap_quant.RData, RData/bootstrap_sb.RData. These files contain 10,000 rows, corresponding to bootsrap iterations of the IV specifications.
    * The file first reads in all data (PR/Data/data_head.R), assigns downgradient, upgradient, and to-the-side for each birth (PR/Main Analysis/binary.R), calculates flow accumulation at the residence (PR/Main Analysis/flow_accumulation.R), and then assigns downgradient, upgradient, and to-the-side for each test well, along with their soil variables and wind exposure for the first stage regression. It then adds soil variables to the birth record data, through the location of their drinking water well
 
+
+#### 3. Additional files  
+Note: These should each be run with a clean environment  
+* **PR/Robustness/gw_verification.R**
+  * This calculates the statistics from Appendix M  
+* **PR/GIS/df_watershed.R**
+  * NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
+  * This calculates the watersheds shapes for each residence. They are used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
+* **PR/Robustness/resid_side_comparison.R**
+  * This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
+* **PR/Robustness/New York/Groundwater_NY.R**
+  * This calculates the results used for the New York section (Appendix N)
+* **PR/Placebo/placebo_head.R**
+  * This calculates the number of false positives under the placebo test (Table S-8)
+* **PR/GIS/cs_downstream.R**
+  * This directly calculates the necessary GIS files and creates Figure S-1
+* **PR/Figures/pop_matching_cutoff.R**
+  * This creates Figure S-2b
+* **PR/Figures/meters_cutoff.R**
+  * This creates Figure S-3
+* **PFAS-Code/PR/Figures/quantiles_pfas.R**
+  * This creates Figure Figure S-5 and Table S-12
+
 ### Execution file: PR/infant_health_head.R  
 ### Parameters:
 - natality_path: File path to UA Box Drive folder
@@ -176,41 +199,6 @@
 
  * **PR/National Costs/nat_costs_binary.R**
  * This file recreates Figure 3a with the binary downgradient estimates. It creates and saves Figure S-7
-
-
-
-#### Supplemental files  
-Note: These should each be run with a clean environment  
-* **PR/Robustness/gw_verification.R**
-  * This calculates the statistics from Appendix M  
-* **PR/GIS/df_watershed.R**
-  * NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
-  * This calculates the watersheds shapes for each residence. They are used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
-* **PR/Robustness/resid_side_comparison.R**
-  * This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
-* **PR/Robustness/New York/Groundwater_NY.R**
-  * This calculates the results used for the New York section (Appendix N)
-* **PR/Placebo/placebo_head.R**
-  * This calculates the number of false positives under the placebo test (Table S-8)
-* **PR/GIS/cs_downstream.R**
-  * This directly calculates the necessary GIS files and creates Figure S-1
-* **PR/Figures/pop_matching_cutoff.R**
-  * This creates Figure S-2b
-* **PR/Figures/meters_cutoff.R**
-  * This creates Figure S-3
-* **PFAS-Code/PR/Figures/quantiles_pfas.R**
-  * This creates Figure Figure S-5 and Table S-12
-
-
-
-
-
-
-
-
-With the current setup:
-- To get robustness figure (Figure S-4): First run infant_health_head.R through main analysis with drop_states = TRUE (will want to set IV to FALSE to speed this up). Repeat with relaxed_up = TRUE, then Robustness/relaxed_up_robustness.R. Then run Robustness/resid_side_comparison.R (this can take a while if GIS is true. Then run infant_health_head.R with base spec until main analysis, then Figures/robustness_figure.R
-- To get the ratio of the population in 11 states by that of the lower 48: Run PR/National Costs/Stats/frac_nat_pop.R
 
 
 
