@@ -37,7 +37,7 @@ oster_robust = FALSE #run Oster (2019) selection on unobservables?
 false_test = FALSE #run falsification test?
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 rerun_placebos = TRUE
-code_check = TRUE
+code_check = FALSE
 n_cores = 1
 
 #data cleaning
@@ -84,15 +84,14 @@ if (rerun_placebos == TRUE){
   plac = NULL
   # Loop through the files
   for (i in 1:10) {
-    # Create a new environment for loading the file
+    #create a new environment for loading the file
     env = new.env()
     
-    # Load the file into the new environment
+    #load the file into the new environment
     load(modify_path(paste0("Data_Verify/RData/placebos_", i, ".RData")), envir = env)
     
     object_name = ls(env)
     
-    # Use get() to retrieve the object by name from the environment
     current_placebo = get(object_name, env)
     
     # bind plac with current_placebo

@@ -180,10 +180,32 @@ tri = fread(modify_path("Data_Verify/Supplemental/tri_nh.csv")) %>%
   dplyr::select(tri_lat = `12. LATITUDE`, tri_lng = `13. LONGITUDE`)
 tri$index = 1:nrow(tri)
 
-#get distance from each row in df and tri
+#get distance from each test well and tri site
 tri_dist =  st_distance(fs_cont %>% st_transform(32110), tri %>% st_as_sf(coords = c("tri_lng", "tri_lat"), crs = 4326) %>% st_transform(32110))
 fs_cont$tri5 = apply(tri_dist, 1, function(x) sum(x <= 5000))
 
 fwrite(fs_cont %>% 
          as_tibble() %>% 
          dplyr::select(!geometry), modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
+
+#get distance between each test well and cont site (for SI discussion)
+cf_dist = st_distance(fs_cont %>% 
+                        st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
+                        st_transform(32110), cont_sites %>% st_transform(32110))
+#percent of test wells within 10km of a cont site
+mean(apply(cf_dist, 1, function(x) sum(x <= 10000) > 0))
+#percent of test wells within 5km of a cont site
+mean(apply(cf_dist, 1, function(x) sum(x <= 5000) > 0))
+#median number of sites within 5km, among wells within 5km
+nw = apply(cf_dist, 1, function(x) sum(x <= 5000))
+mean(nw[nw >= 1])
+rm(nw)
+
+#number of wells with non-missing PFOA/PFOS levels
+sum(!is.na(fs_cont$pfoa) & !is.na(fs_cont$pfos))
+#number of wells with missing PFOS but not PFOA levels
+sum(is.na(fs_cont$pfos) & !is.na(fs_cont$pfoa))
+#number of wells with missing PFOA but not PFOS levels
+sum(is.na(fs_cont$pfoa) & !is.na(fs_cont$pfos))
+#number of wells with missing PFOA and PFOS levels
+sum(is.na(fs_cont$pfoa) & is.na(fs_cont$pfos))

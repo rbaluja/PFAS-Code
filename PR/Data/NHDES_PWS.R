@@ -28,5 +28,8 @@ wells = wells %>%
   st_transform(5070) %>%
   dplyr::filter(!st_is_empty(.))
 
+#number of water systems with active gw wells
+length(unique(wells$sys_id))
+
 #return sys_skip (systems with no active groundwater wells)
 source("PFAS-Code/PR/Data/no_wells.R")

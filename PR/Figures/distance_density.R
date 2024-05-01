@@ -7,6 +7,15 @@ w_dist = st_distance(wells1 %>% st_transform(5070), cont_sites %>% st_transform(
 
 wells1$dist_near = apply(w_dist, 1, min)
 
+#prop of wells within 10km of a contamination site
+mean(wells1$dist_near <= 10000)
+#prop of wells within 5km of a contamination site
+mean(wells1$dist_near <= 5000)
+#median number of sites within 5km, among wells within 5km
+nw = apply(w_dist, 1, function(x) sum(x <= 5000))
+median(nw[nw >= 1])
+rm(nw)
+
 figure_s2a = ggplot(wells1, aes(x = dist_near / 1000)) +
   geom_density(aes(fill = "blue"), alpha = 0.4, color = NA) +  # Set fill and remove border
   scale_fill_identity() +  # Use the literal color name
