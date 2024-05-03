@@ -197,7 +197,6 @@ r_coefs_jittered1$sev_num = r_coefs_jittered1$sev_num - 0.2  # Shift left
 r_coefs_jittered2 = r_coefs[r_coefs$b_outcome == "Low-Birthweight", ]
 r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.2  # Shift right
 
-# Plot using ggplot2
 iv_fig = ggplot() +
   geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10) +
   geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) +
@@ -252,5 +251,5 @@ iv_fig +
                                           vjust = -3), size = 10)
 
 
-ggsave(modify_path("Figures/IV/iv_figure.png"), scale = 3.7)
+ggsave(modify_path3("Figures/IV/iv_figure.png"), scale = 3.7)
 

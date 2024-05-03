@@ -20,7 +20,6 @@ wind_dist= dist_allow = 10000 #wind distance cutoff
 ppt = 1000 #cutoff for primary contamination site
 nat_run_cont_ws = FALSE#recreate national watershed shapes?
 nat_reassn = FALSE #reassign national CBGs to release sites?
-nat_redo_soil = FALSE #recalculate soil stats for national data?
 nb_cbg = FALSE
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 code_check = FALSE
