@@ -5,7 +5,7 @@ nh_map_plot = ggplot() +
   coord_fixed(1.3) + 
   theme_minimal()
 
-dem = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")) 
+dem = terra::rast(modify_path("Data_Verify/GIS/dem_smoothed.tiff")) 
 dem =  terra::crop(dem, extent(nh_map_data %>% summarise(x = c(min(long), max(long)), y = c(min(lat), max(lat)))))
 
 dem = dem %>%
@@ -13,7 +13,7 @@ dem = dem %>%
 
 colnames(dem) = c("x", "y", "elev")
 
-plot_data = data.frame(x = c(-71.35, -71.25, -71.4, -71.32), y = c(44.28, 44.3, 44.26, 44.254), label = c("C", "\\omega_1", "\\omega_2", "\\omega_3"))
+plot_data = data.frame(x = c(-71.35, -71.25, -71.4, -71.32), y = c(44.25, 44.3, 44.26, 44.254), label = c("C", "\\omega_1", "\\omega_2", "\\omega_3"))
 #read in calculated watersheds for plot_data points
 if (!file.exists(modify_path("Data_Verify/GIS/f1_watershed.RData"))){
   stop("Data not found. Please run PR/GIS/figure1_watershed.R first.")
@@ -28,7 +28,7 @@ f1_ws = f1_ws %>% purrr::map_df(rev) %>% st_as_sf()
 
 f1 = nh_map_plot + 
   geom_raster(data = dem, aes(x = x, y = y, fill = elev)) +
-  scale_fill_viridis_c(guide = guide_colorbar(barwidth = 30, barheight = 1,
+  scale_fill_viridis_c(guide = guide_colorbar(barwidth = 63, barheight = 1,
                                               title = "",
                                               title.hjust = 0.5,
                                               label.hjust = .5,
@@ -36,15 +36,15 @@ f1 = nh_map_plot +
                        breaks = c(0.0, 500, 1000, 1500),
                        labels = c("0", "500m", "1000m", "1500m")) +
   theme(legend.position = "bottom") +
-  ylim(44.18, 44.4) + xlim(-71.5, -71.15) +
-  annotate("point", x = -71.35, y = 44.28, color = "black", size = 4) +
-  #annotate("text", x = -71.35, y = 44.28, label = "C", vjust = -1.5, color = "black", size = 10, family = "arial") +
-  annotate("point", x = -71.25, y = 44.3, color = "tan4", size = 4) +
-  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = 1., vjust = -0.3, color = "tan4", size = 10, family = "arial") +
-  annotate("point", x = -71.4, y = 44.26, color = "white", size = 4) +
+  ylim(44.18, 44.38) + xlim(-71.5, -71.15) +
+  annotate("point", x = -71.35, y = 44.27, color = "black", size = 6) +
+  annotate("text", x = -71.35, y = 44.28, label = "C", vjust = 1.3, color = "black", size = 10, family = "arial") +
+  annotate("point", x = -71.25, y = 44.3, color = "grey77", size = 6) +
+  annotate("text", x = -71.25, y = 44.3, label = "ω[3]", parse = TRUE, hjust = 1., vjust = -0.5, color = "grey77", size = 10, family = "arial") +
+  annotate("point", x = -71.4, y = 44.26, color = "white", size = 6) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
-  annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 3) +
-  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = 0.75, hjust = -1, color = "firebrick4", size = 10) + 
+  annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 6) +
+  annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = -0.3, hjust = -.3, color = "firebrick4", size = 10) + 
   # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
   #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
   #              color = "white", size = 1, lineend = "round") +
@@ -59,11 +59,13 @@ f1 = nh_map_plot +
         axis.text = element_blank(),
         axis.title = element_blank())
 
-#add geometry from f1_ws to f1
-f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
+f1 = f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
              alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 2, 3)) +
-  scale_color_manual(values = c("C" = "black", "omega1" = "tan4", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
+  scale_color_manual(values = c("C" = "black", "omega1" = "grey77", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
   
 
 
-ggsave(modify_path3("Figures/Figure1/figure1_dem.png"), scale = 1.25)
+ggsave(modify_path3("Figures/Figure1/figure1_dem.png"), f1, scale = 1.25)
+
+
+

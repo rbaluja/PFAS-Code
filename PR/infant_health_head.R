@@ -8,8 +8,8 @@ source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus, ggpattern, forcats)
+             modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
+             rgdal, units, tidycensus, ggpattern, forcats)
 options(modelsummary_format_numeric_latex = "mathmode")
 options(tigris_use_cache = TRUE)
 
