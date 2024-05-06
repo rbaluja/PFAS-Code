@@ -48,6 +48,10 @@ df$pred_pfas_level = sinh(df$pred_pfas)/1000
 df_nn = df[which(!is.na(df$pred_pfas)), ]
 quantiles = quantile(df_nn$pred_pfas, c(0, 0.2, 0.4, 0.6, 0.8, 1))
 df_nn$quant_pfas = as.integer(cut(df_nn$pred_pfas, breaks = quantiles, include.lowest = TRUE, labels = 1:5))
+#second lowest quintile pfas level (SI Section I)
+d = df_nn[df_nn$quant_pfas == 2, ]
+min(d$pred_pfas_level * 1000)
+max(d$pred_pfas_level * 1000)
 
 preterm = fixest::feols(gestation < 37 ~ as.factor(quant_pfas) + asinh(pfas) +
                           n_sites + wind_exposure + 

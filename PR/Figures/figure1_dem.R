@@ -59,12 +59,11 @@ f1 = nh_map_plot +
         axis.title = element_blank())
 
 f1 = f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
-             alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 7, 2)) +
+                  alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 7, 2)) +
   scale_color_manual(values = c("C" = "black", "omega1" = "grey77", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
-  
+
 
 
 ggsave(modify_path3("Figures/Figure1/figure1_dem.png"), f1, height = 4800, width = 4800, units = "px")
-
 
 

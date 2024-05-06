@@ -47,4 +47,3 @@ if (tables){
 if (figures){
   source("PFAS-Code/PR/Figures/figures_head.R") 
 }
-
