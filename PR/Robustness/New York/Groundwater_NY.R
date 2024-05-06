@@ -16,17 +16,16 @@ population_weighted = T
 gw_dist_allowance = 5000
 nyc = F
 longisland = F
-rerun_epa_well = F
-rerun_weather = F
-rerun_pollution = F
-rerun_birthdata = F
-code_check = F
+rerun_weather = T
+rerun_pollution = T
+rerun_birthdata = T
+code_check = T
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 n_cores = 1
 
 
 #read in the water measurement data
-gw_level = read.delim('New York/Data/Groundwater/gwlevels_ny')
+gw_level = read.delim(modify_path4('New York/Data/Groundwater/gwlevels_ny'))
 gw_level$sl_lev_va = as.numeric(gw_level$sl_lev_va)
 gw_level = gw_level %>% tidyr::drop_na(sl_lev_va) #gets rid of missing data
 gw_level = gw_level %>% 
@@ -44,7 +43,7 @@ if (all_wells == F){
 }
 
 #load latitude/longitude information for well id
-gw_loc = read_delim('New York/Data/Groundwater/gwlevels_tabbed', 
+gw_loc = read_delim(modify_path4('New York/Data/Groundwater/gwlevels_tabbed'), 
                     delim = "\t", escape_double = FALSE, 
                     trim_ws = TRUE)
 gw_loc = gw_loc[-1, ] #drop first row
@@ -61,7 +60,7 @@ gw = gw_loc %>%
 
 #load and combine vitality data 2010-1018
 if (rerun_birthdata == T){
-  gw_ny = read_csv('New York/Data/Births/ny_birth10-12.csv', 
+  gw_ny = read_csv(modify_path4('New York/Data/Births/ny_birth10-12.csv'), 
                    col_types = cols(...1 = col_skip(), `Out of Wedlock` = col_skip(), 
                                     `Medicaid or Self-pay` = col_skip(),
                                     `Infant Deaths Rate` = col_skip(), 
@@ -70,7 +69,7 @@ if (rerun_birthdata == T){
   colnames(gw_ny) = c('zip', 'total_birth', 'percent_premature', 'percent_all_low','percent_late_care', 'infant_deaths', 'neonatal_deaths')
   gw_ny$year = '2010-2012'
   
-  df = read_csv('New York/Data/Births/ny_birth13-15.csv', 
+  df = read_csv(modify_path4('New York/Data/Births/ny_birth13-15.csv'), 
                 col_types = cols(...1 = col_skip(), 
                                  `Medicaid or Self-pay` = col_skip(), 
                                  `Infant Deaths Rate` = col_skip(), 
@@ -82,7 +81,7 @@ if (rerun_birthdata == T){
   gw_ny = rbind(gw_ny, df)
   
   
-  df = read_csv('New York/Data/Births/ny_birth16-18.csv', 
+  df = read_csv(modify_path4('New York/Data/Births/ny_birth16-18.csv'), 
                 col_types = cols(...1 = col_skip(),  
                                  `Medicaid or Self-pay` = col_skip(), 
                                  `Infant Deaths Rate` = col_skip(), 
@@ -93,7 +92,7 @@ if (rerun_birthdata == T){
   
   gw_ny = rbind(gw_ny, df)
 }else{
-  gw_ny = read.csv('New York/Data/Births/ny_with_nearest_well_pop_full_run.csv')
+  gw_ny = read.csv(modify_path4('New York/Data/Births/ny_with_nearest_well_pop_full_run.csv'))
   gw_ny = subset(gw_ny, select = - X)
 }
 
@@ -147,7 +146,7 @@ if(rerun_birthdata == T){
     gw_ny$lat[is.na(gw_ny$lat)] = 43.800
     gw_ny$lng[is.na(gw_ny$lng)] = -76.12
   }else{
-    pop_weighted_location = read_csv('New York/Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv') %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
+    pop_weighted_location = read_csv(modify_path4('New York/Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv')) %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
       dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PREF_STATE_1221, lng = LGT, lat = LAT) %>% 
       dplyr::filter(state == "NY") %>% 
       dplyr::select(!state)
@@ -162,7 +161,7 @@ if(rerun_birthdata == T){
 
 
 
-gw_ny_contaminated = read_excel("New York/Data/Pollution/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx", sheet = 2) %>% 
+gw_ny_contaminated = read_excel(modify_path4("New York/Data/Pollution/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx"), sheet = 2) %>% 
   dplyr::filter(State == "New York" & `Matrix Type` == "Groundwater") %>% 
   dplyr::select(name = `Site name`, 
                 lng = Longitude,
@@ -241,7 +240,7 @@ gw_ny_contaminated = dplyr::bind_rows(pblapply(1:nrow(gw_ny_contaminated), gw_as
 
 
 #assigning ZCTA to dataset
-ZiptoZcta_Crosswalk_2021 = read_excel('New York/Data/Supplemental/ZiptoZcta_Crosswalk_2021.xlsx', #These data come from udsmapper.org
+ZiptoZcta_Crosswalk_2021 = read_excel(modify_path4('New York/Data/Supplemental/ZiptoZcta_Crosswalk_2021.xlsx'), #These data come from udsmapper.org
                                       col_types = c("text", "skip", "text", 
                                                     "skip", "text", "skip")) %>% 
   dplyr::select(zip = ZIP_CODE, 
@@ -362,13 +361,13 @@ gw_ny = gw_ny %>%
 if (rerun_pollution == T){
   ny_shapefile = zctas(year = 2010, state = 'NY')
   ny_shapefile$geometry = st_transform(ny_shapefile$geometry, crs = '+proj=longlat +datum=WGS84')
-  space_pm25 = raster('New York/Data/Pollution/2010.tif')
+  space_pm25 = raster(modify_path4('New York/Data/Pollution/2010.tif'))
   space_pm25.value = raster::extract(space_pm25, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
   d = as.data.frame(space_pm25.value)
   d = subset(d, select = c(ZCTA5CE10, X2010))
   colnames(d) = c('zcta', 'mean_pm25_2010')
   for (i in c('2011', '2012', '2013', '2014', '2015', '2016')){
-    path = paste0('New York/Data/Pollution/' , i, '.tif')
+    path = modify_path4(paste0('New York/Data/Pollution/' , i, '.tif'))
     space_pm25_i = raster(path)
     space_pm25_i.value = raster::extract(space_pm25_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
     d_i = as.data.frame(space_pm25_i.value)
@@ -377,9 +376,9 @@ if (rerun_pollution == T){
     d = merge(d, d_i, by = 'zcta')
   }
   pollution = d
-  write.csv(pollution, 'New York/Data/Pollution/ny_pop_weighted_pm25.csv')
+  write.csv(pollution, modify_path4('New York/Data/Pollution/ny_pop_weighted_pm25.csv'))
 }else{
-  pollution = read.csv('New York/Data/Pollution/ny_pop_weighted_pm25.csv')
+  pollution = read.csv(modify_path4('New York/Data/Pollution/ny_pop_weighted_pm25.csv'))
   pollution = pollution[, -1] #removes X
 }
 pollution$mean_pm25_12 = rowMeans(pollution[, c(2, 3, 4)])
@@ -391,13 +390,13 @@ gw_ny$mean_pm25 = ifelse(gw_ny$year == "2010-2012", gw_ny$mean_pm25_12, ifelse(g
 
 #bringing in temperature data
 if (rerun_weather == T){
-  weather = raster('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_2010_bil.bil')
+  weather = raster(modify_path4('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_2010_bil.bil'))
   weather.value = raster::extract(weather, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
   d = as.data.frame(weather.value)
   d = d[, c(2, ncol(d))]
   colnames(d) = c('zcta', 'temp_2010') 
   for (i in c('2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018')){
-    path = paste0('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_' , i, '_bil.bil')
+    path = modify_path4(paste0('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_' , i, '_bil.bil'))
     weather_i = raster(path)
     weather_i.value = raster::extract(weather_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
     d_i = as.data.frame(weather_i.value)
@@ -406,9 +405,9 @@ if (rerun_weather == T){
     d = merge(d, d_i, by = 'zcta')
   }
   weather = d
-  write.csv(weather,  'New York/Data/Temperature/ny_pop_weighted_temp.csv')
+  write.csv(weather,  modify_path4('New York/Data/Temperature/ny_pop_weighted_temp.csv'))
 }else{
-  weather = read.csv('New York/Data/Temperature/ny_pop_weighted_temp.csv')
+  weather = read.csv(modify_path4('New York/Data/Temperature/ny_pop_weighted_temp.csv'))
   weather = weather[, -1]
 }
 weather$mean_temp_13 = rowMeans(weather[, c(2, 3, 4)])

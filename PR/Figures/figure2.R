@@ -1174,11 +1174,11 @@ lplot = ggplot(legend_data) +
 ptplot = ggplot() +
   labs(title = "Preterm") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.85, size = 60, face = "bold"))
+  theme(plot.title = element_text(hjust = 1, size = 60, face = "bold"))
 btplot = ggplot() +
   labs(title = "Low-Birthweight") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.65, size = 60, face = "bold"))
+  theme(plot.title = element_text(hjust = 0.8, size = 60, face = "bold"))
 
 title = (ptplot | btplot)
 main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
@@ -1187,4 +1187,4 @@ fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 # /
 #   lplot
 
-ggsave(modify_path3("Figures/figure2.png"), fig2, scale = 8, limitsize = F)
+ggsave(modify_path3("Figures/figure2.png"), fig2, width = 17000, height = 10000, units = "px", limitsize = F)

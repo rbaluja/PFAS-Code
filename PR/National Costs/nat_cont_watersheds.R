@@ -105,7 +105,7 @@ cont_ws = function(state, states11){
     writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/nat_cont/cont_watershed/Shapes/site_", state_sites$index[i] ,  "ws_shape.shp")), overwrite = TRUE)
   }
 }
-pblapply(states11, cont_ws, states11, cl = 1) 
+pblapply(states11, cont_ws, states11, cl = n_cores) 
 
 files = list.files(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
 

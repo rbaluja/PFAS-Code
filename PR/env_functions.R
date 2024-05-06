@@ -29,3 +29,11 @@ modify_path3 = function(path) {
     return(path)
   }
 }
+
+modify_path4 = function(path) {
+  if(code_check) {
+    return(gsub("New York", "New York Konan", path))
+  } else {
+    return(path)
+  }
+}

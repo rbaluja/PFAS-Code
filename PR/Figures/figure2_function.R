@@ -12,8 +12,8 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   if (keep_x){
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
-      geom_point(aes(x=Estimate), color = col, shape=16, size=8) +
-      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 1) + 
+      geom_point(aes(x=Estimate), color = col, shape=16, size=16) +
+      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 3) + 
       geom_vline(xintercept = 0, linetype="dashed") +
       theme_classic() + ylab(category) + xlab("") + 
       theme(axis.line.y = element_blank(),
@@ -26,8 +26,8 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
-      geom_point(aes(x=Estimate), color = col, shape=16, size=8) +
-      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 1) + 
+      geom_point(aes(x=Estimate), color = col, shape=16, size=16) +
+      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 3) + 
       geom_vline(xintercept = 0, linetype="dashed") +
       theme_classic() + ylab(category) + xlab("") + 
       theme(axis.line = element_blank(),
@@ -172,28 +172,28 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   if (left){
     if (header){
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 20), 
-        area(t = 7, l = 21, b = 60, r = 50), 
-        area(t = 0, l = 51, b = 60, r = 75) 
+        area(t = 0, l = 0, b = 30, r = 20), 
+        area(t = 5, l = 21, b = 30, r = 35), 
+        area(t = 0, l = 36, b = 30, r = 50) 
       ) 
     }else{
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 20), 
-        area(t = 0, l = 21, b = 60, r = 50), 
-        area(t = 0, l = 51, b = 60, r = 75) 
+        area(t = 0, l = 0, b = 30, r = 20), 
+        area(t = 0, l = 21, b = 30, r = 35), 
+        area(t = 0, l = 36, b = 30, r = 50) 
       ) 
     }
     f = p_left + pany1 + p_right + plot_layout(design = layout) 
   }else{
     if (header){
       layout = c(
-        area(t = 7, l = 0, b = 60, r = 39), 
-        area(t = 0, l = 40, b = 60, r = 70) 
+        area(t = 5, l = 0, b = 30, r = 14), 
+        area(t = 0, l = 15, b = 30, r = 27) 
       ) 
     }else{
       layout = c(
-        area(t = 0, l = 0, b = 60, r = 39), 
-        area(t = 0, l = 40, b = 60, r = 70) 
+        area(t = 0, l = 0, b = 30, r = 14), 
+        area(t = 0, l = 15, b = 30, r = 27) 
       ) 
     }
     f = pany1 + p_right + plot_layout(design = layout) 
