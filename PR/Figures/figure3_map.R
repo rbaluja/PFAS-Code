@@ -31,7 +31,7 @@ cmap = function(i, state_abb, states_keep, bs_c){
   
   
   smap = ggplot() +
-    geom_sf(data = states[states$NAME == states_keep[i], ], color = "black", fill = "transparent") + 
+    geom_sf(data = states[states$NAME == states_keep[i], ], color = "black", fill = "transparent", size = 3) + 
     geom_sf(data = cs_counties, aes(fill = cost), color = NA, alpha = 0.8) +
     scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 150), 
                         breaks = c(0, 50, 100, 150),
@@ -42,7 +42,7 @@ cmap = function(i, state_abb, states_keep, bs_c){
                                                title.hjust = 0.5,
                                                label.hjust = .5,
                                                label.position = "bottom")) +
-    geom_point(data = cont_sites %>% dplyr::filter(state == states_keep[i]), aes(x = lng, y = lat), alpha = 0.4, size = 2) + theme_void() + 
+    geom_point(data = cont_sites %>% dplyr::filter(state == states_keep[i]), aes(x = lng, y = lat), alpha = 0.4, size = 0.5) + theme_void() + 
     theme(legend.title = element_text(size = 26), 
           legend.text = element_text(size = 26), 
           legend.position = "bottom", 
