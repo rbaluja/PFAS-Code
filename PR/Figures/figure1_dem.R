@@ -36,13 +36,13 @@ f1 = nh_map_plot +
                        labels = c("0", "500m", "1000m", "1500m")) +
   theme(legend.position = "bottom") +
   ylim(44.18, 44.38) + xlim(-71.5, -71.15) +
-  annotate("point", x = -71.35, y = 44.27, color = "black", size = 12) +
+  annotate("point", x = -71.37, y = 44.27, color = "black", size = 12) +
   annotate("text", x = -71.35, y = 44.28, label = "C", vjust = 1.3, color = "black", size = 10, family = "arial") +
   annotate("point", x = -71.232, y = 44.3, color = "grey77", size = 8) +
   annotate("text", x = -71.232, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -.25, vjust = -0.45, color = "grey77", size = 10, family = "arial") +
-  annotate("point", x = -71.4, y = 44.26, color = "white", size = 8) +
+  annotate("point", x = -71.415, y = 44.247, color = "white", size = 8) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 
-  annotate("point", x = -71.33, y = 44.26, color = "firebrick", size = 8) +
+  annotate("point", x = -71.335, y = 44.27, color = "firebrick", size = 8) +
   annotate("text", x = -71.33, y = 44.26, label = "ω[2]", parse = TRUE, vjust = -0.3, hjust = -.3, color = "firebrick4", size = 10) + 
   # geom_segment(aes(x = -71.3, y = 44.27, xend = -71.26, yend = 44.25),
   #              arrow = grid::arrow(type = "closed", length = unit(0.2, "inches")),
@@ -58,7 +58,7 @@ f1 = nh_map_plot +
         axis.text = element_blank(),
         axis.title = element_blank())
 
-f1 = f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
+f1 + geom_sf(data = f1_ws, aes(color = as.factor(site)), 
                   alpha = 0, fill = "transparent", linewidth = ifelse(f1_ws$site == "C", 7, 2)) +
   scale_color_manual(values = c("C" = "black", "omega1" = "grey77", "omega2" = "white", "omega3" = "firebrick"), guide = FALSE)
 

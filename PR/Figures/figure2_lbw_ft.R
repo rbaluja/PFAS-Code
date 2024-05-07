@@ -122,8 +122,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "Relaxed Upgradient Definition", "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["down"]/mean(df[df$gestation >= 37, ]$bweight < 2500) * 100, 
                drop_close$coefficients["down"]/mean(df[df$gestation >= 37, ]$bweight < 2500) * 100, pre_2016$coefficients["down"]/mean(df[df$gestation >= 37, ]$bweight < 2500) * 100, 
                lbw_ft_ds$coefficients["down"]/mean(df[df$gestation >= 37, ]$bweight < 2500) * 100,  lbw_ft_rup$coefficients["down"]/mean(df[df$gestation >= 37, ]$bweight < 2500) * 100,
@@ -148,9 +148,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
-                                  "No Demographics", "Relaxed Upgradient Definition", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -163,4 +163,4 @@ data$pval_label = sprintf("%.5f", data$pval)
 
 lbw_ft_f2 = figure2_fun(data, "Any Low-Birthweight (Full-Term)", TRUE, TRUE, "Any Low-Birthweight (Full-Term)", TRUE)
 
-ggsave(modify_path3("Figures/figure2_lbw_ft.png"), lbw_ft_f2, scale = 5, limitsize = F)
+ggsave(modify_path3("Figures/figure2_lbw_ft.png"), lbw_ft_f2, width = 12000, height = 4500, units = "px", limitsize = F)
