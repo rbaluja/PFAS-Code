@@ -36,6 +36,9 @@ csite_buff = cont_sites %>%
 
 
 #create necessary directories
+dir.create(modify_path("Data_Verify/GIS/National"))
+dir.create(modify_path("Data_Verify/National/GIS"))
+
 dir.create(modify_path("Data_Verify/GIS/nat_cont"))
 dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed"))
@@ -64,7 +67,7 @@ fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), modify_
 cont_ws = function(state, states11){
   
   #get dem for state
-  e = get_elev_raster(states[which(states$NAME == state), ]$geometry, z = 9)
+  e = get_elev_raster(states[which(states$NAME == state), ], z = 9)
   writeRaster(e, modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), overwrite = TRUE)
   
   #fill the dem sinks

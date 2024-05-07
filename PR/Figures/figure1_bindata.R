@@ -31,7 +31,7 @@ df_c = df %>%
 
 df_c$vlbw = as.numeric(df_c$bweight < 1000)
 
-df_c$dist_bin = as.integer(cut(df_c$dist, breaks = c(0, 1000, 3000, 5000), include.lowest = TRUE, labels =FALSE))
+df_c$dist_bin = as.integer(cut(df_c$dist, breaks = c(0, 3000, 5000), include.lowest = TRUE, labels =FALSE))
 
 df_c$dus = ifelse(df_c$down == 1, "down", ifelse(df_c$up == 1, "up", "side"))
 
@@ -41,7 +41,7 @@ dfc_vlbw = df_c %>%
   dplyr::summarise(n = n())
 
 dfc_vlbw$middle = as.numeric(dfc_vlbw$dist_bin == 2)
-dfc_vlbw$outer = as.numeric(dfc_vlbw$dist_bin == 3)
+#dfc_vlbw$outer = as.numeric(dfc_vlbw$dist_bin == 3)
 dfc_vlbw$triangle = ifelse(dfc_vlbw$dus == "up", 1, ifelse(dfc_vlbw$dus == "down", 3, 4))
 
 # dfc_side = dfc_vlbw[dfc_vlbw$triangle == 4, ]
@@ -63,7 +63,7 @@ dfc_vlbw = dfc_vlbw %>%
 
 for (l in 0:1){
   for (t in 1:4){
-    for (d in 1:3){
+    for (d in 1:2){
       d2 = dfc_vlbw %>% 
         dplyr::filter(vlbw == l, 
                       triangle == t, 
@@ -74,7 +74,6 @@ for (l in 0:1){
                vlbw = l, 
                n = 0, 
                middle = ifelse(d == 2, 1, 0), 
-               outer = ifelse(d == 3, 1, 0), 
                triangle = t)
         dfc_vlbw = rbind(dfc_vlbw, nr)
       }
@@ -87,7 +86,7 @@ source("PFAS-Code/PR/Figures/figure1_triangles.R")
 
 fig = fig %>% right_join(dfc_vlbw %>% 
                            dplyr::mutate(middle = as.numeric(middle), 
-                                         outer = as.numeric(outer), 
+                                         
                                          triangle = as.numeric(triangle)))
 
 
@@ -138,8 +137,7 @@ fig1_bin = ggplot() +
   geom_segment(aes(x = 0, y = 0, xend = -5, yend = 0), 
                linetype = "dotted", 
                color = "black", size = 1) + 
-  annotate("text", x = -0.6, y = 0.08, label = "1km", hjust = 0.5, vjust = 0, size = 20) +  
-  annotate("text", x = -2, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) + 
+  annotate("text", x = -1.5, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) + 
   annotate("text", x = -4, y = 0.08, label = "5km", hjust = 0.5, vjust = 0, size = 20)
 
 ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, scale = 2.5)
