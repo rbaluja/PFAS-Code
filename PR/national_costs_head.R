@@ -38,12 +38,13 @@ if (nb_cbg){
 #get watershed for each cont site
 if (nat_run_cont_ws){
   source("PFAS-Code/PR/National Costs/nat_watersheds.R")  
+  cont_ws = get(load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData")))
+  wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
   births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"), colClasses = c(county = "character"))
 }else{
   #load in watersheds
-  load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData"))
-  cont_ws = wells_ws
-  load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData"))
+  cont_ws = get(load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData")))
+  wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
 }
 
 #assign cbg to sites
