@@ -91,6 +91,16 @@ lbw_births = sum(bs$add_lbw)
 bs$add_lbw_se = bs$pred_pfas * bs$births * llbw_sd
 lbw_births_se = sum(bs$add_lbw_se)
 
+if(still){
+  #stillborn
+  bs$add_still = bs$pred_pfas * bs$births * 0.00053
+  still_births = sum(bs$add_still)
+  still_cost = (still_births * 11446900.66)/10^9
+  bs$add_still_se = bs$pred_pfas * bs$births * stillbrn_sd
+  still_births_se = sum(bs$add_still_se)
+  still_cost_se = (still_births_se * 11446900.66)/10^9
+}
+
 
 #social cost figure
 data = data.frame(
@@ -227,4 +237,4 @@ lbw_cost = lbw_cost + geom_text(aes(label=se,
 p_costs = p_costs + guides(pattern = "none")
 figure_3 = (p_costs | lbw_cost) + plot_layout(guides = "collect")& 
   theme(legend.position = 'bottom')
-ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, scale= 5, device = "png", limitsize = FALSE)
+ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 9937, height = 9541, units = "px", device = "png", limitsize = FALSE)

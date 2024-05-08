@@ -480,15 +480,14 @@ table_s4 = modelsummary::modelsummary(still_table,
                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
                                       coef_map = c("down", "updown", "pred_pfas"),
                                       gof_map = c("nobs", "r.squared"), 
-                                      output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
+                                      output = "latex")
 sink(modify_path2("Tables/table_s4.tex"))
 print(still_table)
 sink() 
 
 #stillborn standard error
 stillbrn_sd = linear_bootstrap(boot_coefs, "stillborn", still_table[["IV"]])
+save(stillbrn_sd, file = modify_path("Data_Verify/RData/stillbrn_sd.RData"))
 
 
 

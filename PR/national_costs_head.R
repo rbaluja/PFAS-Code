@@ -24,6 +24,7 @@ nb_cbg = FALSE
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 code_check = FALSE
 n_cores = 1
+still = FALSE
 
 
 #clean raw births data
@@ -38,12 +39,12 @@ if (nb_cbg){
 #get watershed for each cont site
 if (nat_run_cont_ws){
   source("PFAS-Code/PR/National Costs/nat_watersheds.R")  
-  cont_ws = get(load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData")))
+  cont_ws = get(load(modify_path("Data_Verify/RData/nat_cont_watershed.RData")))
   wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
   births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"), colClasses = c(county = "character"))
 }else{
   #load in watersheds
-  cont_ws = get(load(modify_path("Data_Verify/GIS/National/nat_cont_watershed.RData")))
+  cont_ws = get(load(modify_path("Data_Verify/RData/nat_cont_watershed.RData")))
   wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
 }
 

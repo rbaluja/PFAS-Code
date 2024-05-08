@@ -83,4 +83,4 @@ cost_hist +
             vjust = -0.25,
             size = 14)
 
-ggsave(modify_path3("Figures/Figure3/full_cost.png"), scale = 2, limitsize = FALSE)
+ggsave(modify_path3("Figures/Figure3/full_cost.png"), width = 10358, height = 6133, units = "px", limitsize = FALSE)

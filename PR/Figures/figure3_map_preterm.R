@@ -135,4 +135,4 @@ ggplot() +
         legend.key.width = unit(2, "cm")) + 
   geom_sf_text(data = s_lab, aes(label = STUSPS), size = 14)
 
-ggsave(modify_path3("Figures/Figure3/costs_map_pre.png"),  scale= 4, device = "png", limitsize = FALSE)
+ggsave(modify_path3("Figures/Figure3/costs_map_pre.png"),  width = 9166, height = 8800, units = "px", device = "png", limitsize = FALSE)
