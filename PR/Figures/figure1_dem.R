@@ -38,7 +38,7 @@ f1 = nh_map_plot +
   ylim(44.18, 44.38) + xlim(-71.5, -71.15) +
   annotate("point", x = -71.37, y = 44.27, color = "black", size = 12) +
   annotate("text", x = -71.35, y = 44.28, label = "C", vjust = 1.3, color = "black", size = 10, family = "arial") +
-  annotate("point", x = -71.232, y = 44.3, color = "grey77", size = 8) +
+  annotate("point", x = -71.265, y = 44.25, color = "grey77", size = 8) +
   annotate("text", x = -71.232, y = 44.3, label = "ω[3]", parse = TRUE, hjust = -.25, vjust = -0.45, color = "grey77", size = 10, family = "arial") +
   annotate("point", x = -71.415, y = 44.247, color = "white", size = 8) +
   annotate("text", x = -71.4, y = 44.26, label = "ω[1]", parse = TRUE, vjust = -.5, hjust = 1, color = "white", size = 10)  + 

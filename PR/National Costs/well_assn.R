@@ -7,7 +7,7 @@ dwells = unique(down_wells$geoid)
 #get lat long in births df
 births = births %>% 
   st_transform(4326) %>%
-  mutate(lng = sf::st_coordinates(.)[, 1],
+  dplyr::mutate(lng = sf::st_coordinates(.)[, 1],
          lat = sf::st_coordinates(.)[, 2]) %>% 
   st_transform(3437)
 

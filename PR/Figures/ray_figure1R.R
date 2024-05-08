@@ -11,7 +11,7 @@ states = tigris::states() %>%
 states = states %>% 
   st_crop(xmin = -71.5, xmax = -71.15, ymin = 44.18, ymax = 44.38)
 
-pd = data.frame(x = c(-71.37, -71.232, -71.42, -71.34), y = c(44.27, 44.3, 44.247, 44.27)) %>% 
+pd = data.frame(x = c(-71.37, -71.313, -71.42, -71.34), y = c(44.268, 44.236, 44.263, 44.27)) %>% 
   st_as_sf(coords = c("x", "y"), crs = 4326)
 pd$data_column_fill = c("C", "omega3", "omega1", "omega2")
 

@@ -76,8 +76,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-             "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+             "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$gestation < 37) * 100, 
                drop_close$coefficients["updown"]/mean(df$gestation < 37) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 37) * 100, pr_rside$coefficients["updown"]/mean(df$gestation < 37) * 100,
                p_all_ds$coefficients["updown"]/mean(df$gestation < 37) * 100, 
@@ -101,9 +101,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -180,8 +180,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
                drop_close$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, lpr_rside$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
                lp_ds$coefficients["updown"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,  
@@ -205,9 +205,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -328,8 +328,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
                drop_close$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, mpr_rside$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
                mp_ds$coefficients["updown"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
@@ -354,9 +354,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -482,8 +482,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$gestation < 28) * 100, 
                drop_close$coefficients["updown"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 28) * 100, vpr_rside$coefficients["updown"]/mean(df$gestation < 28) * 100,
                vp_ds$coefficients["updown"]/mean(df$gestation < 28) * 100,
@@ -508,9 +508,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -639,8 +639,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$bweight < 2500) * 100, 
                drop_close$coefficients["updown"]/mean(df$bweight < 2500) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 2500) * 100, lbw_rside$coefficients["updown"]/mean(df$bweight < 2500) * 100,
                lbw_all_ds$coefficients["updown"]/mean(df$bweight < 2500) * 100,  
@@ -664,9 +664,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -790,8 +790,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
                drop_close$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, llbw_rside$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
                llbw_ds$coefficients["updown"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
@@ -816,9 +816,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -942,8 +942,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
                drop_close$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, mlbw_rside$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
                mlbw_ds$coefficients["updown"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,  
@@ -969,9 +969,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -1095,8 +1095,8 @@ data = data.frame(
                "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", "No Downgradient Homes", 
-            "Drop Cont. Sites w/in 5km of State Border",
-            "No Demographics", "No Medical Controls", "Contaminated Site Fixed Effect"),
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$bweight < 1000) * 100, 
                drop_close$coefficients["updown"]/mean(df$bweight < 1000) * 100, pre_2016$coefficients["updown"]/mean(df$bweight < 1000) * 100, vlbw_rside$coefficients["updown"]/mean(df$bweight < 1000) * 100,
                vlbw_ds$coefficients["updown"]/mean(df$bweight < 1000) * 100,  
@@ -1122,9 +1122,9 @@ data = data.frame(
 data = data %>% 
   dplyr::filter(Check != "No Downgradient Homes")
 
-data$Check = factor(data$Check, c("Contaminated Site Fixed Effect", "No Medical Controls", 
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", 
-                                  "Drop Cont. Sites w/in 5km of State Border", 
+                                  "Drop Border Sites", 
                                   "Drop After 2015",
                                   "Drop within 1km", "Baseline"))
 
@@ -1158,11 +1158,11 @@ lplot = ggplot(legend_data) +
 ptplot = ggplot() +
   labs(title = "Preterm") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.85, size = 60, face = "bold"))
+  theme(plot.title = element_text(hjust = 0.9, size = 70, face = "bold"))
 btplot = ggplot() +
   labs(title = "Low-Birthweight") +
   theme_void() +
-  theme(plot.title = element_text(hjust = 0.65, size = 60, face = "bold"))
+  theme(plot.title = element_text(hjust = 0.73, size = 70, face = "bold"))
 
 title = (ptplot | btplot)
 main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
@@ -1171,4 +1171,4 @@ fig2_up = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 # /
 #   lplot
 
-ggsave(modify_path3("Figures/figure2_upgradient.png"), fig2_up, scale = 8, limitsize = F)
+ggsave(modify_path3("Figures/figure2_upgradient.png"), fig2_up, width = 17000, height = 10000, units = "px", limitsize = F)
