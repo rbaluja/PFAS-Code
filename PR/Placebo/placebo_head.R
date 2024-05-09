@@ -47,6 +47,15 @@ nh_shape = tigris::states() %>%
   dplyr::filter(STUSPS == "NH") %>% 
   st_transform(32110)
 
+#fill sinks
+wbt_breach_depressions(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"), modify_path("Data_Verify/GIS/filled_dem.tiff"))
+
+#flow accumulation
+wbt_d8_flow_accumulation(modify_path("Data_Verify/GIS/filled_dem.tiff"), modify_path("Data_Verify/GIS/flow_acc.tiff"))
+
+#flow direction
+wbt_d8_pointer(modify_path("Data_Verify/GIS/filled_dem.tiff"), modify_path("Data_Verify/GIS/flow_dir.tiff"))
+
 #read in placebo functions
 source("PFAS-Code/PR/Placebo/placebo_functions.R")
 
