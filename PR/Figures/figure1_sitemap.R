@@ -30,9 +30,9 @@ nh_map_data = map_data("state", region = "new hampshire")
 
 ggplot() +
   geom_polygon(data = nh_map_data, aes(x = long, y = lat, group = group), fill = 'white', color = 'black') +
-  geom_sf(data = cont_sites_buff, aes(fill = log(sum_pfoa_pfos)), alpha = 0.5, color = "transparent") +
+  geom_sf(data = cont_sites_buff, aes(fill = log(sum_pfoa_pfos)), alpha = 0.7, color = "transparent") +
   scale_fill_gradientn(colors = c("yellow3", "firebrick4"),
-                       guide = guide_colorbar(barwidth = 50, barheight = 1,
+                       guide = guide_colorbar(barwidth = 40, barheight = 1,
                                               title = "Log PFOA + PFOS (ppt)",
                                               title.position = "top",
                                               title.hjust = 0.5,
@@ -49,7 +49,7 @@ ggplot() +
         legend.position = "bottom", 
         legend.text = element_text(size = 44), 
         legend.title = element_text(size = 50), 
-        legend.box.spacing = unit(-100, "pt"), 
+        #legend.box.spacing = unit(-100, "pt"), 
         plot.margin = unit(c(0, -2, 0, -2), "cm"))
 
-ggsave(modify_path3("Figures/Figure1/site_map.png"), scale = 3)
+ggsave(modify_path3("Figures/Figure1/site_map.png"))

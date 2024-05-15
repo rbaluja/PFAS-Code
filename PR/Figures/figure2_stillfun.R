@@ -1,4 +1,4 @@
-figure2_fun = function(data, category, keep_x, header, ti, left){
+figure2_still_fun = function(data, category, keep_x, header, ti, left){
   if (category == "Any" | category == "Any Low-Birthweight (Full-Term)"){
     col = "dodgerblue"
   }else if (category == "Slightly" | category == "Slightly"){
@@ -71,35 +71,35 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
         side = "right"
       )
     )) 
-    
+  
   if (header){
     res_plot = res_plot %>%
-    bind_rows(
-      data.frame(
-        Check = "Model",
-        estimate_lab = "Estimate (95% CI)",
-        d_lower = "",
-        d_upper = "",
-        pval = "p-value"
-      )
-    ) 
+      bind_rows(
+        data.frame(
+          Check = "Model",
+          estimate_lab = "Estimate (95% CI)",
+          d_lower = "",
+          d_upper = "",
+          pval = "p-value"
+        )
+      ) 
     res_plot$Check = factor(res_plot$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                             "Drop After 2015",
-                                            "Drop within 1km", "Baseline" , "Model"
+                                              "No Demographics", "Relax Upgradient Def'n", 
+                                              "Drop Border Sites", 
+                                              "Drop After 2015",
+                                              "Drop within 1km", "Baseline" , "Model"
     ))
     res_plot$model = res_plot$Check
   }else{
     res_plot$Check = factor(res_plot$Check, c("Site Fixed Effects", "No Medical Controls", 
                                               "No Demographics", "Relax Upgradient Def'n", 
                                               "Drop Border Sites", 
-                                               "Drop After 2015",
+                                              "Drop After 2015",
                                               "Drop within 1km", "Baseline"
     ))
     res_plot$model = res_plot$Check
   }
-    
+  
   
   
   if (!header){
@@ -124,7 +124,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   
   p_left =
     p_left +
-    coord_cartesian(xlim = c(0, 10)) + labs(y = ti, x = "") + 
+    coord_cartesian(xlim = c(0, 10)) + labs(y = "", x = "") + 
     theme(panel.background = element_rect(fill = 'white', colour = 'white'), 
           axis.ticks = element_blank(), 
           axis.text = element_blank(), 
@@ -171,38 +171,21 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank())
   }
   
-  if (left){
-    if (header){
-      layout = c(
-        area(t = 0, l = 0, b = 30, r = 9), 
-        area(t = 5, l = 10, b = 30, r = 19), 
-        area(t = 0, l = 20, b = 30, r = 31) 
-      ) 
-    }else{
-      layout = c(
-        area(t = 0, l = 0, b = 30, r = 9), 
-        area(t = 0, l = 10, b = 30, r = 19), 
-        area(t = 0, l = 20, b = 30, r = 31) 
-      ) 
-    }
-    f = p_left + pany1 + p_right + plot_layout(design = layout) 
+  if (header){
+    layout = c(
+      area(t = 0, l = 0, b = 30, r = 9), 
+      area(t = 5, l = 10, b = 30, r = 19), 
+      area(t = 0, l = 20, b = 30, r = 31) 
+    ) 
   }else{
-    if (header){
-      layout = c(
-        area(t = 5, l = 0, b = 30, r = 14), 
-        area(t = 0, l = 15, b = 30, r = 35) 
-      ) 
-    }else{
-      layout = c(
-        area(t = 0, l = 0, b = 30, r = 14), 
-        area(t = 0, l = 15, b = 30, r = 35) 
-      ) 
-    }
-    f = pany1 + p_right + plot_layout(design = layout) 
-    
+    layout = c(
+      area(t = 0, l = 0, b = 30, r = 9), 
+      area(t = 0, l = 10, b = 30, r = 19), 
+      area(t = 0, l = 20, b = 30, r = 31) 
+    ) 
   }
+  f = p_left + pany1 + p_right + plot_layout(design = layout) 
   
   return(f)
   
 } 
-

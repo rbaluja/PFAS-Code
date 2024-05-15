@@ -115,24 +115,32 @@ s_lab = states %>% as_tibble() %>%
 
 
 ggplot() +
-  geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +  # Removing border color for the counties layer
-  geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +  # Uniform border thickness
-  scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 20), 
+  geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
+  geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
+  scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 20),
                       breaks = c(0, 5, 10, 15, 20),
                       labels = c("$0", "$5M", "$10M", "$15M", expression("> $20M")),
-                      guide = guide_colorbar(barwidth = 40, barheight = 1,
+                      guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title = "Annual Preterm Costs",
                                              title.position = "top",
                                              title.hjust = 0.5,
                                              label.hjust = .5,
                                              label.position = "bottom")) +
-  geom_point(data = cont_sites %>% dplyr::filter(state %in% states_keep), aes(x = lng, y = lat), alpha = 0.4, size = 3) +
+  geom_point(data = cont_sites %>% filter(state %in% states_keep), 
+             aes(x = lng, y = lat, color = ""), 
+             alpha = 0.4, size = 3) +
+  scale_color_manual(values = "black",
+                     name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +
+  guides(color = guide_legend(override.aes = list(size = 10), # Increase the dot size in the legend
+                              title.position = "left")) + # Ensure the title is on the left of the dot
   theme_void() +
-  theme(legend.title = element_text(size = 40), 
-        legend.text = element_text(size = 40), 
-        legend.position = "bottom", 
+  theme(legend.title = element_text(size = 60),
+        legend.text = element_text(size = 58),
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.box.margin = margin(2, 2, 2, 2, "cm"),
         legend.key.height = unit(2, "cm"),
-        legend.key.width = unit(2, "cm")) + 
+        legend.key.width = unit(2, "cm")) +
   geom_sf_text(data = s_lab, aes(label = STUSPS), size = 14)
 
-ggsave(modify_path3("Figures/Figure3/costs_map_pre.png"),  width = 9166, height = 8800, units = "px", device = "png", limitsize = FALSE)
+ggsave(modify_path3("Figures/Figure3/costs_map_pre.png"),  width = 8483, height = 5875, units = "px", device = "png", limitsize = FALSE)

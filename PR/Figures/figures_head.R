@@ -1,6 +1,3 @@
-#predicted PFAS map
-source("PFAS-Code/PR/Figures/pred_pfas_map.R")
-
 #figure1 sitemap
 source("PFAS-Code/PR/Figures/figure1_sitemap.R")
 
@@ -32,7 +29,7 @@ source("PFAS-Code/PR/Figures/iv_figure.R")
 source("PFAS-Code/PR/Figures/distance_density.R")
 
 #DEM figure 1
-source("PFAS-Code/PR/Figures/figure1_dem.R")
+source("PFAS-Code/PR/Figures/ray_figure1.R")
 
 if (rob_app_fig){
   source("PFAS-Code/PR/Figures/robustness_figure.R")

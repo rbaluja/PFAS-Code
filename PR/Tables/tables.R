@@ -44,8 +44,7 @@ t1_preterm = modelsummary::modelsummary(table1_preterm,
                                     fmt = modelsummary::fmt_significant(2, scientific = F), 
                                     coef_map = c("down", "updown"),
                                     gof_map = c("nobs", "r.squared"), 
-                                    output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
+                                    output = "latex") 
 sink(modify_path2("Tables/table1_preterm.tex"))
 print(t1_preterm)
 sink()
@@ -100,18 +99,17 @@ t1_lbw = modelsummary::modelsummary(table1_lbw,
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down", "updown"),
                            gof_map = c("nobs", "r.squared"), 
-                           output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
+                           output = "latex") 
 sink(modify_path2("Tables/table1_lbw.tex"))
 print(t1_lbw)
 sink()
 
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap_wstill.RData"))) {
   stop("Bootstrap standard errors")
 }
-load(modify_path("Data_Verify/RData/bootstrap.RData"))
+load(modify_path("Data_Verify/RData/bootstrap_wstill.RData"))
 
 #preterm
 table2_preterm = list()
@@ -155,8 +153,7 @@ t2_preterm = modelsummary::modelsummary(table2_preterm,
                                         fmt = modelsummary::fmt_significant(2, scientific = F), 
                                         coef_map = c("pred_pfas"),
                                         gof_map = c("nobs", "r.squared"), 
-                                        output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
+                                        output = "latex")
 sink(modify_path2("Tables/table2_preterm.tex"))
 print(t2_preterm)
 sink()
@@ -236,8 +233,7 @@ t2_lbw = modelsummary::modelsummary(table2_lbw,
                                         fmt = modelsummary::fmt_significant(2, scientific = F), 
                                         coef_map = c("pred_pfas"),
                                         gof_map = c("nobs", "r.squared"), 
-                                        output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
+                                        output = "latex") 
 sink(modify_path2("Tables/table2_lbw.tex"))
 print(t2_lbw)
 sink()
@@ -453,10 +449,6 @@ sink()
 
 #####################
 ### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
-if (!file.exists(modify_path("Data_Verify/RData/bootstrap_sb.RData"))) {
-  stop("Bootstrap standard errors")
-}
-load(modify_path("Data_Verify/RData/bootstrap_sb.RData"))
 still_table = list()
 
 still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
@@ -488,6 +480,18 @@ sink()
 #stillborn standard error
 stillbrn_sd = linear_bootstrap(boot_coefs, "stillborn", still_table[["IV"]])
 save(stillbrn_sd, file = modify_path("Data_Verify/RData/stillbrn_sd.RData"))
+
+if (bs_cov){
+  cov_still_pl = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "lpreterm", table2_preterm[["Slightly"]])
+  cov_still_pm = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mpreterm", table2_preterm[["Moderately"]])
+  cov_still_pv = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mpreterm", table2_preterm[["Very"]])
+  
+  cov_still_bl = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "llbw", table2_lbw[["lLow Birthweight"]])
+  cov_still_bm = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
+  cov_still_bv = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
+  
+  save(cov_still_pl, cov_still_pm, cov_still_pv, cov_still_bl, cov_still_bm, cov_still_bv, file = modify_path("Data_Verify/RData/cov_still.RData"))
+}
 
 
 

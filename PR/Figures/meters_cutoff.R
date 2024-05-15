@@ -335,9 +335,9 @@ p_combined = ggplot() +
   theme_minimal() + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14), 
-        plot.title = element_text(face = "bold", hjust = 0.5, size = 26)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24), 
+        plot.title = element_text(hjust = 0.5, size = 34)) +
   guides(color = "none", fill = "none")+ ggtitle("Preterm") + 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE) + ylim(c(-0.02, 0.12))
 
@@ -351,8 +351,8 @@ lp_combined = ggplot() +
   theme_minimal() + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25)+  guides(color = FALSE)+ ylim(c(-0.02, 0.12))
 
@@ -365,8 +365,8 @@ mp_combined = ggplot() +
   theme_minimal() + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25)+  guides(color = FALSE)+ ylim(c(-0.02, 0.12))
 
@@ -379,11 +379,11 @@ vp_combined = ggplot() +
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme(legend.position = "bottom", 
-        axis.text.x = element_text(size = 20, face = "bold"), 
-        axis.title.x = element_text(size = 20, face = "bold"), 
-        legend.text = element_text(size = 20, face = "bold"),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.text.x = element_text(size = 26), 
+        axis.title.x = element_text(size = 28), 
+        legend.text = element_text(size = 24),
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + 
   scale_x_continuous(breaks = 1:10)+ ylim(c(-0.02, 0.12))
@@ -433,9 +433,9 @@ lbw_combined = ggplot(reg_data, aes(x = km)) +
   xlab("") + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14), 
-        plot.title = element_text(face = "bold", hjust = 0.5, size = 26)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24), 
+        plot.title = element_text(hjust = 0.5, size = 34)) +
   guides(color = "none", fill = "none")+ ggtitle("Low Birthweight") + 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+ ylim(c(-0.02, 0.12))
 
@@ -449,8 +449,8 @@ llbw_combined = ggplot(reg_data, aes(x = km)) +
   xlab("") + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+ ylim(c(-0.02, 0.12))
 
@@ -463,8 +463,8 @@ vlbw_combined = ggplot(reg_data, aes(x = km)) +
   xlab("") + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+ ylim(c(-0.02, 0.12))
 
@@ -479,17 +479,17 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   xlab("Buffer (km)") +
   theme_minimal() + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_text(size = 20, face = "bold"), 
-        axis.title.x = element_text(size = 20, face = "bold"), 
-        legend.text = element_text(size = 20, face = "bold"),
-        axis.title.y = element_text(size = 18, face = "bold"), 
-        axis.text.y = element_text(face = "bold", size = 14)) +
+        axis.text.x = element_text(size = 26), 
+        axis.title.x = element_text(size = 28), 
+        legend.text = element_text(size = 24),
+        axis.title.y = element_text(size = 28), 
+        axis.text.y = element_text(size = 24)) +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + 
   scale_x_continuous(breaks = 1:10) + ylim(c(-0.02, 0.12))
 
 
 figure_s3 = (p_combined | lbw_combined) / (lp_combined | llbw_combined) / (mp_combined | vlbw_combined) / (vp_combined | elbw_combined)
-ggsave(modify_path3("Figures/Robustness/figure_s3.png"), figure_s3, width = 7000, height = 5000, units = "px", dpi = 300)
+ggsave(modify_path3("Figures/Robustness/figure_s6.png"), figure_s3, width = 7000, height = 7000, units = "px", dpi = 300)
 
 

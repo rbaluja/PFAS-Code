@@ -1,5 +1,5 @@
 #robustness figure
-source("PFAS-Code/PR/Figures/figure2_function.R")
+source("PFAS-Code/PR/Figures/figure2_stillfun.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -8,7 +8,7 @@ one_sp = function(tval, pval){
     return(pval/2)
   }
 }
-#preterm
+
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
@@ -115,6 +115,8 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-stillbrn_f2 = figure2_fun(data, "Stillborn", TRUE, TRUE, "Stillborn", TRUE)
+stillbrn_f2 = figure2_still_fun(data, "Stillbirth", TRUE, TRUE, "Stillbirth", FALSE)
+stillbrn_f2 = stillbrn_f2 + ggtitle("Stillbirth") + theme_void() + theme(plot.title = element_text(hjust = -0.75, size = 70, face = "bold"))
 
-ggsave(modify_path3("Figures/figure2_stillbrn.png"), stillbrn_f2, width = 12000, height = 3500, units = "px", limitsize = F)
+
+ggsave(modify_path3("Figures/figure2_stillbrn.png"), stillbrn_f2, width = 10000, height = 3500, units = "px", limitsize = F)

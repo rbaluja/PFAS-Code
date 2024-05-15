@@ -119,19 +119,29 @@ ggplot() +
   scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 1000), 
                       breaks = c(0, 250, 500, 750, 1000),
                       labels = c("0", "250", "500", "750", expression(">1000")),
-                      guide = guide_colorbar(barwidth = 40, barheight = 1,
+                      guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title = "Predicted PFAS Level (ppt)",
                                              title.position = "top",
                                              title.hjust = 0.5,
                                              label.hjust = .5,
                                              label.position = "bottom")) +
-  geom_point(data = cont_sites %>% dplyr::filter(state %in% states_keep), aes(x = lng, y = lat), alpha = 0.4, size = 3) +
+  geom_point(data = cont_sites %>% filter(state %in% states_keep), 
+             aes(x = lng, y = lat, color = ""), 
+             alpha = 0.4, size = 3) +
+  scale_color_manual(values = "black",
+                     name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +
+  guides(color = guide_legend(override.aes = list(size = 10), # Increase the dot size in the legend
+                              title.position = "left")) + # Ensure the title is on the left of the dot
   theme_void() +
-  theme(legend.title = element_text(size = 40), 
-        legend.text = element_text(size = 40), 
-        legend.position = "bottom", 
+  theme(legend.title = element_text(size = 60),
+        legend.text = element_text(size = 58),
+        legend.position = "bottom",
+        legend.box = "vertical",
+        legend.box.margin = margin(2, 2, 2, 2, "cm"),
         legend.key.height = unit(2, "cm"),
-        legend.key.width = unit(2, "cm")) + 
+        legend.key.width = unit(2, "cm")) +
   geom_sf_text(data = s_lab, aes(label = STUSPS), size = 14)
 
-ggsave(modify_path3("Figures/Figure3/pred_pfas_map.png"),  scale= 4, device = "png", limitsize = FALSE)
+
+
+ggsave(modify_path3("Figures/Figure3/pred_pfas_map.png"),  scale= 2, device = "png", limitsize = FALSE)

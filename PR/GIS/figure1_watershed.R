@@ -13,8 +13,8 @@ states = tigris::states() %>%
   dplyr::filter(STUSPS == "NH")
 states = states %>% 
   st_crop(xmin = -71.5, xmax = -71.15, ymin = 44.18, ymax = 44.38)
-e = get_elev_raster(states, z = 13)
-writeRaster(e, modify_path("Data_Verify/GIS/ger_dem.tiff"))
+e = get_elev_raster(states, z = 14)
+writeRaster(e, modify_path("Data_Verify/GIS/ger_dem.tiff"), overwrite = TRUE)
 
 #fill sinks
 wbt_breach_depressions(modify_path("Data_Verify/GIS/ger_dem.tiff"), modify_path("Data_Verify/GIS/filled_ger_smoothed.tiff"))
@@ -26,8 +26,9 @@ wbt_d8_flow_accumulation(modify_path("Data_Verify/GIS/filled_ger_smoothed.tiff")
 wbt_d8_pointer(modify_path("Data_Verify/GIS/filled_ger_smoothed.tiff"), modify_path("Data_Verify/GIS/flow_dir_smoothed_ger.tiff"))
 
 
-f1 = data.frame(x = c(-71.35, -71.31, -71.4, -71.32), y = c(44.28, 44.255, 44.26, 44.254)) %>% 
+f1 = data.frame(x = c(-71.35, -71.375, -71.365, -71.32), y = c(44.28, 44.232, 44.25, 44.254)) %>% 
   st_as_sf(coords = c("x", "y"), crs = 4326)
+
 
 f1_watershed = function(i){
   

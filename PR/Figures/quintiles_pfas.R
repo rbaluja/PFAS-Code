@@ -30,7 +30,7 @@ census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 tables = TRUE
 figures = TRUE
 code_check = FALSE
-n_cores = 1
+n_cores = 3
 rob_app_fig = FALSE
 
 #data cleaning
@@ -237,6 +237,15 @@ reg_data[2:5, "llbw_p"] = 1 - pnorm(reg_data[2:5, "llbw_coef"]/reg_data[2:5, "ll
 reg_data[2:5, "mlbw_p"] = 1 - pnorm(reg_data[2:5, "mlbw_coef"]/reg_data[2:5, "mlbw_se"])
 reg_data[2:5, "vlbw_p"] = 1 - pnorm(reg_data[2:5, "vlbw_coef"]/reg_data[2:5, "vlbw_se"])
 
+reg_data[2:5, "pre_p"] = ifelse(reg_data[2:5, "pre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "pre_p"]))
+reg_data[2:5, "lpre_p"] = ifelse(reg_data[2:5, "lpre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "lpre_p"]))
+reg_data[2:5, "mpre_p"] = ifelse(reg_data[2:5, "mpre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "mpre_p"]))
+reg_data[2:5, "vpre_p"] = ifelse(reg_data[2:5, "vpre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "vpre_p"]))
+
+reg_data[2:5, "lbw_p"] = ifelse(reg_data[2:5, "lbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "lbw_p"]))
+reg_data[2:5, "llbw_p"] = ifelse(reg_data[2:5, "llbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "llbw_p"]))
+reg_data[2:5, "mlbw_p"] = ifelse(reg_data[2:5, "mlbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "mlbw_p"]))
+reg_data[2:5, "vlbw_p"] = ifelse(reg_data[2:5, "vlbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "vlbw_p"]))
 
 #confidence bands
 reg_data$pre_low = reg_data$pre_coef - 1.96 * reg_data$pre_se
@@ -260,21 +269,21 @@ reg_data$vlbw_high = reg_data$vlbw_coef + 1.96 * reg_data$vlbw_se
 breaks = seq(1, 5, by = 1)
 labels = as.character(breaks)
 
-reg_data$pval_label = sprintf("%.6f", reg_data$pre_p)
+
 pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=pre_low , ymax=pre_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = pre_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = pre_high, label = pre_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"), 
     legend.position = "bottom", 
     legend.margin = margin(t = -2, unit = "pt"),
-    axis.text.y = element_text(face = "bold", size = 18),
+    axis.text.y = element_text(size = 24),
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)
     
   )+
@@ -282,15 +291,15 @@ pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
   scale_x_continuous(breaks = breaks, labels = labels)  + ylim(c(-0.06, 0.09)) + 
   ggtitle("Preterm")
 
-reg_data$pval_label = sprintf("%.6f", reg_data$lpre_p)
+
 lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=lpre_low , max=lpre_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lpre_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lpre_high, label = lpre_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"),  
@@ -298,43 +307,43 @@ lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
     legend.title = element_blank(), 
     legend.margin = margin(t = -2, unit = "pt"),  
     plot.title = element_text(hjust = 0.5), 
-    axis.text.y = element_text(face = "bold", size = 18)
+    axis.text.y = element_text(size = 24)
     
   )+
   xlab("") + ylab("Slightly (32-36 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.6f", reg_data$mpre_p)
+
 mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=mpre_low , max=mpre_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mpre_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mpre_high, label = mpre_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"),  
     legend.position = "bottom",  
     legend.title = element_blank(),  
     legend.margin = margin(t = -2, unit = "pt"),
-    plot.title = element_text(hjust = 0.5), 
-    axis.text.y = element_text(face = "bold", size = 18)
+    plot.title = element_text(hjust = 0.5, size = 34), 
+    axis.text.y = element_text(size = 24)
     
   )+
   xlab("") + ylab("Moderately (28-31 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.6f", reg_data$vpre_p)
+
 vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=vpre_low , ymax=vpre_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vpre_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vpre_high, label = vpre_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
-  theme(axis.text = element_text(size = 18, face = "bold"), 
-        axis.title = element_text(size = 18, face = "bold")) + 
+  theme(axis.text = element_text(size = 24), 
+        axis.title = element_text(size = 28)) + 
   xlab("Predicted PFAS Quintile") + ylab("Very (<28 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
@@ -342,8 +351,8 @@ vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
 pfas_hist = ggplot(df_nn, aes(x=pred_pfas_level)) +
   geom_density() + 
   theme_minimal() + 
-  theme(axis.text = element_text(face = "bold", size = 18), 
-        axis.title = element_text(face = "bold", size = 18), 
+  theme(axis.text = element_text(size = 24), 
+        axis.title = element_text(size = 28), 
         plot.margin = margin(t = 50, unit = "pt")) + 
   xlab("Predicted PFAS (ppb)") + ylab("Density") + 
  xlim(c(0, 1)) + geom_vline(xintercept = quantile(df_nn$pred_pfas_level, 0.2)) + 
@@ -352,36 +361,36 @@ pfas_hist = ggplot(df_nn, aes(x=pred_pfas_level)) +
 
 
 
-reg_data$pval_label = sprintf("%.6f", reg_data$lbw_p)
+
 lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=lbw_low, ymax=lbw_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lbw_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lbw_high, label = lbw_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"),  
     legend.position = "bottom",  
     legend.margin = margin(t = -2, unit = "pt"),
-    axis.text.y = element_text(face = "bold", size = 18),
+    axis.text.y = element_text(size = 24),
     plot.title = element_text(face = "bold", hjust = 0.5, size = 26)
     
   ) + 
   xlab("") + ylab("Any (<2500g)")+ ylim(c(-0.06, 0.12)) + 
   ggtitle("Low Birthweight")
 
-reg_data$pval_label = sprintf("%.6f", reg_data$llbw_p)
+
 llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=llbw_low, ymax=llbw_high), width=0.1, alpha = 0.5) +
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = llbw_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = llbw_high, label = llbw_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"),  
@@ -389,20 +398,20 @@ llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
     legend.title = element_blank(),  
     legend.margin = margin(t = -2, unit = "pt"),
     plot.title = element_text(hjust = 0.5), 
-    axis.text.y = element_text(face = "bold", size = 18)
+    axis.text.y = element_text(size = 24)
     
   ) + 
   xlab("") + ylab("Slightly (1500-2499g)") + ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.6f", reg_data$mlbw_p)
+
 mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=mlbw_low, ymax=mlbw_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mlbw_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mlbw_high, label = mlbw_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(
-    axis.title.y = element_text(face = "bold", size = 18),
+    axis.title.y = element_text(size = 28),
     axis.text.x = element_blank(),
     strip.text.x = element_text(size = rel(1)), # Decrease facet label size
     panel.spacing.x = unit(0.1, "lines"),  
@@ -410,20 +419,20 @@ mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
     legend.title = element_blank(),  
     legend.margin = margin(t = -2, unit = "pt"),
     plot.title = element_text(hjust = 0.5), 
-    axis.text.y = element_text(face = "bold", size = 18)
+    axis.text.y = element_text(size = 24)
     
   ) + 
   xlab("") + ylab("Moderately (1000-1499g)")+ ylim(c(-0.06, 0.09))
 
-reg_data$pval_label = sprintf("%.6f", reg_data$vlbw_p)
+
 vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   geom_point(size=2) + 
   geom_errorbar(aes(ymin=vlbw_low, ymax=vlbw_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vlbw_high, label = pval_label), nudge_y = 0.01, size = 5) +
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vlbw_high, label = vlbw_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
-  theme(axis.text = element_text(size = 18, face = "bold"), 
-        axis.title = element_text(size = 18, face = "bold")) + 
+  theme(axis.text = element_text(size = 24), 
+        axis.title = element_text(size = 28)) + 
   xlab("Predicted PFAS Quintile") + ylab("Very (<1000g)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
@@ -435,7 +444,7 @@ figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
   (mpr_pfas_fig | mlbw_pfas_fig)/
   (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave(modify_path3("Figures/IV/figure_s5.png"), figure_s5,  width = 25, height = 20)
+ggsave(modify_path3("Figures/IV/figure_s7.png"), figure_s5,  width = 7000, height = 7500, units = "px")
 
 
 #Copy these to paste into table S-10

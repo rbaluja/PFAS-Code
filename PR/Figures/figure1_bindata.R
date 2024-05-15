@@ -117,21 +117,21 @@ for (i in 1:nrow(fig)) {
 
 points_sf = do.call(rbind, points_list)
 
-points_sf$vlbw = ifelse(points_sf$vlbw == "1", "Yes", "No")
-points_sf$vlbw = factor(points_sf$vlbw, levels = c("Yes", "No"))
+points_sf$vlbw = ifelse(points_sf$vlbw == "1", "1 Very Low-Weight Birth", "100 Non-Very Low-Weight Births")
+points_sf$vlbw = factor(points_sf$vlbw, levels = c("1 Very Low-Weight Birth", "100 Non-Very Low-Weight Births"))
 
 fig1_bin = ggplot() +
-  geom_sf(data = fig, fill = NA, color = "black") +  
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.4, size = ifelse(points_sf$vlbw == "Yes", 10, 12)) + 
-  scale_color_manual(values = c("No" = "dodgerblue3", "Yes" = "firebrick4"), 
+  geom_sf(data = fig, fill = NA, color = "black", size = 2) +  
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.4, size = ifelse(points_sf$vlbw == "1 Very Low-Weight Birth", 8, 12)) + 
+  scale_color_manual(values = c("100 Non-Very Low-Weight Births" = "dodgerblue3", "1 Very Low-Weight Birth" = "firebrick4"), 
                      guide = guide_colorsteps(title.position = "top", 
-                                              title = "Very Low-Birthweight")) + 
-  theme_void() + labs(color = "Very Low-Birthweight") + 
+                                              title = "")) + 
+  theme_void() + labs(color = "") + 
   geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.5, "inches")), color = "black", size = 1) +
   theme(axis.text = element_blank(), 
         axis.title = element_blank(),
-        legend.text = element_text(size= 60), 
-        legend.title = element_text(size= 60), 
+        legend.text = element_text(size= 40), 
+        legend.title = element_text(size= 35), 
         legend.position = "bottom") + 
   guides(color = guide_legend(override.aes = list(size = 10))) + 
   geom_segment(aes(x = 0, y = 0, xend = -5, yend = 0), 
@@ -140,4 +140,4 @@ fig1_bin = ggplot() +
   annotate("text", x = -1.5, y = 0.08, label = "3km", hjust = 0.5, vjust = 0, size = 20) + 
   annotate("text", x = -4, y = 0.08, label = "5km", hjust = 0.5, vjust = 0, size = 20)
 
-ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, scale = 2.5)
+ggsave(modify_path3("Figures/Figure1/figure1_bindata.png"), fig1_bin, width = 6000, height = 4000, units = "px")
