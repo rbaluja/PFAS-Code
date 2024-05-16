@@ -120,3 +120,53 @@ stillbrn_f2 = stillbrn_f2 + ggtitle("Stillbirth") + theme_void() + theme(plot.ti
 
 
 ggsave(modify_path3("Figures/figure2_stillbrn.png"), stillbrn_f2, width = 10000, height = 3500, units = "px", limitsize = F)
+
+
+#upgradient
+data = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               drop_close$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, pre_2016$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               stillbrn_ds$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100,  
+               no_pers$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               no_med$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, site$coefficients["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100),
+  StdError = c(full$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               drop_close$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, pre_2016$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               stillbrn_ds$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               no_pers$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, 
+               no_med$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100, site$se["updown"]/mean(df[df$chld_dead_live != 9, ]$stillbrn) * 100),
+  pval = c(1 - one_sp(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(stillbrn_ds$coeftable["updown", "t value"], stillbrn_ds$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])
+  )
+)
+data = data %>% 
+  dplyr::filter(Check != "No Downgradient Homes")
+
+data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                  "No Demographics",
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
+
+
+data$down = data$Estimate
+data$up = data$Upgradient
+data$d_lower = data$down - 1.96 * data$StdError
+data$d_upper = data$down + 1.96 * data$StdError
+data$pval_label = sprintf("%.5f", data$pval)
+
+stillbrn_f2up = figure2_still_fun(data, "Stillbirth", TRUE, TRUE, "Stillbirth", FALSE)
+stillbrn_f2up = stillbrn_f2up + ggtitle("Stillbirth") + theme_void() + theme(plot.title = element_text(hjust = -0.75, size = 70, face = "bold"))
+
+
+ggsave(modify_path3("Figures/figure2_stillbrn_up.png"), stillbrn_f2up, width = 10000, height = 3500, units = "px", limitsize = F)

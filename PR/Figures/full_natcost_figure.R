@@ -58,7 +58,7 @@ cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
     pattern_density = 0.1, 
     pattern_spacing = 0.02, 
     pattern_key_scale_factor = 0.3, 
-    alpha = 0.8,
+    alpha = 0.7,
     width = 0.8
   ) +
   geom_bar(

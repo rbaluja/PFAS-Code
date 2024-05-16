@@ -24,7 +24,7 @@ figure2_still_fun = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-300, 400)) + xlab("% Increase of Mean Occurrence Rate")
+      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Population Base Rate")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 

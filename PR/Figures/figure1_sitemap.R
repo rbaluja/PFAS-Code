@@ -47,8 +47,8 @@ ggplot() +
         axis.ticks.y = element_blank(), 
         text = element_text(family = "Helvetica"), 
         legend.position = "bottom", 
-        legend.text = element_text(size = 44), 
-        legend.title = element_text(size = 50), 
+        legend.text = element_text(size = 30), 
+        legend.title = element_text(size = 36), 
         #legend.box.spacing = unit(-100, "pt"), 
         plot.margin = unit(c(0, -2, 0, -2), "cm"))
 
