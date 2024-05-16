@@ -225,11 +225,11 @@ r_coefs_jittered2$b_outcome_legend = factor(r_coefs_jittered2$b_outcome, levels 
 r_coefs_still$b_outcome_legend = factor(r_coefs_still$b_outcome, levels = c("Preterm", "Low-Birthweight"))
 
 iv_fig = ggplot() +
-  geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10) +
+  geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
   geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
-  geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10) +
+  geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
   geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
-  geom_point(data = r_coefs_still, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10) +  
+  geom_point(data = r_coefs_still, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
   geom_errorbar(data = r_coefs_still, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
   scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
   scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4", "Stillbirth" = "darkolivegreen")) +

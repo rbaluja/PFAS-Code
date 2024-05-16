@@ -55,7 +55,7 @@ data = data.frame(
 
 # Scaling factor for right axis values
 #scale_factor = max(data$Value[data$Axis == "Left"]) / max(data$Value[data$Axis == "Right"])
-scale_factor = 500/1
+scale_factor = 600/1
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data$Weeks = factor(data$Weeks, 
@@ -77,7 +77,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "Annual Additional Births",
     sec.axis = sec_axis(~./scale_factor, name=""), 
-    limits = c(NA, 500) 
+    limits = c(NA, 600) 
   )  +
   theme_minimal() + 
   ggtitle("Preterm Births") + 
@@ -96,7 +96,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) 
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=3), 
-                                 y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 15), 
+                                 y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 20), 
                              position=position_dodge(width=0.9), 
                              vjust=0, 
                              size=18)
@@ -120,7 +120,7 @@ data_bw = data.frame(
 )
 
 # Scaling factor for right axis values
-scale_factor_bw = 500/1
+scale_factor_bw = 600/1
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_bw$Weeks = factor(data_bw$Weeks, 
@@ -143,7 +143,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
-    limits = c(NA, 2000) 
+    limits = c(NA, 600) 
   ) +
   ggtitle("Low-Weight Births") +
   theme_minimal() +
@@ -162,7 +162,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
 lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 55),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 25),
                                 position=position_dodge(width=0.9), 
                                 vjust=0,
                                 size=18)
@@ -186,7 +186,7 @@ data_still = data.frame(
 )
 
 # Scaling factor
-scale_factor_still = 500/1
+scale_factor_still = 600/1
 
 data_still$Axis = factor(data_still$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_still$Weeks = factor(data_still$Weeks, 
@@ -209,7 +209,7 @@ still_cost_fig = ggplot(data_still, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
-    limits = c(NA, 500) 
+    limits = c(NA, 600) 
   ) +
   ggtitle("Stillbirths") +
   theme_minimal() +

@@ -122,18 +122,19 @@ points_sf$vlbw = factor(points_sf$vlbw, levels = c("1 Very Low-Weight Birth", "1
 
 fig1_bin = ggplot() +
   geom_sf(data = fig, fill = NA, color = "black", size = 2) +  
-  geom_sf(data = points_sf, aes(color = as.factor(vlbw)), alpha = 0.4, size = ifelse(points_sf$vlbw == "1 Very Low-Weight Birth", 8, 12)) + 
-  scale_color_manual(values = c("100 Non-Very Low-Weight Births" = "dodgerblue3", "1 Very Low-Weight Birth" = "firebrick4"), 
-                     guide = guide_colorsteps(title.position = "top", 
-                                              title = "")) + 
-  theme_void() + labs(color = "") + 
+  geom_sf(data = points_sf, aes(color = as.factor(vlbw), shape = as.factor(vlbw)), alpha = ifelse(points_sf$vlbw == "1 Very Low-Weight Birth", 0.8, 0.4), size = 12) + 
+  scale_color_manual(values = c("100 Non-Very Low-Weight Births" = "dodgerblue3", "1 Very Low-Weight Birth" = "black")) + 
+  scale_shape_manual(values = c("100 Non-Very Low-Weight Births" = 20, "1 Very Low-Weight Birth" = 13)) + 
+  theme_void() + 
+  labs(color = "", shape = "", legend = "") + 
   geom_segment(aes(x = 0, y = 0, xend = 0, yend = -5), arrow = arrow(type = "closed", length = unit(0.5, "inches")), color = "black", size = 1) +
   theme(axis.text = element_blank(), 
         axis.title = element_blank(),
-        legend.text = element_text(size= 40), 
-        legend.title = element_text(size= 35), 
+        legend.text = element_text(size = 50), 
+        legend.title = element_text(size = 35), 
         legend.position = "bottom") + 
-  guides(color = guide_legend(override.aes = list(size = 10))) + 
+  guides(color = guide_legend(override.aes = list(size = 12)), 
+         shape = guide_legend(override.aes = list(size = 12))) + 
   geom_segment(aes(x = 0, y = 0, xend = -5, yend = 0), 
                linetype = "dotted", 
                color = "black", size = 1) + 
