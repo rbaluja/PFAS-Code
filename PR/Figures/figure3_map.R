@@ -31,22 +31,21 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
 
 
 bs_c = bs %>% 
-  dplyr::group_by(county) %>% 
+  dplyr::group_by(state) %>% 
   dplyr::summarise(add_vlbw = sum(add_vlbw), 
-                   add_mlbw = sum(add_mlbw))
+                   add_mlbw = sum(add_mlbw), 
+                   add_still = sum(add_still))
 
-bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^6
+bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22 + bs_c$add_still * 6925374.8993)/10^6
 
-bs_c[which(bs_c$cost > 150), ]$cost = 150
 
-cs = tigris::counties() %>% 
+cs = tigris::states() %>% 
   dplyr::filter(STATEFP %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55")) %>% 
-  left_join(bs_c %>% as_tibble() %>% dplyr::select(!geometry), by = c("GEOID" = "county"))
+  left_join(bs_c %>% as_tibble() %>% dplyr::select(!geometry), by = c("GEOID" = "state"))
 
 states = tigris::states() %>% 
   dplyr::filter(STUSPS %in% state_abb)
 
-cs[is.na(cs$cost), ]$cost = 0
 
 states[states$STUSPS == "CO", ]$geometry = states[states$STUSPS == "CO", ]$geometry + matrix(data = c(5, 0), ncol = 2)
 states[states$STUSPS == "CA", ]$geometry = states[states$STUSPS == "CA", ]$geometry + matrix(data = c(9, 0), ncol = 2)
@@ -73,6 +72,7 @@ cs = cs %>% st_transform(3395)
 #get x/y coordinates for label on each shape
 states$x_lab = 0
 states$y_lab = 0
+
 #Above CA
 states[states$STUSPS == "CA", ]$x_lab = 0.8 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmin + 0.2 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmax
 states[states$STUSPS == "CA", ]$y_lab = st_bbox(states[states$STUSPS == "CA", ]$geometry)$ymax + 50000
@@ -119,17 +119,18 @@ s_lab = states %>% as_tibble() %>%
 ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
-  scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 150),
-                      breaks = c(0, 50, 100, 150),
-                      labels = c("$0", "$50M", "$100M", expression("> $150M")),
+  scale_fill_gradient(low = "white", high = "firebrick4",
+                      limits =c(0, 3000),
+                      breaks = c(0, 500, 1000, 1500, 2000, 2500, 3000),
+                      labels = c("0", "$0.5B", "$1B", "$1.5B", "$2B", "$2.5B", "$3B"),
+                      name = "Annual Low-Birthweight Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
-                                             title = "Annual Low-Birthweight Costs",
                                              title.position = "top",
                                              title.hjust = 0.5,
                                              label.hjust = .5,
                                              label.position = "bottom")) +
   geom_point(data = cont_sites %>% filter(state %in% states_keep), 
-             aes(x = lng, y = lat, color = ""), 
+             aes(x = lng, y = lat, color = "Confirmed Site"), 
              alpha = 0.4, size = 3) +
   scale_color_manual(values = "black",
                      name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +

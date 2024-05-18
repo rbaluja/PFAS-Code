@@ -5,10 +5,10 @@ vpre_cost = (vpre_births * 204083)/10^9
 vpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
 vpre_cost_se = (vpre_births_se * 204083)/10^9
 
-mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
+mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0011 #49.11458
 mpre_cost = (mpre_births * 205041)/10^9
 #standard error: 
-mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
+mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0023 #53.04375
 mpre_cost_se = (mpre_births_se *  205041)/10^9
 
 lpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
@@ -25,14 +25,14 @@ vlbw_cost = (vlbw_births * 5133739.83)/10^9
 vlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
 vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 
-mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
+mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.000032 #-0.9822917
 mlbw_cost = (mlbw_births * 1634411.22)/10^9
 #standard error: 
-mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
+mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.001854 #36.34479
 mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
-lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0264
-lbw_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0075
+lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0190
+lbw_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0086
 
 #stillbirths
 still_births = sum(bs[which(bs$down == 1), ]$births) * 0.00111

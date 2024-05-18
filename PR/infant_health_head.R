@@ -10,7 +10,8 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              rgdal, units, tidycensus, ggpattern, forcats)
-options(modelsummary_format_numeric_latex = "mathmode")
+options("modelsummary_format_numeric_latex" = "plain")
+config_modelsummary(factory_latex = "kableExtra")
 options(tigris_use_cache = TRUE)
 
 #set up environment

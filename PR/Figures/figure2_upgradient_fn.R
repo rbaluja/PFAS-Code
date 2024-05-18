@@ -12,8 +12,8 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   if (keep_x){
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
-      geom_point(aes(x=Estimate), color = col, shape=16, size=8) +
-      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 1) + 
+      geom_point(aes(x=Estimate), color = col, shape=16, size=18) +
+      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 3) + 
       geom_vline(xintercept = 0, linetype="dashed") +
       theme_classic() + ylab(category) + xlab("") + 
       theme(axis.line.y = element_blank(),
@@ -26,8 +26,8 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
-      geom_point(aes(x=Estimate), color = col, shape=16, size=8) +
-      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 1) + 
+      geom_point(aes(x=Estimate), color = col, shape=16, size=18) +
+      geom_linerange(aes(xmin=d_lower, xmax=d_upper), size = 3) + 
       geom_vline(xintercept = 0, linetype="dashed") +
       theme_classic() + ylab(category) + xlab("") + 
       theme(axis.line = element_blank(),

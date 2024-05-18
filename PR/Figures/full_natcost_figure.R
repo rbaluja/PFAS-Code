@@ -9,10 +9,10 @@ load(modify_path("Data_Verify/RData/preterm_sd.RData"))
 load(modify_path("Data_Verify/RData/stillbrn_sd.RData"))
 #variance of preterm costs in 11 states
 var_pre11 = sum(bs$pred_pfas * bs$births)^2 * 
-  ((36728/10^9)^2 * lpreterm_sd^2 + (205041/10^9)^2 * mpreterm_sd^2 + (204083/10^9)^2 * vpreterm_sd^2 + (11446900.66/10^9)^2 * stillbrn_sd^2 + #variance terms
-     2 * 36728/10^9 * 205041/10^9 * cov_pre_lm + 2 * 36728/10^9 * 204083/10^9 * cov_pre_lv + 2 * 36728/10^9 * 11446900.66/10^9 * cov_still_pl + #slightly covariances
-     2 * 205041/10^9 * 204083/10^9 * cov_pre_mv + 2 * 205041/10^9 * 11446900.66/10^9 * cov_still_pm + #moderately covariances
-     2 * 204083/10^9 * 11446900.66/10^9 * cov_still_pv) 
+  ((36728/10^9)^2 * lpreterm_sd^2 + (205041/10^9)^2 * mpreterm_sd^2 + (204083/10^9)^2 * vpreterm_sd^2 + (6925374.8993/10^9)^2 * stillbrn_sd^2 + #variance terms
+     2 * 36728/10^9 * 205041/10^9 * cov_pre_lm + 2 * 36728/10^9 * 204083/10^9 * cov_pre_lv + 2 * 36728/10^9 * 6925374.8993/10^9 * cov_still_pl + #slightly covariances
+     2 * 205041/10^9 * 204083/10^9 * cov_pre_mv + 2 * 205041/10^9 * 6925374.8993/10^9 * cov_still_pm + #moderately covariances
+     2 * 204083/10^9 * 6925374.8993/10^9 * cov_still_pv) 
 sd_pre11 = sqrt(var_pre11)
 
 #low birthweight costs in 11 states
@@ -24,9 +24,9 @@ load(modify_path("Data_Verify/RData/cov_lbw.RData"))
 load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 #variance of low birthweight costs in 11 states
 var_lbw11 = sum(bs$pred_pfas * bs$births)^2 *
-  ((5133739.83/10^9)^2 * vlbw_sd^2 + (1634411.22/10^9)^2 * mlbw_sd^2 + (11446900.66/10^9)^2 * stillbrn_sd^2 + #variance terms
-     2 * 5133739.83/10^9 * 1634411.22/10^9 * cov_lbw_mv + 2 * 1634411.22/10^9 * 11446900.66/10^9 * cov_still_bm + #moderately covariances
-     2 * 5133739.83/10^9 * 11446900.66/10^9 * cov_still_bv) #covariance term
+  ((5133739.83/10^9)^2 * vlbw_sd^2 + (1634411.22/10^9)^2 * mlbw_sd^2 + (6925374.8993/10^9)^2 * stillbrn_sd^2 + #variance terms
+     2 * 5133739.83/10^9 * 1634411.22/10^9 * cov_lbw_mv + 2 * 1634411.22/10^9 * 6925374.8993/10^9 * cov_still_bm + #moderately covariances
+     2 * 5133739.83/10^9 * 6925374.8993/10^9 * cov_still_bv) #covariance term
 sd_lbw11 = sqrt(var_lbw11) 
 
 #total costs (multiply by 2.91)

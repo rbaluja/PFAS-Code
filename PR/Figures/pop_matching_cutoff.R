@@ -36,7 +36,7 @@ n_cores = 1
 
 index = 1
 if (!code_check){
-  load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+  load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData")) 
 }else{
   
   cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
@@ -153,4 +153,4 @@ figure_s2b = ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) +
         axis.title = element_text(size = 35)) + 
   scale_x_continuous(breaks = 1:10)
 
-ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b)
+ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b, width = 4421, height = 2937, units = "px")

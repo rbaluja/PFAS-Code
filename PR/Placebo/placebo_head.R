@@ -24,7 +24,7 @@ match_wells = FALSE #Re match natality data to wells?
 domestic = FALSE #include individuals outside of PWS boundaries?
 drop_far_down = TRUE
 drop_far_up = FALSE
-IV = TRUE #Run IV spec?
+IV = FALSE #Run IV spec?
 rerun_fs_clean = FALSE #clean first stage data?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
@@ -118,7 +118,7 @@ if (rerun_placebos == TRUE){
   plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
   
   plac = rbind(plac, plac_na)
-  save(plac, file = modify_path("Data_Verify/RData/placebos.RData") )
+  save(plac, file = modify_path("Data_Verify/RData/placebos_still.RData") )
 }else{
   load(modify_path("Data_Verify/RData/placebos.RData") )
 }

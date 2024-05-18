@@ -10,16 +10,20 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              units, tidycensus, ggpattern, forcats, zipcodeR)
+
+options("modelsummary_format_numeric_latex" = "plain")
+config_modelsummary(factory_latex = "kableExtra")
+
 #set options
 all_wells = T
 population_weighted = T
 gw_dist_allowance = 5000
 nyc = F
 longisland = F
-rerun_weather = T
-rerun_pollution = T
-rerun_birthdata = T
-code_check = T
+rerun_weather = F
+rerun_pollution = F
+rerun_birthdata = F
+code_check = F
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 n_cores = 1
 
@@ -526,13 +530,20 @@ reg2_c = fixest::feols(percent_all_low  ~
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg2_c)
 
-ny_table = modelsummary::modelsummary(list(reg_prim1, reg1_c, reg_prim2, reg2_c), 
+reg1_nd = fixest::feols(percent_neonatal_deaths  ~ 
+                          treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
+                          I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
+                          percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
+
+reg2_nd = fixest::feols(percent_neonatal_deaths  ~ 
+                                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
+                                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
+                                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
+
+modelsummary::modelsummary(list(reg_prim1, reg1_c, reg_prim2, reg2_c, reg1_nd, reg2_nd), 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #one-sided stars 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("treatment1", "treatment1:I(contaminated_amount/10^3)"),
+                           coef_map = c("treatment1" = "Downgradient", 
+                                        "treatment1:I(contaminated_amount/10^3)" = "Downgradient x PFAS"),
                            gof_map = c("nobs", "r.squared"), 
-                           output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center")
-sink(modify_path2("Tables/table_NY.tex"))
-print(ny_table)
-sink()
+                           output = modify_path2("Tables/table_NY.tex"))

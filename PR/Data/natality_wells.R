@@ -72,4 +72,4 @@ df = dplyr::bind_rows(pblapply(1:length(serviced_list), well_assigner, serviced_
 #this removes individuals who are serviced by surface water (i.e., their supplier is in sys_skip)
 df = df %>% 
   tidyr::drop_na(well_lat) %>% 
-  unique() #lose 31552 individuals who receive their water from a source without groundwater wells
+  unique() #lose 31543 individuals who receive their water from a source without groundwater wells

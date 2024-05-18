@@ -35,14 +35,14 @@ if (code_check == TRUE){
     source("PFAS-Code/PR/Data/elev_setup.R")
     
   }else if (match_wells == TRUE ){
-    load(paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
+    load(paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch_still.RData"))
     #match residences to water wells
     source("PFAS-Code/PR/Data/natality_wells.R")
     
     #get elevation at relevant well and residence
     source("PFAS-Code/PR/Data/elev_setup.R")
   }else{
-    load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+    load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData")) 
   } 
 }
 

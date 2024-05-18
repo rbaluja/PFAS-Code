@@ -39,16 +39,13 @@ table1_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  updown + down +  I
                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-t1_preterm = modelsummary::modelsummary(table1_preterm, 
+modelsummary::modelsummary(table1_preterm, 
                                     stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                                     fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                    coef_map = c("down", "updown"),
+                                    coef_map = c("down" = "Downgradient", 
+                                                 "updown" = "Upgradient"),
                                     gof_map = c("nobs", "r.squared"), 
-                                    output = "latex") 
-sink(modify_path2("Tables/table1_preterm.tex"))
-print(t1_preterm)
-sink()
-
+                                    output = modify_path2("Tables/table1_preterm.tex")) 
 
 #low birthweight
 table1_lbw = list() 
@@ -94,15 +91,13 @@ table1_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  updown
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-t1_lbw = modelsummary::modelsummary(table1_lbw, 
+modelsummary::modelsummary(table1_lbw, 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("down", "updown"),
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient"),
                            gof_map = c("nobs", "r.squared"), 
-                           output = "latex") 
-sink(modify_path2("Tables/table1_lbw.tex"))
-print(t1_lbw)
-sink()
+                           output = modify_path2("Tables/table1_lbw.tex")) 
 
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
@@ -148,15 +143,12 @@ table2_preterm[["Very"]]= fixest::feols(I(gestation < 28) ~ pred_pfas + asinh(pf
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
-t2_preterm = modelsummary::modelsummary(table2_preterm, 
+modelsummary::modelsummary(table2_preterm, 
                                         stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                                         fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                        coef_map = c("pred_pfas"),
+                                        coef_map = c("pred_pfas" = "Predicted PFAS"),
                                         gof_map = c("nobs", "r.squared"), 
-                                        output = "latex")
-sink(modify_path2("Tables/table2_preterm.tex"))
-print(t2_preterm)
-sink()
+                                        output = modify_path2("Tables/table2_preterm.tex"))
 
 #calculate bootstrapped standard errors
 preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
@@ -164,6 +156,10 @@ lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Slightly
 mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Moderately"]])
 vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Very"]])
 save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd.RData"))
+dnorm(table2_preterm[["All"]]$coefficients["pred_pfas"]/preterm_sd)
+dnorm(table2_preterm[["Slightly"]]$coefficients["pred_pfas"]/lpreterm_sd)
+dnorm(table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/mpreterm_sd)
+dnorm(table2_preterm[["Very"]]$coefficients["pred_pfas"]/vpreterm_sd)
 
 
 #marginal effect
@@ -228,15 +224,12 @@ table2_lbw[["Very Low Birthweight"]]= fixest::feols(I(bweight < 1000) ~ pred_pfa
                                                   m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 
-t2_lbw = modelsummary::modelsummary(table2_lbw, 
+modelsummary::modelsummary(table2_lbw, 
                                         stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                                         fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                        coef_map = c("pred_pfas"),
+                                        coef_map = c("pred_pfas" = "Predicted PFAS"),
                                         gof_map = c("nobs", "r.squared"), 
-                                        output = "latex") 
-sink(modify_path2("Tables/table2_lbw.tex"))
-print(t2_lbw)
-sink()
+                                        output = modify_path2("Tables/table2_lbw.tex")) 
 
 #calculate bootstrapped standard errors
 lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
@@ -268,7 +261,10 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
   cov_lbw_mv = cov_boot(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
   save(cov_lbw_lm, cov_lbw_lv, cov_lbw_mv, file = modify_path("Data_Verify/RData/cov_lbw.RData"))  
 }
-
+dnorm(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/lbw_sd)
+dnorm(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/llbw_sd)
+dnorm(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/mlbw_sd)
+dnorm(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/vlbw_sd)
 
 
 
@@ -350,18 +346,13 @@ df2 = df2 %>%
 df2 = as.data.frame(df2)
 
 
-table_s2 = datasummary_balance(~group, 
+datasummary_balance(~group, 
                     data = df2, 
                     na.rm = T, 
                     fmt = modelsummary::fmt_significant(2, scientific = F, 
                                                         zero.print = T, drop0trailing = F, 
                                                         nsmall = 2), 
-                    output = "latex") %>% 
-  kable_styling(font_size = 6, fixed_thead = T, position = "center")
-
-sink(modify_path2("Tables/table_s2.tex"))
-print(table_s2)
-sink()
+                    output = modify_path2("Tables/table_s2.tex")) 
 
 length(which(df2$group == 1))
 
@@ -414,8 +405,10 @@ df2 = df2 %>%
                   !is.na(month) & 
                   !is.na(birth_race_dsc_1) & 
                   !is.na(wic))
+
 df2 = df2 %>% 
-  dplyr::select(`Very Preterm` = vpre, 
+  dplyr::select(Stillbirth = stillbrn,
+                `Very Preterm` = vpre, 
                 `Moderately Preterm` = mpre, 
                 `Slightly Preterm` = lpre, 
                 `Very Low Birthweight` = vlbw, 
@@ -433,18 +426,14 @@ df2$`Residence Distance`= df2$`Residence Distance`/1000
 df2$`PFOA + PFOS at Site` = df2$`PFOA + PFOS at Site`/1000
 
 
-table_s3 = datasummary_balance(~group, 
+datasummary_balance(~group, 
                     data = df2, 
                     na.rm = T, 
                     fmt = modelsummary::fmt_significant(2, scientific = F, 
                                                         zero.print = T, drop0trailing = F, 
                                                         nsmall = 2), 
-                    output = "latex") %>% 
-  kable_styling(font_size = 6, fixed_thead = T, position = "center")
+                    output =modify_path2("Tables/table_s3.tex"))
 
-sink(modify_path2("Tables/table_s3.tex"))
-print(table_s3)
-sink()
 
 
 #####################
@@ -457,7 +446,23 @@ still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3
                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                           m_height + tri5 +fa_resid + wind_exposure 
-                                        |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
+                                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+still_table[["PFAS Inter."]] = fixest::feols(stillbrn ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid + wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+still_table[["Distance Inter."]] = fixest::feols(stillbrn ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid + wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
                                       n_sites + wind_exposure + 
@@ -465,17 +470,20 @@ still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) +
                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
+                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
 
-table_s4 = modelsummary::modelsummary(still_table, 
+modelsummary::modelsummary(still_table, 
                                       stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                      coef_map = c("down", "updown", "pred_pfas"),
+                                      coef_map = c("down" = "Downgradient", 
+                                                   "updown" = "Upgradient", 
+                                                   "down:I(dist/1000)" = "Downgradient \times Dist.", 
+                                                   "updown:I(dist/1000)" = "Upgradient \times Dist.",
+                                                   "down:I(pfas/10^3)" ="Downgradient \times PFAS",
+                                                   "updown:I(pfas/10^3)"="Upgradient \times PFAS",
+                                                   "pred_pfas" = "Predicted PFAS"),
                                       gof_map = c("nobs", "r.squared"), 
-                                      output = "latex")
-sink(modify_path2("Tables/table_s4.tex"))
-print(still_table)
-sink() 
+                                      output = modify_path2("Tables/table_s4.tex")) 
 
 #stillborn standard error
 stillbrn_sd = linear_bootstrap(boot_coefs, "stillborn", still_table[["IV"]])
@@ -531,17 +539,15 @@ tables6_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-table_s7_preterm = modelsummary::modelsummary(tables6_preterm, 
+modelsummary::modelsummary(tables6_preterm, 
                            stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
-                           coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "down:I(dist/1000)" = "Downgradient $\times$ Dist", 
+                                        "updown:I(dist/1000)" = "Upgradient $\times$ Dist"),
                            gof_map = c("nobs", "r.squared"), 
-                           output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s7_preterm.tex"))
-print(table_s7_preterm)
-sink()
+                           output = modify_path2("Tables/table_s7_preterm.tex"))
 
 
 
@@ -590,17 +596,15 @@ tables6_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(d
 
 
 
-table_s7_lbw = modelsummary::modelsummary(tables6_lbw, 
+modelsummary::modelsummary(tables6_lbw, 
                                               stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                               fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "down:I(dist/1000)" = "Downgradient $\times$ Dist", 
+                                        "updown:I(dist/1000)" = "Upgradient $\times$ Dist"),
                                               gof_map = c("nobs", "r.squared"), 
-                                              output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s7_lbw.tex"))
-print(table_s7_lbw)
-sink() 
+                                              output = modify_path2("Tables/table_s7_lbw.tex"))
 
 ##########################
 #####Table S-6 (interaction with PFAS)
@@ -638,17 +642,15 @@ tables7_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *
                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-table_s6_preterm = modelsummary::modelsummary(tables7_preterm, 
+modelsummary::modelsummary(tables7_preterm, 
                                               stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                               fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
+                                              coef_map = c("down" = "Downgradient", 
+                                                          "updown" = "Upgradient",
+                                                          "down:I(pfas/10^3)" = "Downgradient PFAS", 
+                                                          "updown:I(pfas/10^3)" = "Upgradient PFAS"),
                                               gof_map = c("nobs", "r.squared"), 
-                                              output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s6_preterm.tex"))
-print(table_s6_preterm)
-sink()
+                                              output = modify_path2("Tables/table_s6_preterm.tex"))
 
 
 
@@ -697,17 +699,15 @@ tables7_lbw[["Very"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(p
 
 
 
-table_s6_lbw = modelsummary::modelsummary(tables7_lbw, 
+modelsummary::modelsummary(tables7_lbw, 
                                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                           fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                          coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "down:I(pfas/10^3)" = "Downgradient PFAS", 
+                                        "updown:I(pfas/10^3)" = "Upgradient PFAS"),
                                           gof_map = c("nobs", "r.squared"), 
-                                          output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s6_lbw.tex"))
-print(table_s6_lbw)
-sink() 
+                                          output = modify_path2("Tables/table_s6_lbw.tex"))
 
 
 ########################
@@ -750,16 +750,15 @@ tables8_preterm[["Very"]] = fixest::feols(I(gestation < 28) ~  updown + down +  
 
 
 
-table_s8_preterm = modelsummary::modelsummary(tables8_preterm, 
+modelsummary::modelsummary(tables8_preterm, 
                                               stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), 
                                               fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down", "down:I(pfas/10^3)", "updown", "updown:I(pfas/10^3)" , "gestation","bweight"),
+                                              coef_map = c("down" = "Downgradient", 
+                                                           "updown" = "Upgradient",
+                                                           "bweight" = "Birtheight", 
+                                                           "gestation" = "Gestation"),
                                               gof_map = c("nobs", "r.squared"), 
-                                              output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-sink(modify_path2("Tables/table_s8_preterm.tex"))
-print(table_s8_preterm)
-sink()
+                                              output = modify_path2("Tables/table_s8_preterm.tex"))
 
 #low birthweight
 tables8_lbw = list() 
@@ -806,17 +805,15 @@ tables8_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  updow
 
 
 
-table_s8_lbw = modelsummary::modelsummary(tables8_lbw, 
+modelsummary::modelsummary(tables8_lbw, 
                                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
                                           fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                          coef_map = c("down", "down:I(dist/1000)", "updown", "updown:I(dist/1000)" , "gestation","bweight"),
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "bweight" = "Birtheight", 
+                                        "gestation" = "Gestation"),
                                           gof_map = c("nobs", "r.squared"), 
-                                          output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s8_lbw.tex"))
-print(table_s8_lbw)
-sink() 
+                                          output = modify_path2("Tables/table_s8_lbw.tex"))
 
 
 
@@ -830,18 +827,14 @@ table_s11 = modelsummary::modelsummary(list(w_reg),
                            stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
 gof_map = c("nobs", "r.squared"), 
-                           output = "latex") %>% 
-  kable_styling(fixed_thead = T, position = "center") 
-
-sink(modify_path2("Tables/table_s12.tex"))
-print(table_s11)
-sink() 
+                           output = modify_path2("Tables/table_s12.tex"))
 
 
 
 #Oster Coefficient - \delta in paper (Table S-5)
 source("PFAS-Code/PR/Robustness/oster_selection.R")
 sink(modify_path2("Tables/table_s5.tex"))
+print(d_still)
 print(d_pre)
 print(d_lpre)
 print(d_mpre)

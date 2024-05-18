@@ -191,21 +191,21 @@ r9 = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) +
                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9), ])
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
 r_coefs[9, "sev"] = "Stillbirth"
 r_coefs[9, "coef"] = r9$coeftable["pred_pfas", 1]
 r_coefs[9, "se"] = stillbrn_sd
 
-r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df[which(df$chld_dead_live != 9), ]$stillbrn) * 100 * 1000
-r_coefs[9, "es_se"] = (stillbrn_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df[which(df$chld_dead_live != 9), ]$stillbrn) * 100* 1000
-r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df[which(df$chld_dead_live != 9), ]$stillbrn) * 100* 1000
-r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df[which(df$chld_dead_live != 9), ]$stillbrn) * 100* 1000
+r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$stillbrn) * 100 * 1000
+r_coefs[9, "es_se"] = (stillbrn_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$stillbrn) * 100* 1000
+r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$stillbrn) * 100* 1000
+r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$stillbrn) * 100* 1000
 r_coefs[9, "b_outcome"] = "Stillbirth"
 r_coefs[9, "sig"] = "Yes"
 r_coefs[9, "p_value"] = 1 - pnorm(r9$coefficients["pred_pfas"]/stillbrn_sd)
 r_coefs[9, "p_value_s"] = ifelse(r_coefs[9, "p_value"] < 0.001, "<0.001", round(r_coefs[9, "p_value"], 3))
 
-r_coefs$sev = factor(r_coefs$sev, levels = c("Any", "Slightly", "Moderately", "Very", "Stillbirth"))
+r_coefs$sev = factor(r_coefs$sev, levels = c("Stillbirth", "Any", "Slightly", "Moderately", "Very"))
 
 
 
@@ -247,7 +247,7 @@ iv_fig = ggplot() +
         legend.key.size = unit(5, "lines")) + 
   ylim(-50, 850) + 
   geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
-  geom_vline(xintercept = 4.5, linetype = "dashed", size = 1.5)
+  geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5)
 
 #add p value label
 iv_fig = iv_fig + 

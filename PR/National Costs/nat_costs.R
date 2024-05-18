@@ -55,7 +55,7 @@ vpre_births_se = sum(bs$add_vpre_se)
 vpre_cost_se = (vpre_births_se * 204083)/10^9
 
 #mpre
-bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
+bs$add_mpre = bs$pred_pfas * bs$births * 0.00128
 mpre_births = sum(bs$add_mpre) #339.5661
 mpre_cost = (mpre_births * 205041)/10^9
 bs$add_mpre_se = bs$pred_pfas * bs$births * mpreterm_sd
@@ -63,7 +63,7 @@ mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
 mpre_cost_se = (mpre_births_se *  205041)/10^9
 
 #lpre
-bs$add_lpre = bs$pred_pfas * bs$births * 0.006
+bs$add_lpre = bs$pred_pfas * bs$births * 0.0059
 lpre_births = sum(bs$add_lpre)
 lpre_cost = (lpre_births * 36728)/10^9
 bs$add_lpre_se = bs$pred_pfas * bs$births *  lpreterm_sd
@@ -89,7 +89,7 @@ mlbw_births_se = sum(bs$add_mlbw_se)
 mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
 #lbw 
-bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
+bs$add_lbw = bs$pred_pfas * bs$births * 0.0051
 lbw_births = sum(bs$add_lbw)
 bs$add_lbw_se = bs$pred_pfas * bs$births * llbw_sd
 lbw_births_se = sum(bs$add_lbw_se)
@@ -98,10 +98,10 @@ lbw_births_se = sum(bs$add_lbw_se)
 #stillborn
 bs$add_still = bs$pred_pfas * bs$births * 0.00053
 still_births = sum(bs$add_still)
-still_cost = (still_births * 11446900.66)/10^9
+still_cost = (still_births * 6925374.8993)/10^9
 bs$add_still_se = bs$pred_pfas * bs$births * stillbrn_sd
 still_births_se = sum(bs$add_still_se)
-still_cost_se = (still_births_se * 11446900.66)/10^9
+still_cost_se = (still_births_se * 6925374.8993)/10^9
 
 
 #social cost figure
@@ -146,14 +146,13 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 60), 
-        axis.text.y = element_text(size = 60), 
+        axis.title.y = element_blank(), 
         legend.text = element_text(size = 60), 
         axis.text.x = element_text(size = 60),
         plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
-        axis.text.y.right = element_blank()) +
+        axis.text.y = element_blank()) +
   guides(alpha = "none", fill = "none", pattern = "none") +
   scale_pattern_manual(values = c("none", "stripe")) 
 
@@ -218,8 +217,9 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_blank(), 
-        legend.spacing.x = unit(1, 'cm')) + 
+        axis.text.y.right = element_text(size = 60), 
+        axis.title.y.right = element_text(size = 60),
+        legend.spacing.x = unit(1.5, 'cm')) + 
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
 lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
@@ -267,25 +267,23 @@ still_cost_fig = ggplot(data_still, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births (Left Axis)" = "dodgerblue3", "Costs (Right Axis)" = "firebrick4")) +
   scale_y_continuous(
-    "",
-    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
+    "Annual Additional Births",
+    sec.axis = sec_axis(~./scale_factor_bw, name=""), 
     limits = c(NA, 2000) 
   ) +
   ggtitle("Stillbirths") +
   theme_minimal() +
-  theme(legend.position = "bottom",
-        legend.key.size = unit(4, "lines"),
-        legend.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 60),
-        axis.text.y = element_blank(),
-        legend.text = element_text(size = 60),
+  theme(legend.position = "bottom", 
+        legend.title = element_blank(), 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_text(size = 60), 
+        axis.text.y = element_text(size = 60), 
+        legend.text = element_text(size = 60), 
         axis.text.x = element_blank(),
         plot.title = element_text(hjust = 0.5, size = 80), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
-        panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_text(size = 60), 
-        legend.spacing.x = unit(1, 'cm')) + 
+        panel.grid.minor = element_line(color = "grey60", size = 0.25), 
+        axis.text.y.right = element_blank()) + 
   scale_pattern_manual(values = c("none", "stripe")) + 
   guides(alpha = "none", fill = "none", pattern = "none")
 still_cost_fig = still_cost_fig + geom_text(aes(label=round(Value, digits=2), 
@@ -307,6 +305,7 @@ still_cost_fig = still_cost_fig + geom_text(aes(label=se,
 
 p_costs = p_costs + guides(pattern = "none")
 still_cost_fig = still_cost_fig + guides(pattern = "none")
-figure_3 = (p_costs | lbw_cost | still_cost_fig) + plot_layout(widths = c(3, 3, 1), guides = "collect")& 
+figure_3 = (still_cost_fig | p_costs | lbw_cost) + plot_layout(widths = c(1, 3, 3), guides = "collect")& 
   theme(legend.position = 'bottom')
+
 ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 12000, height = 9541, units = "px", device = "png", limitsize = FALSE)

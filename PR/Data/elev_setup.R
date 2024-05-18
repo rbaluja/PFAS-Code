@@ -26,4 +26,4 @@ df_ll = df %>%
 e1 = raster::extract(dem_elev, df_ll)
 df$resid_elev = e1$`LiDAR-Derived Bare Earth DEM - NH`
 
-#save(df, file = paste0(natality_path, "[UA Box Health] birth_records_matched.RData"))
+#save(df, file = paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData"))
