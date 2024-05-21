@@ -31,23 +31,21 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
 
 
 bs_c = bs %>% 
-  dplyr::group_by(county) %>% 
+  dplyr::group_by(state) %>% 
   dplyr::summarise(add_vpre = sum(add_vpre), 
                    add_mpre = sum(add_mpre), 
-                   add_lpre = sum(add_lpre))
+                   add_lpre = sum(add_lpre), 
+                   add_mort = sum(add_mort))
 
-bs_c$cost = (bs_c$add_vpre * 204083 + bs_c$add_mpre * 205041 + bs_c$add_lpre * 36728)/10^6
+bs_c$cost = (bs_c$add_vpre * 204083 + bs_c$add_mpre * 205041 + bs_c$add_lpre * 36728 + bs_c$add_mort * 6581967.8795)/10^6
 
-bs_c$cost = ifelse(bs_c$cost > 20, 20, bs_c$cost)
-
-cs = tigris::counties() %>% 
+cs = tigris::states() %>% 
   dplyr::filter(STATEFP %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55")) %>% 
-  left_join(bs_c %>% as_tibble() %>% dplyr::select(!geometry), by = c("GEOID" = "county"))
+  left_join(bs_c %>% as_tibble() %>% dplyr::select(!geometry), by = c("GEOID" = "state"))
 
 states = tigris::states() %>% 
   dplyr::filter(STUSPS %in% state_abb)
 
-cs[is.na(cs$cost), ]$cost = 0
 
 states[states$STUSPS == "CO", ]$geometry = states[states$STUSPS == "CO", ]$geometry + matrix(data = c(5, 0), ncol = 2)
 states[states$STUSPS == "CA", ]$geometry = states[states$STUSPS == "CA", ]$geometry + matrix(data = c(9, 0), ncol = 2)
@@ -74,54 +72,59 @@ cs = cs %>% st_transform(3395)
 #get x/y coordinates for label on each shape
 states$x_lab = 0
 states$y_lab = 0
+
 #Above CA
 states[states$STUSPS == "CA", ]$x_lab = 0.8 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmin + 0.2 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmax
 states[states$STUSPS == "CA", ]$y_lab = st_bbox(states[states$STUSPS == "CA", ]$geometry)$ymax + 50000
 #Above CO
-states[states$STUSPS == "CO", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmax
+states[states$STUSPS == "CO", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmax
 states[states$STUSPS == "CO", ]$y_lab = st_bbox(states[states$STUSPS == "CO", ]$geometry)$ymax + 50000
 #Above ND
-states[states$STUSPS == "ND", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmax
+states[states$STUSPS == "ND", ]$x_lab = 0.75 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmin + 0.25 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmax
 states[states$STUSPS == "ND", ]$y_lab = st_bbox(states[states$STUSPS == "ND", ]$geometry)$ymax +50000
 #Above MN
-states[states$STUSPS == "MN", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmax
+states[states$STUSPS == "MN", ]$x_lab = 0.35 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmin + 0.65 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmax
 states[states$STUSPS == "MN", ]$y_lab = st_bbox(states[states$STUSPS == "MN", ]$geometry)$ymax - 50000
 #Inside WI
-states[states$STUSPS == "WI", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmax
-states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymax - 300000
+states[states$STUSPS == "WI", ]$x_lab = 0.45 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmin + 0.55 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmax
+states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymin - 80000
 #Inside MI
 states[states$STUSPS == "MI", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmax
-states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymax - 250000
+states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymax + 30000
 #Inside NY
-states[states$STUSPS == "NY", ]$x_lab = 0.6 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmin + 0.4 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmax
-states[states$STUSPS == "NY", ]$y_lab = st_bbox(states[states$STUSPS == "NY", ]$geometry)$ymax -0.5
+states[states$STUSPS == "NY", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmax
+states[states$STUSPS == "NY", ]$y_lab = st_bbox(states[states$STUSPS == "NY", ]$geometry)$ymin + 150000
 #Above VT
-states[states$STUSPS == "VT", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
+states[states$STUSPS == "VT", ]$x_lab = 0.95 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0.05 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
 states[states$STUSPS == "VT", ]$y_lab = st_bbox(states[states$STUSPS == "VT", ]$geometry)$ymax + 50000
 #Below NH
-states[states$STUSPS == "NH", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
+states[states$STUSPS == "NH", ]$x_lab = 0.4 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.6 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
 states[states$STUSPS == "NH", ]$y_lab = st_bbox(states[states$STUSPS == "NH", ]$geometry)$ymin - 50000
 #Inside ME
 states[states$STUSPS == "ME", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmax
-states[states$STUSPS == "ME", ]$y_lab = st_bbox(states[states$STUSPS == "ME", ]$geometry)$ymax - 100000
+states[states$STUSPS == "ME", ]$y_lab = st_bbox(states[states$STUSPS == "ME", ]$geometry)$ymax + 75000
 #Above FL
-states[states$STUSPS == "FL", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmax
-states[states$STUSPS == "FL", ]$y_lab = st_bbox(states[states$STUSPS == "FL", ]$geometry)$ymax+ 20000
+states[states$STUSPS == "FL", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmax
+states[states$STUSPS == "FL", ]$y_lab = st_bbox(states[states$STUSPS == "FL", ]$geometry)$ymax+ 50000
 
 
 s_lab = states %>% as_tibble() %>% 
   dplyr::select(!geometry) %>% 
+  left_join(cs %>% as_tibble() %>% dplyr::select(!geometry)) %>%
   st_as_sf(coords = c("x_lab", "y_lab"), crs = 3395)
+s_lab$l = paste0(s_lab$STUSPS, ":", round(s_lab$cost/1000, 2))
 
 
-ggplot() +
+
+cost_map = ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
-  scale_fill_gradient(low = "white", high = "firebrick4", limits = c(0, 20),
-                      breaks = c(0, 5, 10, 15, 20),
-                      labels = c("$0", "$5M", "$10M", "$15M", expression("> $20M")),
+  scale_fill_gradient(low = "white", high = "firebrick4",
+                      limits =c(0, 1500),
+                      breaks = c(0, 250, 500, 750,  1000, 1250, 1500),
+                      labels = c("0", "$0.25B", "$0.5B", "$0.75B", "$1B", "$1.25B", "$1.5B"),
+                      name = "Annual Infant Mortality + Preterm Births Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
-                                             title = "Annual Preterm Costs",
                                              title.position = "top",
                                              title.hjust = 0.5,
                                              label.hjust = .5,
@@ -131,8 +134,8 @@ ggplot() +
              alpha = 0.4, size = 3) +
   scale_color_manual(values = "black",
                      name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +
-  guides(color = guide_legend(override.aes = list(size = 10), # Increase the dot size in the legend
-                              title.position = "left")) + # Ensure the title is on the left of the dot
+  guides(color = guide_legend(override.aes = list(size = 10),
+                              title.position = "left")) + 
   theme_void() +
   theme(legend.title = element_text(size = 60),
         legend.text = element_text(size = 58),
@@ -141,6 +144,5 @@ ggplot() +
         legend.box.margin = margin(2, 2, 2, 2, "cm"),
         legend.key.height = unit(2, "cm"),
         legend.key.width = unit(2, "cm")) +
-  geom_sf_text(data = s_lab, aes(label = STUSPS), size = 14)
-
-ggsave(modify_path3("Figures/Figure3/costs_map_pre.png"),  width = 8483, height = 5875, units = "px", device = "png", limitsize = FALSE)
+  geom_sf_text(data = s_lab, aes(label = l), size = 14)
+ggsave(modify_path3("Figures/Figure3/costs_map_premort.png"), cost_map,  width = 9166, height = 5875, units = "px", device = "png", limitsize = FALSE)

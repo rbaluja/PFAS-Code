@@ -30,7 +30,7 @@ census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
 tables = TRUE
 figures = TRUE
 code_check = FALSE
-n_cores = 3
+n_cores = 1
 rob_app_fig = FALSE
 
 #data cleaning
@@ -126,13 +126,15 @@ vlbw = fixest::feols(I(bweight < 1000) ~  as.factor(quant_pfas) + asinh(pfas) +
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
 
-still = fixest::feols(stillbrn ~  as.factor(quant_pfas) + asinh(pfas) + 
-                        n_sites + wind_exposure + 
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+mort = fixest::feols(death ~  as.factor(quant_pfas) + asinh(pfas) + 
+                       n_sites + wind_exposure + 
+                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                       m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn)
+
+
 
 
 #saving data
@@ -145,7 +147,7 @@ colnames(reg_data) = c("pre_coef", "pre_se", "pre_p",
                        "llbw_coef","llbw_se","llbw_p",
                        "mlbw_coef","mlbw_se", "mlbw_p",
                        "vlbw_coef", "vlbw_se", "vlbw_p", 
-                       "still_coef", "still_se", "still_p",
+                       "mort_coef", "mort_se", "mort_p",
                        "quantile")
 
 
@@ -162,7 +164,8 @@ for (i in 2:5){
   reg_data[index, "mlbw_coef"] = mlbw$coefficients[label]
   reg_data[index, "vlbw_coef"] = vlbw$coefficients[label]
   
-  reg_data[index, "still_coef"] = still$coefficients[label]
+  reg_data[index, "mort_coef"] = mort$coefficients[label]
+  
   reg_data[index, "quantile"] = index
   
   
@@ -170,10 +173,10 @@ for (i in 2:5){
 }
 
 #need to run bootstrap_iv.R to recreate these values
-if (!file.exists(modify_path("Data_Verify/RData/bootstrap_quant_wstill.RData"))) {
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap_quant.RData"))) {
   stop("Bootstrap standard errors")
 }
-load(modify_path("Data_Verify/RData/bootstrap_quant_wstill.RData"))
+load(modify_path("Data_Verify/RData/bootstrap_quant.RData"))
 
 #calculate bootstrapped standard errors
 bs_se = quintile_bootstrap(boot_coefs, reg_data)
@@ -218,10 +221,11 @@ reg_data$vlbw_se[3] = bs_se$vlbw3_sd
 reg_data$vlbw_se[4] = bs_se$vlbw4_sd
 reg_data$vlbw_se[5] = bs_se$vlbw5_sd
 
-reg_data$still_se[2] = bs_se$still2_sd
-reg_data$still_se[3] = bs_se$still3_sd
-reg_data$still_se[4] = bs_se$still4_sd
-reg_data$still_se[5] = bs_se$still5_sd
+reg_data$mort_se[2] = bs_se$mort2_sd
+reg_data$mort_se[3] = bs_se$mort3_sd
+reg_data$mort_se[4] = bs_se$mort4_sd
+reg_data$mort_se[5] = bs_se$mort5_sd
+
 
 #set first quantile values
 reg_data[1, "pre_coef"] = 0
@@ -241,8 +245,8 @@ reg_data[1, "mlbw_coef"] = 0
 reg_data[1, "mlbw_se"] = 0
 reg_data[1, "vlbw_coef"] = 0
 reg_data[1, "vlbw_se"] = 0
-reg_data[1, "still_coef"] = 0
-reg_data[1, "still_se"] = 0
+reg_data[1, "mort_coef"] = 0
+reg_data[1, "mort_se"] = 0
 reg_data[1, "quantile"] = 1
 
 #get p values
@@ -255,7 +259,8 @@ reg_data[2:5, "lbw_p"] = 1 - pnorm(reg_data[2:5, "lbw_coef"]/reg_data[2:5, "lbw_
 reg_data[2:5, "llbw_p"] = 1 - pnorm(reg_data[2:5, "llbw_coef"]/reg_data[2:5, "llbw_se"])
 reg_data[2:5, "mlbw_p"] = 1 - pnorm(reg_data[2:5, "mlbw_coef"]/reg_data[2:5, "mlbw_se"])
 reg_data[2:5, "vlbw_p"] = 1 - pnorm(reg_data[2:5, "vlbw_coef"]/reg_data[2:5, "vlbw_se"])
-reg_data[2:5, "still_p"] = 1 - pnorm(reg_data[2:5, "still_coef"]/reg_data[2:5, "still_se"])
+
+reg_data[2:5, "mort_p"] = 1 - pnorm(reg_data[2:5, "mort_coef"]/reg_data[2:5, "mort_se"])
 
 reg_data[2:5, "pre_p"] = ifelse(reg_data[2:5, "pre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "pre_p"]))
 reg_data[2:5, "lpre_p"] = ifelse(reg_data[2:5, "lpre_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "lpre_p"]))
@@ -267,7 +272,8 @@ reg_data[2:5, "llbw_p"] = ifelse(reg_data[2:5, "llbw_p"] < 0.001, "<0.001", spri
 reg_data[2:5, "mlbw_p"] = ifelse(reg_data[2:5, "mlbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "mlbw_p"]))
 reg_data[2:5, "vlbw_p"] = ifelse(reg_data[2:5, "vlbw_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "vlbw_p"]))
 
-reg_data[2:5, "still_p"] = ifelse(reg_data[2:5, "still_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "still_p"]))
+reg_data[2:5, "mort_p"] = ifelse(reg_data[2:5, "mort_p"] < 0.001, "<0.001", sprintf("%.3f", reg_data[2:5, "mort_p"]))
+
 
 #confidence bands
 reg_data$pre_low = reg_data$pre_coef - 1.96 * reg_data$pre_se
@@ -288,8 +294,9 @@ reg_data$mlbw_high = reg_data$mlbw_coef + 1.96 * reg_data$mlbw_se
 reg_data$vlbw_low = reg_data$vlbw_coef - 1.96 * reg_data$vlbw_se
 reg_data$vlbw_high = reg_data$vlbw_coef + 1.96 * reg_data$vlbw_se
 
-reg_data$still_low = reg_data$still_coef - 1.96 * reg_data$still_se
-reg_data$still_high = reg_data$still_coef + 1.96 * reg_data$still_se
+reg_data$mort_low = reg_data$mort_coef - 1.96 * reg_data$mort_se
+reg_data$mort_high = reg_data$mort_coef + 1.96 * reg_data$mort_se
+
 
 breaks = seq(1, 5, by = 1)
 labels = as.character(breaks)
@@ -461,29 +468,28 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   xlab("Predicted PFAS Quintile") + ylab("Very (<1000g)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
-
-still_pfas_fig = ggplot(reg_data, aes(x=quantile, y=still_coef)) +
+mort_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mort_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=still_low, ymax=still_high), width=0.1, alpha = 0.5) + 
-  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = still_high, label = still_p), nudge_y = 0.01, size = 8) +
+  geom_errorbar(aes(ymin=mort_low, ymax=mort_high), width=0.1, alpha = 0.5) + 
+  geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mort_high, label = mort_p), nudge_y = 0.01, size = 8) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
   theme(axis.text = element_text(size = 24), 
         axis.title = element_text(size = 28)) + 
-  xlab("Predicted PFAS Quintile") + ylab("Stillbirth") + 
+  xlab("Predicted PFAS Quintile") + ylab("Infant Mortality") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 
 
 
-figure_s5 = ((pr_pfas_fig | lbw_pfas_fig)/
+
+quintiles_fig = ((pr_pfas_fig | lbw_pfas_fig)/
                (lpr_pfas_fig | llbw_pfas_fig)/
                (mpr_pfas_fig | mlbw_pfas_fig)/
                (vpr_pfas_fig | vlbw_pfas_fig))/
   pfas_hist
-ggsave(modify_path3("Figures/IV/figure_s7.png"), figure_s5,  width = 7000, height = 7500, units = "px")
-
-ggsave(modify_path3("Figures/IV/figure_s7_still.png"), still_pfas_fig,  width = 3500, height = 1875, units = "px")
+ggsave(modify_path3("Figures/IV/quintiles.png"), quintiles_fig,  width = 7000, height = 7500, units = "px")
+ggsave(modify_path3("Figures/IV/quintiles_mort.png"), mort_pfas_fig, width = 3500, height = 1875, units = "px")
 
 
 #Copy these to paste into table S-10
@@ -545,22 +551,22 @@ for (ot in c("pre", "lpre", "mpre", "vpre", "lbw", "llbw", "mlbw", "vlbw")){
 }
 sink()
 
-sink(modify_path2("Tables/still_quintiles.tex"))
-print(round(as.numeric(reg_data[2, c("still_coef")]), digits = 4), breaks = " & ")
-print(round(as.numeric(reg_data[2, c("still_se")]), digits = 4), breaks = " & ")
+sink(modify_path2("Tables/mortality_quintiles.tex"))
+print(round(as.numeric(reg_data[2, c("mort_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[2, c("mort_se")]), digits = 4), breaks = " & ")
 print("\n")
 
-print(round(as.numeric(reg_data[3, c("still_coef")]), digits = 4), breaks = " & ")
-print(round(as.numeric(reg_data[3, c("still_se")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[3, c("mort_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[3, c("mort_se")]), digits = 4), breaks = " & ")
 print("\n")
 
-print(round(as.numeric(reg_data[4, c("still_coef")]), digits = 4), breaks = " & ")
-print(round(as.numeric(reg_data[4, c("still_se")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[4, c("mort_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[4, c("mort_se")]), digits = 4), breaks = " & ")
 print("\n")
 
-print(round(as.numeric(reg_data[5, c("still_coef")]), digits = 4), breaks = " & ")
-print(round(as.numeric(reg_data[5, c("still_se")]), digits = 4), breaks = " & ")
-for (ot in c("still")){
+print(round(as.numeric(reg_data[5, c("mort_coef")]), digits = 4), breaks = " & ")
+print(round(as.numeric(reg_data[5, c("mort_se")]), digits = 4), breaks = " & ")
+for (ot in c("mort")){
   for (q in 2:5){
     coef = reg_data[q, paste0(ot, "_coef")]
     se = reg_data[q, paste0(ot, "_se")]

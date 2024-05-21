@@ -530,12 +530,12 @@ reg2_c = fixest::feols(percent_all_low  ~
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg2_c)
 
-reg1_nd = fixest::feols(percent_neonatal_deaths  ~ 
+reg1_nd = fixest::feols(percent_infant_deaths  ~ 
                           treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                           I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                           percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-reg2_nd = fixest::feols(percent_neonatal_deaths  ~ 
+reg2_nd = fixest::feols(percent_infant_deaths  ~ 
                                     treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")

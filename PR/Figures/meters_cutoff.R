@@ -51,7 +51,8 @@ natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Econ
 
 index = 1
 if (code_check == FALSE){
-  load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData"))  
+  load(paste0(natality_path, "[UA Box Health] birth_records_matched_mortality.RData"))  
+  
 }else{
   cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
     dplyr::filter(State == 'New Hampshire' & `Matrix Type` == 'Groundwater') %>% 
@@ -114,7 +115,7 @@ colnames(reg_data) = c('meters',
                        'llbw_down','llbw_dse', "llbw_updown", "llbw_udse",'llbw_down_p',
                        'vlbw_down','vlbw_dse', "vlbw_updown", "vlbw_udse",'vlbw_down_p',
                        'elbw_down','elbw_dse', "elbw_updown", "elbw_udse", 'elbw_down_p', 
-                       'still_down', 'still_dse', 'still_updown', 'still_udse', 'still_down_p')
+                       'mort_down','mort_dse', "mort_updown", "mort_udse", 'mort_down_p')
 for (meters in 3:10 * 1000){
   
   dist = meters
@@ -207,14 +208,15 @@ for (meters in 3:10 * 1000){
                        |county + year^month + birth_race_dsc_1, data = df[which(df$dist <= meters), ], 
                        warn = F, notes = F, cluster = c("site", "year^month"))
   
-  still = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                  m_height + tri5 +fa_resid + wind_exposure 
-                |county + year^month + birth_race_dsc_1, data = df[which(df$chld_dead_live != 9 & df$dist <= meters), ], 
-                warn = F, notes = F, cluster = c("site", "year^month"))
+  mort = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid + wind_exposure
+                       |county + year^month + birth_race_dsc_1, data = df[which(df$dist <= meters), ], 
+                       warn = F, notes = F, cluster = c("site", "year^month"))
+
   
 
   pre_v = vcov(preterm_any, cluster = c("site", "year^month"))
@@ -227,7 +229,8 @@ for (meters in 3:10 * 1000){
   vlbw_v = vcov(vlbw, cluster = c("site", "year^month"))
   elbw_v = vcov(elbw, cluster = c("site", "year^month"))
   
-  still_v = vcov(still, cluster = c("site", "year^month"))
+  mort_v = vcov(mort, cluster = c("site", "year^month"))
+  
   
   reg_data[index, "meters"] = meters
   reg_data[index, "pre_down"] = preterm_any$coeftable["down", 1]
@@ -286,12 +289,13 @@ for (meters in 3:10 * 1000){
   reg_data[index, "elbw_down_p"] = one_sp(elbw$coeftable["down", "t value"], 
                                          elbw$coeftable["down", "Pr(>|t|)"])
   
-  reg_data[index, "still_down"] = still$coeftable["down", 1]
-  reg_data[index, "still_dse"] = sqrt(still_v["down", "down"])
-  reg_data[index, "still_updown"] = still$coeftable["updown", 1]
-  reg_data[index, "still_udse"] = sqrt(still_v["updown", "updown"])
-  reg_data[index, "still_down_p"] = one_sp(still$coeftable["down", "t value"], 
-                                          still$coeftable["down", "Pr(>|t|)"])
+  reg_data[index, "mort_down"] = mort$coeftable["down", 1]
+  reg_data[index, "mort_dse"] = sqrt(mort_v["down", "down"])
+  reg_data[index, "mort_updown"] = mort$coeftable["updown", 1]
+  reg_data[index, "mort_udse"] = sqrt(mort_v["updown", "updown"])
+  reg_data[index, "mort_down_p"] = one_sp(mort$coeftable["down", "t value"], 
+                                          mort$coeftable["down", "Pr(>|t|)"])
+
   
   
   
@@ -507,9 +511,9 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_hline(yintercept = 0, color = "black", size = 0.25) + 
   scale_x_continuous(breaks = 1:10) + ylim(c(-0.02, 0.12))
 
-#stillbirths
-reg_data$still_dlower = reg_data$still_down - 1.96 * reg_data$still_dse
-reg_data$still_dupper = reg_data$still_down + 1.96 * reg_data$still_dse
+#infant mortality
+reg_data$mort_dlower = reg_data$mort_down - 1.96 * reg_data$mort_dse
+reg_data$mort_dupper = reg_data$mort_down + 1.96 * reg_data$mort_dse
 
 # Create adjusted datasets
 reg_data_upgradient = reg_data %>% 
@@ -518,14 +522,14 @@ reg_data_upgradient = reg_data %>%
 reg_data_downgradient = reg_data %>% 
   mutate(theta_cutoff_adjusted = km + adjustment_km)
 
-reg_data_upgradient$still_down_p_label = ifelse(reg_data_upgradient$still_down_p < 0.001, "<0.001", sprintf("%.3f", reg_data_upgradient$still_down_p))
+reg_data_upgradient$mort_down_p_label = ifelse(reg_data_upgradient$mort_down_p < 0.001, "<0.001", sprintf("%.3f", reg_data_upgradient$mort_down_p))
 
-still_fig = ggplot(reg_data, aes(x = km)) + 
-  geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = still_down)) +
-  geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = still_dlower, ymax = still_dupper), width = 0.1,) +
-  geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = still_dupper, 
-                                            label = still_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Stillbirth") + 
+mort_fig = ggplot(reg_data, aes(x = km)) + 
+  geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mort_down)) +
+  geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = mort_dlower, ymax = mort_dupper), width = 0.1,) +
+  geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mort_dupper, 
+                                            label = mort_down_p_label), nudge_y = 0.01, size = 7) +
+  ylab("Infant Mortality") + 
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme_minimal() + 
@@ -543,8 +547,6 @@ still_fig = ggplot(reg_data, aes(x = km)) +
 
 figure_s3 = (p_combined | lbw_combined) / (lp_combined | llbw_combined) / (mp_combined | vlbw_combined) / (vp_combined | elbw_combined)
 ggsave(modify_path3("Figures/Robustness/cutoff_figure.png"), figure_s3, width = 7000, height = 7000, units = "px", dpi = 300)
-ggsave(modify_path3("Figures/Robustness/cutoff_figure_still.png"), still_fig, width = 3500, height = 1750, units = "px")
-
-
+ggsave(modify_path3("Figures/Robustness/cutoff_figure_mort.png"), mort_fig, width = 3500, height = 1750, units = "px")
 
 

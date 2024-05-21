@@ -3,12 +3,11 @@ path = paste0(natality_path, "[UA Box Health] VR2210_Deliverable/dr_6264_deliver
 df = read_excel(path, sheet = 2)
 rm(path)
 
-#drop observations with missing key variables (lose 1590 observations)
+#drop observations with missing key variables (lose 1538 observations)
 df = df %>% 
   dplyr::filter(CHLD_BRTH_WGT != 9999 & CLNC_EST_GEST_AGE != 99) %>% 
   dplyr::filter(!is.na(CHLD_BRTH_WGT) & !is.na(CLNC_EST_GEST_AGE)) %>%
-  dplyr::filter(APGAR_FIVE_MIN <= 10 & !is.na(APGAR_FIVE_MIN)) %>% 
-  dplyr::filter(CHLD_DEAD_LIVE != 9 & !is.na(CHLD_DEAD_LIVE))
+  dplyr::filter(APGAR_FIVE_MIN <= 10 & !is.na(APGAR_FIVE_MIN)) 
 
 #drop individuals with missing lat long (lose 5320 observations)
 df = df %>%

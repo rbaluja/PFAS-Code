@@ -90,6 +90,8 @@ if (rerun_placebos == TRUE){
   placebos_10 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
   save(placebos_10, file = modify_path("Data_Verify/RData/placebos_10.RData"))
   
+
+  
   plac = NULL
   # Loop through the files
   for (i in 1:10) {
@@ -107,38 +109,45 @@ if (rerun_placebos == TRUE){
     if(is.null(plac)) {
       plac = current_placebo
     } else {
-      plac = rbind(plac, current_placebo)
+      plac = plyr::rbind.fill(plac, current_placebo)
     }
   }
   
+  #check for missing iterations, and redo them.
   n_na = length(which(is.na(plac$preterm)))
-  plac = plac %>%
-    tidyr::drop_na()
-  #15 missing obs, fill those in
-  plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
+  while (n_na > 0){
+    plac = plac %>%
+      tidyr::drop_na(preterm)
   
-  plac = rbind(plac, plac_na)
-  save(plac, file = modify_path("Data_Verify/RData/placebos_still.RData") )
+    plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
+    plac = plyr::rbind.fill(plac, plac_na)
+    n_na = length(which(is.na(plac$preterm))) 
+  }
+  
+  save(plac, file = modify_path("Data_Verify/RData/placebos_mort.RData") )
 }else{
-  load(modify_path("Data_Verify/RData/placebos.RData") )
+  load(modify_path("Data_Verify/RData/placebos_mort.RData") )
 }
 
 #This is the input to table S-6. It counts the number of runs with sig positive coef estimates
 plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.281552)
 sum(plac$pre_sig)#201 false positives
 plac$vpre_sig = as.numeric(plac$vpreterm/plac$vpreterm_se > 2.326348)
-sum(plac$vpre_sig)#35 false positives at 1%
+sum(plac$vpre_sig)#40 false positives at 1%
 
 plac$lbw_sig = as.numeric(plac$lbw/plac$lbw_se > 2.326348) 
-sum(plac$lbw_sig)#103 false positives
+sum(plac$lbw_sig)#91 false positives
 plac$llbw_sig = as.numeric(plac$llbw/plac$llbw_se > 1.644854)
-sum(plac$llbw_sig)#195 false positives
-plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#47 false positives
+sum(plac$llbw_sig)#185 false positives
+plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#45 false positives
 sum(plac$vlbw_sig)
+plac$mort_sig = as.numeric(plac$mort/plac$mort_se > 2.326348)
+sum(plac$mort_sig) #32 false positives
 
 sum(as.numeric(plac$preterm/plac$preterm_se > 1.281552 & 
                  plac$vpreterm/plac$vpreterm_se > 2.326348 & 
                  plac$lbw/plac$lbw_se > 2.326348 & 
                  plac$llbw/plac$llbw_se > 1.644854 & 
-                 plac$vlbw/plac$vlbw_se > 2.326348)) # 2 of the 1000 had the same significance (or greater) on all of our significant effects
+                 plac$vlbw/plac$vlbw_se > 2.326348 & 
+                 plac$mort/plac$mort_se > 2.326348)) # 1 of the 1000 had the same significance (or greater) on all of our significant effects
 

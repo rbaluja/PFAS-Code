@@ -42,7 +42,7 @@ placebo = function(i, df, wells){
                              "llbw", "llbw_se",
                              "mlbw", "mlbw_se",
                              "vlbw","vlbw_se", 
-                             "still", "still_se")
+                             "mort", "mort_se")
     return(boot_coefs)
   })
   
@@ -415,14 +415,14 @@ placebo_res = function(df){
                                                      m_height + tri5 
                                                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  
-  still = fixest::feols(stillbrn ~  updown + down  + dist  + n_sites + 
+  mort = fixest::feols(death ~  updown + down  + dist  + n_sites + 
                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
                          m_height + tri5 
                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
   
   boot_coefs[1, "preterm"] = preterm$coefficients["down"]
   boot_coefs[1, "preterm_se"] = preterm$se["down"]
@@ -448,8 +448,8 @@ placebo_res = function(df){
   boot_coefs[1, "vlbw"] = vlbw$coefficients["down"]
   boot_coefs[1, "vlbw_se"] = vlbw$se["down"]
   
-  boot_coefs[1, "still"] = still$coefficients["down"]
-  boot_coefs[1, "still_se"] = still$se["down"]
+  boot_coefs[1, "mort"] = mort$coefficients["down"]
+  boot_coefs[1, "mort_se"] = mort$se["down"]
   
   return(boot_coefs)
   

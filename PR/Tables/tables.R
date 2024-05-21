@@ -47,6 +47,10 @@ modelsummary::modelsummary(table1_preterm,
                                     gof_map = c("nobs", "r.squared"), 
                                     output = modify_path2("Tables/table1_preterm.tex")) 
 
+table1_preterm[["Very"]]$coefficients["down"]/mean(df$gestation < 28)
+(table1_preterm[["Very"]]$coefficients["down"] - 1.96 * table1_preterm[["Very"]]$se["down"])/mean(df$gestation < 28)
+(table1_preterm[["Very"]]$coefficients["down"] + 1.96 * table1_preterm[["Very"]]$se["down"])/mean(df$gestation < 28)
+
 #low birthweight
 table1_lbw = list() 
 table1_lbw[["Low Birthweight all "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
@@ -98,13 +102,16 @@ modelsummary::modelsummary(table1_lbw,
                                         "updown" = "Upgradient"),
                            gof_map = c("nobs", "r.squared"), 
                            output = modify_path2("Tables/table1_lbw.tex")) 
+table1_lbw[["Very Low Birthweight"]]$coefficients["down"]/mean(df$bweight < 1000)
+(table1_lbw[["Very Low Birthweight"]]$coefficients["down"] - 1.96 * table1_lbw[["Very Low Birthweight"]]$se["down"])/mean(df$bweight < 1000)
+(table1_lbw[["Very Low Birthweight"]]$coefficients["down"] + 1.96 * table1_lbw[["Very Low Birthweight"]]$se["down"])/mean(df$bweight < 1000)
 
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-if (!file.exists(modify_path("Data_Verify/RData/bootstrap_wstill.RData"))) {
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
   stop("Bootstrap standard errors")
 }
-load(modify_path("Data_Verify/RData/bootstrap_wstill.RData"))
+load(modify_path("Data_Verify/RData/bootstrap.RData"))
 
 #preterm
 table2_preterm = list()
@@ -156,10 +163,10 @@ lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Slightly
 mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Moderately"]])
 vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Very"]])
 save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd.RData"))
-dnorm(table2_preterm[["All"]]$coefficients["pred_pfas"]/preterm_sd)
-dnorm(table2_preterm[["Slightly"]]$coefficients["pred_pfas"]/lpreterm_sd)
-dnorm(table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/mpreterm_sd)
-dnorm(table2_preterm[["Very"]]$coefficients["pred_pfas"]/vpreterm_sd)
+1 - pnorm(table2_preterm[["All"]]$coefficients["pred_pfas"]/preterm_sd)
+1 - pnorm(table2_preterm[["Slightly"]]$coefficients["pred_pfas"]/lpreterm_sd)
+1 - pnorm(table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/mpreterm_sd)
+1 - pnorm(table2_preterm[["Very"]]$coefficients["pred_pfas"]/vpreterm_sd)
 
 
 #marginal effect
@@ -261,10 +268,10 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
   cov_lbw_mv = cov_boot(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
   save(cov_lbw_lm, cov_lbw_lv, cov_lbw_mv, file = modify_path("Data_Verify/RData/cov_lbw.RData"))  
 }
-dnorm(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/lbw_sd)
-dnorm(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/llbw_sd)
-dnorm(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/mlbw_sd)
-dnorm(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/vlbw_sd)
+1 - pnorm(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/lbw_sd)
+1 - pnorm(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/llbw_sd)
+1 - pnorm(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/mlbw_sd)
+1 - pnorm(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/vlbw_sd)
 
 
 
@@ -407,7 +414,7 @@ df2 = df2 %>%
                   !is.na(wic))
 
 df2 = df2 %>% 
-  dplyr::select(Stillbirth = stillbrn,
+  dplyr::select(`Infant Mortality` = death,
                 `Very Preterm` = vpre, 
                 `Moderately Preterm` = mpre, 
                 `Slightly Preterm` = lpre, 
@@ -438,41 +445,44 @@ datasummary_balance(~group,
 
 #####################
 ### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
-still_table = list()
+mort_table = list()
 
-still_table[["Binary"]] = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+mort_table[["Binary"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height + tri5 +fa_resid + wind_exposure 
+                                          m_height + tri5 +fa_resid + wind_exposure
                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-still_table[["PFAS Inter."]] = fixest::feols(stillbrn ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
-                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                             m_height + tri5 + fa_resid + wind_exposure
-                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+mort_table[["PFAS Interaction"]] = fixest::feols(death ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                    m_height + tri5 + fa_resid + wind_exposure
+                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-still_table[["Distance Inter."]] = fixest::feols(stillbrn ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
-                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                             m_height + tri5 + fa_resid + wind_exposure
-                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+mort_table[["Distance Interaction"]] = fixest::feols(death ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
+                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                        m_height + tri5 + fa_resid + wind_exposure
+                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-still_table[["IV"]] = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
+mort_table[["IV"]] = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
                                       n_sites + wind_exposure + 
                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                       m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
+mort_table[["Binary"]]$coefficients["down"]/mean(df$death)
+(mort_table[["Binary"]]$coefficients["down"] - 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
+(mort_table[["Binary"]]$coefficients["down"] + 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
 
-modelsummary::modelsummary(still_table, 
+modelsummary::modelsummary(mort_table, 
                                       stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
                                       coef_map = c("down" = "Downgradient", 
@@ -486,19 +496,21 @@ modelsummary::modelsummary(still_table,
                                       output = modify_path2("Tables/table_s4.tex")) 
 
 #stillborn standard error
-stillbrn_sd = linear_bootstrap(boot_coefs, "stillborn", still_table[["IV"]])
-save(stillbrn_sd, file = modify_path("Data_Verify/RData/stillbrn_sd.RData"))
+mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
+save(mort_sd, file = modify_path("Data_Verify/RData/mort_sd.RData"))
+#p value for IV
+1 - pnorm(mort_table[["IV"]]$coefficients["pred_pfas"]/mort_sd)
 
 if (bs_cov){
-  cov_still_pl = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "lpreterm", table2_preterm[["Slightly"]])
-  cov_still_pm = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mpreterm", table2_preterm[["Moderately"]])
-  cov_still_pv = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mpreterm", table2_preterm[["Very"]])
+  cov_mort_pl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "lpreterm", table2_preterm[["Slightly"]])
+  cov_mort_pm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mpreterm", table2_preterm[["Moderately"]])
+  cov_mort_pv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vpreterm", table2_preterm[["Very"]])
   
-  cov_still_bl = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "llbw", table2_lbw[["lLow Birthweight"]])
-  cov_still_bm = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
-  cov_still_bv = cov_boot(boot_coefs, "stillborn", still_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
+  cov_mort_bl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "llbw", table2_lbw[["lLow Birthweight"]])
+  cov_mort_bm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
+  cov_mort_bv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
   
-  save(cov_still_pl, cov_still_pm, cov_still_pv, cov_still_bl, cov_still_bm, cov_still_bv, file = modify_path("Data_Verify/RData/cov_still.RData"))
+  save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path("Data_Verify/RData/cov_mort.RData"))
 }
 
 
@@ -834,7 +846,7 @@ gof_map = c("nobs", "r.squared"),
 #Oster Coefficient - \delta in paper (Table S-5)
 source("PFAS-Code/PR/Robustness/oster_selection.R")
 sink(modify_path2("Tables/table_s5.tex"))
-print(d_still)
+print(d_mort)
 print(d_pre)
 print(d_lpre)
 print(d_mpre)

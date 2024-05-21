@@ -1,5 +1,5 @@
 #robustness figure
-source("PFAS-Code/PR/Figures/figure2_stillfun.R")
+source("PFAS-Code/PR/Figures/figure2_mortfun.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -10,10 +10,9 @@ one_sp = function(tval, pval){
 }
 
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
-load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
-full = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -21,7 +20,7 @@ full = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-site  = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -29,7 +28,7 @@ site  = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_site
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -37,7 +36,7 @@ no_fe = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_site
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -45,7 +44,7 @@ drop_close = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = fixest::feols(stillbrn ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(death ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -54,7 +53,7 @@ pre_2016 = fixest::feols(stillbrn ~ down + updown +  I(pfas/10^3) + dist  + n_si
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = fixest::feols(stillbrn ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(death ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -63,7 +62,7 @@ no_pers = fixest::feols(stillbrn ~ down + updown +  I(pfas/10^3) + dist  + n_sit
                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = fixest::feols(stillbrn ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
@@ -78,22 +77,22 @@ data = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$stillbrn) * 100, 
-               drop_close$coefficients["down"]/mean(df$stillbrn) * 100, pre_2016$coefficients["down"]/mean(df$stillbrn) * 100, 
-               stillbrn_ds$coefficients["down"]/mean(df$stillbrn) * 100,  stillbrn_rup$coefficients["down"]/mean(df$stillbrn) * 100,
-               no_pers$coefficients["down"]/mean(df$stillbrn) * 100, 
-               no_med$coefficients["down"]/mean(df$stillbrn) * 100, site$coefficients["down"]/mean(df$stillbrn) * 100),
-  StdError = c(full$se["down"]/mean(df$stillbrn) * 100, 
-               drop_close$se["down"]/mean(df$stillbrn) * 100, pre_2016$se["down"]/mean(df$stillbrn) * 100, 
-               stillbrn_ds$se["down"]/mean(df$stillbrn) * 100, 
-               stillbrn_rup$se["down"]/mean(df$stillbrn) * 100,
-               no_pers$se["down"]/mean(df$stillbrn) * 100, 
-               no_med$se["down"]/mean(df$stillbrn) * 100, site$se["down"]/mean(df$stillbrn) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df$death) * 100, 
+               drop_close$coefficients["down"]/mean(df$death) * 100, pre_2016$coefficients["down"]/mean(df$death) * 100, 
+               mort_ds$coefficients["down"]/mean(df$death) * 100,  mort_rup$coefficients["down"]/mean(df$death) * 100,
+               no_pers$coefficients["down"]/mean(df$death) * 100, 
+               no_med$coefficients["down"]/mean(df$death) * 100, site$coefficients["down"]/mean(df$death) * 100),
+  StdError = c(full$se["down"]/mean(df$death) * 100, 
+               drop_close$se["down"]/mean(df$death) * 100, pre_2016$se["down"]/mean(df$death) * 100, 
+               mort_ds$se["down"]/mean(df$death) * 100, 
+               mort_rup$se["down"]/mean(df$death) * 100,
+               no_pers$se["down"]/mean(df$death) * 100, 
+               no_med$se["down"]/mean(df$death) * 100, site$se["down"]/mean(df$death) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(stillbrn_ds$coeftable["down", "t value"], stillbrn_ds$coeftable["down", "Pr(>|t|)"]), 
-           one_sp(stillbrn_rup$coeftable["down", "t value"], stillbrn_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mort_ds$coeftable["down", "t value"], mort_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mort_rup$coeftable["down", "t value"], mort_rup$coeftable["down", "Pr(>|t|)"]), 
            one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
            one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
            one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
@@ -115,11 +114,11 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-stillbrn_f2 = figure2_still_fun(data, "Stillbirth", TRUE, TRUE, "Stillbirth", FALSE)
-stillbrn_f2 = stillbrn_f2 + ggtitle("Stillbirth") + theme_void() + theme(plot.title = element_text(hjust = -0.75, size = 70, face = "bold"))
+mort_f2 = figure2_still_fun(data, "Infant Mortality", TRUE, TRUE, "Infant Mortality", FALSE)
+mort_f2 = mort_f2 + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
 
 
-ggsave(modify_path3("Figures/figure2_stillbrn.png"), stillbrn_f2, width = 10000, height = 3500, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2_mort.png"), mort_f2, width = 10000, height = 3500, units = "px", limitsize = F)
 
 
 #upgradient
@@ -130,16 +129,16 @@ data = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["updown"]/mean(df$stillbrn) * 100, 
-               drop_close$coefficients["updown"]/mean(df$stillbrn) * 100, pre_2016$coefficients["updown"]/mean(df$stillbrn) * 100, 
-               stillbrn_ds$coefficients["updown"]/mean(df$stillbrn) * 100,  
-               no_pers$coefficients["updown"]/mean(df$stillbrn) * 100, 
-               no_med$coefficients["updown"]/mean(df$stillbrn) * 100, site$coefficients["updown"]/mean(df$stillbrn) * 100),
-  StdError = c(full$se["updown"]/mean(df$stillbrn) * 100, 
-               drop_close$se["updown"]/mean(df$stillbrn) * 100, pre_2016$se["updown"]/mean(df$stillbrn) * 100, 
-               stillbrn_ds$se["updown"]/mean(df$stillbrn) * 100, 
-               no_pers$se["updown"]/mean(df$stillbrn) * 100, 
-               no_med$se["updown"]/mean(df$stillbrn) * 100, site$se["updown"]/mean(df$stillbrn) * 100),
+  Estimate = c(full$coefficients["updown"]/mean(df$death) * 100, 
+               drop_close$coefficients["updown"]/mean(df$death) * 100, pre_2016$coefficients["updown"]/mean(df$death) * 100, 
+               stillbrn_ds$coefficients["updown"]/mean(df$death) * 100,  
+               no_pers$coefficients["updown"]/mean(df$death) * 100, 
+               no_med$coefficients["updown"]/mean(df$death) * 100, site$coefficients["updown"]/mean(df$death) * 100),
+  StdError = c(full$se["updown"]/mean(df$death) * 100, 
+               drop_close$se["updown"]/mean(df$death) * 100, pre_2016$se["updown"]/mean(df$death) * 100, 
+               stillbrn_ds$se["updown"]/mean(df$death) * 100, 
+               no_pers$se["updown"]/mean(df$death) * 100, 
+               no_med$se["updown"]/mean(df$death) * 100, site$se["updown"]/mean(df$death) * 100),
   pval = c(1 - one_sp(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
@@ -165,8 +164,8 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-stillbrn_f2up = figure2_still_fun(data, "Stillbirth", TRUE, TRUE, "Stillbirth", FALSE)
-stillbrn_f2up = stillbrn_f2up + ggtitle("Stillbirth") + theme_void() + theme(plot.title = element_text(hjust = -0.75, size = 70, face = "bold"))
+mort_f2up = figure2_still_fun(data, "Infant Mortality", TRUE, TRUE, "Infant Mortality", FALSE)
+mort_f2up = mort_f2up + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
 
 
-ggsave(modify_path3("Figures/figure2_stillbrn_up.png"), stillbrn_f2up, width = 10000, height = 3500, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2_mort_up.png"), mort_f2up, width = 12000, height = 3500, units = "px", limitsize = F)

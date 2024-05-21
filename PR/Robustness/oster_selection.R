@@ -404,26 +404,26 @@ d_vpre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
 
 
 
-#stillbirths
+#infant mortality
 #intermediate regression
-inter_r = fixest::feols(stillbrn ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+inter_r = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5 +fa_resid + wind_exposure 
-                        |county + year^month + birth_race_dsc_1, data = df_ost[which(df_ost$chld_dead_live != 9), ], warn = F, notes = F, cluster = c("site", "year^month"))
+                        |county + year^month + birth_race_dsc_1, data = df_ost, warn = F, notes = F, cluster = c("site", "year^month"))
 
 b_tilde = inter_r$coefficients["down"]
-r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$stillbrn - mean(df_ost$stillbrn))^2))
+r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$death - mean(df_ost$death))^2))
 
 #max r^2
 rmax = 1.3 * r2_tilde
 
 #short regression
-short_r = fixest::feols(stillbrn ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
+short_r = fixest::feols(death ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
 b_dot = short_r$coefficients["down"]
-short_r2 = 1 - (sum(short_r$ssr))/(sum((df_ost$stillbrn - mean(df_ost$stillbrn))^2))
+short_r2 = 1 - (sum(short_r$ssr))/(sum((df_ost$death - mean(df_ost$death))^2))
 
 #auxiliary regression
 aux_r = fixest::feols(down ~  I(pfas/10^3) + dist  + n_sites + 
@@ -437,10 +437,10 @@ aux_r = fixest::feols(down ~  I(pfas/10^3) + dist  + n_sites +
 tau_x = var(aux_r$residuals)
 
 #general setup
-var_y = var(df_ost$stillbrn)
+var_y = var(df_ost$death)
 var_x = var(df_ost$down)
 
-d_still = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x + 
+d_mort = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x + 
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/

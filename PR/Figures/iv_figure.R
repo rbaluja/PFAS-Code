@@ -2,7 +2,7 @@
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
 load(modify_path("Data_Verify/RData/preterm_sd.RData"))
 load(modify_path("Data_Verify/RData/lbw_sd.RData"))
-load(modify_path("Data_Verify/RData/stillbrn_sd.RData"))
+load(modify_path("Data_Verify/RData/mort_sd.RData"))
 
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
@@ -185,27 +185,27 @@ r_coefs[8, "sig"] = "Yes"
 r_coefs[8, "p_value"] = 1 - pnorm(r8$coefficients["pred_pfas"]/vlbw_sd)
 r_coefs[8, "p_value_s"] = ifelse(r_coefs[8, "p_value"] < 0.001, "<0.001", round(r_coefs[8, "p_value"], 3))
 
-r9 = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
+r9 = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
                      n_sites + wind_exposure + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
-r_coefs[9, "sev"] = "Stillbirth"
+r_coefs[9, "sev"] = "Infant Mortality"
 r_coefs[9, "coef"] = r9$coeftable["pred_pfas", 1]
-r_coefs[9, "se"] = stillbrn_sd
+r_coefs[9, "se"] = mort_sd
 
-r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$stillbrn) * 100 * 1000
-r_coefs[9, "es_se"] = (stillbrn_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$stillbrn) * 100* 1000
-r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$stillbrn) * 100* 1000
-r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * stillbrn_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$stillbrn) * 100* 1000
-r_coefs[9, "b_outcome"] = "Stillbirth"
+r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100 * 1000
+r_coefs[9, "es_se"] = (mort_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100* 1000
+r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 1000
+r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 1000
+r_coefs[9, "b_outcome"] = "Infant Mortality"
 r_coefs[9, "sig"] = "Yes"
-r_coefs[9, "p_value"] = 1 - pnorm(r9$coefficients["pred_pfas"]/stillbrn_sd)
+r_coefs[9, "p_value"] = 1 - pnorm(r9$coefficients["pred_pfas"]/mort_sd)
 r_coefs[9, "p_value_s"] = ifelse(r_coefs[9, "p_value"] < 0.001, "<0.001", round(r_coefs[9, "p_value"], 3))
 
-r_coefs$sev = factor(r_coefs$sev, levels = c("Stillbirth", "Any", "Slightly", "Moderately", "Very"))
+r_coefs$sev = factor(r_coefs$sev, levels = c("Infant Mortality", "Any", "Slightly", "Moderately", "Very"))
 
 
 
@@ -218,21 +218,22 @@ r_coefs_jittered1$sev_num = r_coefs_jittered1$sev_num - 0.2  # Shift left
 r_coefs_jittered2 = r_coefs[r_coefs$b_outcome == "Low-Birthweight", ]
 r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.2  # Shift right
 
-r_coefs_still = r_coefs[r_coefs$b_outcome == "Stillbirth", ]
+r_coefs_mort = r_coefs[r_coefs$b_outcome == "Infant Mortality", ]
+
 
 r_coefs_jittered1$b_outcome_legend = factor(r_coefs_jittered1$b_outcome, levels = c("Preterm", "Low-Birthweight"))
 r_coefs_jittered2$b_outcome_legend = factor(r_coefs_jittered2$b_outcome, levels = c("Preterm", "Low-Birthweight"))
-r_coefs_still$b_outcome_legend = factor(r_coefs_still$b_outcome, levels = c("Preterm", "Low-Birthweight"))
+r_coefs_mort$b_outcome_legend = factor(r_coefs_mort$b_outcome, levels = c("Preterm", "Low-Birthweight"))
 
-iv_fig = ggplot() +
+iv_fig =  ggplot() +
   geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
   geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
   geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
   geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
-  geom_point(data = r_coefs_still, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
-  geom_errorbar(data = r_coefs_still, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
+  geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
+  geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
   scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
-  scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4", "Stillbirth" = "darkolivegreen")) +
+  scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
   labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +1000 ppt PFAS)", color = "Birth Outcome") +
   theme_minimal() +
   theme(axis.text = element_text(size = 50), 
@@ -260,8 +261,8 @@ iv_fig = iv_fig +
                                           label = ifelse(p_value_s == "<0.001", 
                                                          paste0("p ", p_value_s),
                                                          paste0("p = ", p_value_s)), 
-                                          vjust = -1), size = 10) + 
-  geom_text(data = r_coefs_still, aes(x = sev_num, y = upper_es, 
+                                          vjust = -1), size = 10)+ 
+  geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
                                       label = ifelse(p_value_s == "<0.001", 
                                                      paste0("p ", p_value_s),
                                                      paste0("p = ", p_value_s)), 
@@ -274,10 +275,10 @@ iv_fig = iv_fig +
                                           vjust = -4), size = 12) +
   geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, 
                                           label = format(round(effect_size, 2), nsmall = 2), 
-                                          vjust = -4), size = 12) + 
-  geom_text(data = r_coefs_still, aes(x = sev_num, y = upper_es, 
-                                          label = format(round(effect_size, 2), nsmall = 2), 
-                                          vjust = -4), size = 12)
+                                          vjust = -4), size = 12)+ 
+  geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
+                                      label = format(round(effect_size, 2), nsmall = 2), 
+                                      vjust = -4), size = 12)
 
 #add se label
 iv_fig + 
@@ -287,9 +288,9 @@ iv_fig +
   geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, 
                                           label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
                                           vjust = -3), size = 10) + 
-  geom_text(data = r_coefs_still, aes(x = sev_num, y = upper_es, 
-                                          label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
-                                          vjust = -3), size = 10)
+  geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
+                                      label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
+                                      vjust = -3), size = 10)
 
 
 ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")

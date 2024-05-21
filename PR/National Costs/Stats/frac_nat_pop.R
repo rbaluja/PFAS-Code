@@ -6,6 +6,8 @@ c = cbg_pop %>% left_join(cbg_births %>% dplyr::select(county, tract, cbg, birth
 #population from cdc wonder births:
 sum(c[!is.na(c$births), ]$pop)/sum(c$pop)
 #cdc wonder covers 76% of total US population
+sum(c[which(!is.na(c$births) & c$state %in% c(26, 27, 33, 36, 8, 23, 50, 6, 12, 38, 55)), ]$pop)/sum(c[which(c$state %in% c(26, 27, 33, 36, 8, 23, 50, 6, 12, 38, 55)), ]$pop)
+#cdc wonder covers 87% of the population in these 11 states
 
 ##########
 ##Fraction of US pop living in 11 states who tested

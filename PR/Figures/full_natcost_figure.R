@@ -1,22 +1,21 @@
 #preterm costs in 11 states
-pre_still_c11 = vpre_cost + mpre_cost + lpre_cost + still_cost
+pre_mort_c11 = vpre_cost + mpre_cost + lpre_cost + mort_cost
 pre_c11 = vpre_cost + mpre_cost + lpre_cost
 #read in covariance terms
 load(modify_path("Data_Verify/RData/cov_preterm.RData"))
-load(modify_path("Data_Verify/RData/cov_still.RData"))
+load(modify_path("Data_Verify/RData/cov_mort.RData"))
 #read in se terms
 load(modify_path("Data_Verify/RData/preterm_sd.RData"))
-load(modify_path("Data_Verify/RData/stillbrn_sd.RData"))
+load(modify_path("Data_Verify/RData/mort_sd.RData"))
 #variance of preterm costs in 11 states
 var_pre11 = sum(bs$pred_pfas * bs$births)^2 * 
-  ((36728/10^9)^2 * lpreterm_sd^2 + (205041/10^9)^2 * mpreterm_sd^2 + (204083/10^9)^2 * vpreterm_sd^2 + (6925374.8993/10^9)^2 * stillbrn_sd^2 + #variance terms
-     2 * 36728/10^9 * 205041/10^9 * cov_pre_lm + 2 * 36728/10^9 * 204083/10^9 * cov_pre_lv + 2 * 36728/10^9 * 6925374.8993/10^9 * cov_still_pl + #slightly covariances
-     2 * 205041/10^9 * 204083/10^9 * cov_pre_mv + 2 * 205041/10^9 * 6925374.8993/10^9 * cov_still_pm + #moderately covariances
-     2 * 204083/10^9 * 6925374.8993/10^9 * cov_still_pv) 
+  ((36728/10^9)^2 * lpreterm_sd^2 + (205041/10^9)^2 * mpreterm_sd^2 + (204083/10^9)^2 * vpreterm_sd^2 + (6925374.8993/10^9)^2 * mort_sd^2 + #variance terms
+     2 * 36728/10^9 * 205041/10^9 * cov_pre_lm + 2 * 36728/10^9 * 204083/10^9 * cov_pre_lv + 2 * 36728/10^9 * 6925374.8993/10^9 * cov_mort_pl + #slightly covariances
+     2 * 205041/10^9 * 204083/10^9 * cov_pre_mv + 2 * 205041/10^9 * 6925374.8993/10^9 * cov_mort_pm + #moderately covariances
+     2 * 204083/10^9 * 6925374.8993/10^9 * cov_mort_pv) 
 sd_pre11 = sqrt(var_pre11)
 
 #low birthweight costs in 11 states
-lbw_still_c11 = vlbw_cost + mlbw_cost + still_cost
 lbw_c11 = vlbw_cost + mlbw_cost
 #read in covariance terms
 load(modify_path("Data_Verify/RData/cov_lbw.RData"))
@@ -24,29 +23,27 @@ load(modify_path("Data_Verify/RData/cov_lbw.RData"))
 load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 #variance of low birthweight costs in 11 states
 var_lbw11 = sum(bs$pred_pfas * bs$births)^2 *
-  ((5133739.83/10^9)^2 * vlbw_sd^2 + (1634411.22/10^9)^2 * mlbw_sd^2 + (6925374.8993/10^9)^2 * stillbrn_sd^2 + #variance terms
-     2 * 5133739.83/10^9 * 1634411.22/10^9 * cov_lbw_mv + 2 * 1634411.22/10^9 * 6925374.8993/10^9 * cov_still_bm + #moderately covariances
-     2 * 5133739.83/10^9 * 6925374.8993/10^9 * cov_still_bv) #covariance term
+  ((5133739.83/10^9)^2 * vlbw_sd^2 + (1634411.22/10^9)^2 * mlbw_sd^2 + #variance terms
+     2 * 5133739.83/10^9 * 1634411.22/10^9 * cov_lbw_mv) #covariance term
 sd_lbw11 = sqrt(var_lbw11) 
 
 #total costs (multiply by 2.91)
 pre_ct = pre_c11 * 2.91
-pre_still_ct = pre_still_c11 * 2.91
+pre_mort_ct = pre_mort_c11 * 2.91
 pre_ct_sd = sd_pre11 * 2.91
 
 lbw_ct = lbw_c11 * 2.91
-lbw_still_ct = lbw_still_c11 * 2.91
 lbw_ct_sd = sd_lbw11 * 2.91
 
-cost_d = data.frame(costs = c(round(pre_still_c11, digits = 2), round(lbw_still_c11, digits = 2), round(pre_still_ct, digits = 2), round(lbw_still_ct, digits = 2)),
+cost_d = data.frame(costs = c(round(pre_mort_c11, digits = 2), round(lbw_c11, digits = 2), round(pre_mort_ct, digits = 2), round(lbw_ct, digits = 2)),
                     se = c(paste0("(", round(sd_pre11, digits = 2), ")"), paste0("(", round(sd_lbw11, digits = 2), ")"), 
-                           paste0("(", round(pre_ct_sd, digits = 2), ")"), paste0("(", round(lbw_ct_sd, digits = 2), ")")) , 
-                    bout = c("Preterm (Lower) + Stillbirth (Upper)", "Low-Birthweight (Lower) + Stillbirth (Upper)", "Preterm (Lower) + Stillbirth (Upper)", "Low-Birthweight (Lower) + Stillbirth (Upper)"), 
+                           paste0("(", round(pre_ct_sd, digits = 2), ")"), paste0("(", format(round(lbw_ct_sd, digits = 2), nsmall = 2), ")")) , 
+                    bout = c("Preterm (Lower) + Mortality (Upper)", "Low-Birthweight", "Preterm (Lower) + Mortality (Upper)", "Low-Birthweight"), 
                     geo = c("11 States", "11 States", "National", "National"), 
-                    inner = c(pre_c11, lbw_c11, pre_ct, lbw_ct))
+                    inner = c(pre_c11, 0, pre_ct, 0))
 
 cost_d$geo = factor(cost_d$geo, levels = c("11 States", "National"))
-cost_d$bout = factor(cost_d$bout, levels = c("Preterm (Lower) + Stillbirth (Upper)", "Low-Birthweight (Lower) + Stillbirth (Upper)"))
+cost_d$bout = factor(cost_d$bout, levels = c("Preterm (Lower) + Mortality (Upper)", "Low-Birthweight"))
 
 # Create the bar chart using ggpattern
 cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +

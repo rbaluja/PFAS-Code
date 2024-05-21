@@ -33,10 +33,9 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
 bs_c = bs %>% 
   dplyr::group_by(state) %>% 
   dplyr::summarise(add_vlbw = sum(add_vlbw), 
-                   add_mlbw = sum(add_mlbw), 
-                   add_still = sum(add_still))
+                   add_mlbw = sum(add_mlbw))
 
-bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22 + bs_c$add_still * 6925374.8993)/10^6
+bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^6
 
 
 cs = tigris::states() %>% 
@@ -87,18 +86,18 @@ states[states$STUSPS == "MN", ]$x_lab = 0.35 * st_bbox(states[states$STUSPS == "
 states[states$STUSPS == "MN", ]$y_lab = st_bbox(states[states$STUSPS == "MN", ]$geometry)$ymax - 50000
 #Inside WI
 states[states$STUSPS == "WI", ]$x_lab = 0.45 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmin + 0.55 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmax
-states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymin - 100000
+states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymin - 80000
 #Inside MI
 states[states$STUSPS == "MI", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmax
-states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymax + 75000
+states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymax + 30000
 #Inside NY
 states[states$STUSPS == "NY", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmax
 states[states$STUSPS == "NY", ]$y_lab = st_bbox(states[states$STUSPS == "NY", ]$geometry)$ymin + 150000
 #Above VT
-states[states$STUSPS == "VT", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
+states[states$STUSPS == "VT", ]$x_lab = 0.95 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0.05 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
 states[states$STUSPS == "VT", ]$y_lab = st_bbox(states[states$STUSPS == "VT", ]$geometry)$ymax + 50000
 #Below NH
-states[states$STUSPS == "NH", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
+states[states$STUSPS == "NH", ]$x_lab = 0.4 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.6 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
 states[states$STUSPS == "NH", ]$y_lab = st_bbox(states[states$STUSPS == "NH", ]$geometry)$ymin - 50000
 #Inside ME
 states[states$STUSPS == "ME", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmax
@@ -112,7 +111,7 @@ s_lab = states %>% as_tibble() %>%
   dplyr::select(!geometry) %>% 
   left_join(cs %>% as_tibble() %>% dplyr::select(!geometry)) %>%
   st_as_sf(coords = c("x_lab", "y_lab"), crs = 3395)
-s_lab$l = paste0(s_lab$STUSPS, ":", round(s_lab$cost, 0))
+s_lab$l = paste0(s_lab$STUSPS, ":", round(s_lab$cost/1000, 2))
 
 
 
@@ -120,17 +119,17 @@ cost_map = ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
   scale_fill_gradient(low = "white", high = "firebrick4",
-                      limits =c(0, 3000),
-                      breaks = c(0, 500, 1000, 1500, 2000, 2500, 3000),
-                      labels = c("0", "$0.5B", "$1B", "$1.5B", "$2B", "$2.5B", "$3B"),
-                      name = "Annual Low-Birthweight + Stillbirth Costs",
+                      limits =c(0, 2500),
+                      breaks = c(0, 500, 1000, 1500, 2000, 2500),
+                      labels = c("0", "$0.5B", "$1B", "$1.5B", "$2B", "$2.5B"),
+                      name = "Annual Low-Birthweight Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title.position = "top",
                                              title.hjust = 0.5,
                                              label.hjust = .5,
                                              label.position = "bottom")) +
   geom_point(data = cont_sites %>% filter(state %in% states_keep), 
-             aes(x = lng, y = lat, color = "Confirmed Site"), 
+             aes(x = lng, y = lat, color = ""), 
              alpha = 0.4, size = 3) +
   scale_color_manual(values = "black",
                      name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +

@@ -50,7 +50,7 @@ boot_err = function(i, df, fs_cont){
   boot_coefs = data.frame(matrix(ncol = 11, nrow = 1))
   colnames(boot_coefs) = c("preterm", "lpreterm", "mpreterm", "vpreterm", 
                            "lbw", "llbw", "mlbw", "vlbw",
-                           "gestation", "bweight", "stillborn")
+                           "gestation", "bweight", "mort")
   
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
@@ -133,6 +133,14 @@ boot_err = function(i, df, fs_cont){
                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
+  mort = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
+                         n_sites + wind_exposure + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
+  
   
   
   #continuous outcomes
@@ -152,14 +160,6 @@ boot_err = function(i, df, fs_cont){
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
-  #still births
-  stillbrn = fixest::feols(stillbrn ~ pred_pfas + asinh(pfas) + 
-                             n_sites + wind_exposure + 
-                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
   
   
   boot_coefs[1, 'preterm'] = preterm$coefficients["pred_pfas"]
@@ -170,14 +170,14 @@ boot_err = function(i, df, fs_cont){
   boot_coefs[1, 'llbw'] = llbw$coefficients["pred_pfas"]
   boot_coefs[1, 'mlbw'] = mlbw$coefficients["pred_pfas"]
   boot_coefs[1, 'vlbw'] = vlbw$coefficients["pred_pfas"]
+  boot_coefs[1, 'mort'] = mort$coefficients["pred_pfas"]
   boot_coefs[1, 'gestation'] = gestation$coefficients["pred_pfas"]
   boot_coefs[1, 'bw'] = bw$coefficients["pred_pfas"]
-  boot_coefs[1, "stillborn"] = stillbrn$coefficients["pred_pfas"]
   
   return(boot_coefs)
 }
 boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = n_cores))
-save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_wstill.RData")) 
+save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData")) 
 
 
 #quantiles bootstrap
@@ -192,7 +192,7 @@ boot_err_quant = function(i, df, fs_cont){
                            "llbw5", "llbw2", "llbw3", "llbw4", 
                            "mlbw5", "mlbw2", "mlbw3", "mlbw4", 
                            "vlbw5", "vlbw2", "vlbw3", "vlbw4", 
-                           "still5", "still2", "still3", "still4")
+                           "mort5", "mort2", "mort3", "mort4")
   
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
@@ -283,13 +283,13 @@ boot_err_quant = function(i, df, fs_cont){
                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
   
-  still = fixest::feols(stillbrn ~  as.factor(quant_pfas) + asinh(pfas) + 
-                          n_sites + wind_exposure + 
-                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
+  mort = fixest::feols(death ~  as.factor(quant_pfas) + asinh(pfas) + 
+                         n_sites + wind_exposure + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
   
   
   
@@ -334,12 +334,12 @@ boot_err_quant = function(i, df, fs_cont){
   boot_coefs[1, 'vlbw4'] = vlbw$coefficients["as.factor(quant_pfas)4"]
   boot_coefs[1, 'vlbw5'] = vlbw$coefficients["as.factor(quant_pfas)5"]
   
-  boot_coefs[1, 'still2'] = still$coefficients["as.factor(quant_pfas)2"]
-  boot_coefs[1, 'still3'] = still$coefficients["as.factor(quant_pfas)3"]
-  boot_coefs[1, 'still4'] = still$coefficients["as.factor(quant_pfas)4"]
-  boot_coefs[1, 'still5'] = still$coefficients["as.factor(quant_pfas)5"]
-
+  boot_coefs[1, 'mort2'] = mort$coefficients["as.factor(quant_pfas)2"]
+  boot_coefs[1, 'mort3'] = mort$coefficients["as.factor(quant_pfas)3"]
+  boot_coefs[1, 'mort4'] = mort$coefficients["as.factor(quant_pfas)4"]
+  boot_coefs[1, 'mort5'] = mort$coefficients["as.factor(quant_pfas)5"]
+  
   return(boot_coefs)
 }
 boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = n_cores))
-save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant_wstill.RData")) 
+save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData")) 

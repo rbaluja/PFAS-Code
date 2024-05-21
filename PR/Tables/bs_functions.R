@@ -47,10 +47,10 @@ quintile_bootstrap = function(boot_coefs, reg_data){
   vlbw4_sd = sqrt(sum((boot_coefs$vlbw4 - reg_data[4, "vlbw_coef"])^2)/(nrow(boot_coefs) - 1))
   vlbw5_sd = sqrt(sum((boot_coefs$vlbw5 - reg_data[5, "vlbw_coef"])^2)/(nrow(boot_coefs) - 1))
   
-  still2_sd = sqrt(sum((boot_coefs$still2 - reg_data[2, "still_coef"])^2)/(nrow(boot_coefs) - 1))
-  still3_sd = sqrt(sum((boot_coefs$still3 - reg_data[3, "still_coef"])^2)/(nrow(boot_coefs) - 1))
-  still4_sd = sqrt(sum((boot_coefs$still4 - reg_data[4, "still_coef"])^2)/(nrow(boot_coefs) - 1))
-  still5_sd = sqrt(sum((boot_coefs$still5 - reg_data[5, "still_coef"])^2)/(nrow(boot_coefs) - 1))
+  mort2_sd = sqrt(sum((boot_coefs$mort2 - reg_data[2, "mort_coef"])^2)/(nrow(boot_coefs) - 1))
+  mort3_sd = sqrt(sum((boot_coefs$mort3 - reg_data[3, "mort_coef"])^2)/(nrow(boot_coefs) - 1))
+  mort4_sd = sqrt(sum((boot_coefs$mort4 - reg_data[4, "mort_coef"])^2)/(nrow(boot_coefs) - 1))
+  mort5_sd = sqrt(sum((boot_coefs$mort5 - reg_data[5, "mort_coef"])^2)/(nrow(boot_coefs) - 1))
   
   return(list(p2_sd = p2_sd, p3_sd = p3_sd, p4_sd = p4_sd, p5_sd = p5_sd, 
               lp2_sd = lp2_sd, lp3_sd = lp3_sd, lp4_sd = lp4_sd, lp5_sd = lp5_sd, 
@@ -60,7 +60,7 @@ quintile_bootstrap = function(boot_coefs, reg_data){
               llbw2_sd = llbw2_sd, llbw3_sd = llbw3_sd, llbw4_sd = llbw4_sd, llbw5_sd = llbw5_sd,
               mlbw2_sd = mlbw2_sd, mlbw3_sd = mlbw3_sd, mlbw4_sd = mlbw4_sd, mlbw5_sd = mlbw5_sd,
               vlbw2_sd = vlbw2_sd, vlbw3_sd = vlbw3_sd, vlbw4_sd = vlbw4_sd, vlbw5_sd = vlbw5_sd, 
-              still2_sd = still2_sd, still3_sd = still3_sd, still4_sd = still4_sd, still5_sd = still5_sd))
+              mort2_sd = mort2_sd, mort3_sd = mort3_sd, mort4_sd = mort4_sd, mort5_sd = mort5_sd))
 }
 
 
