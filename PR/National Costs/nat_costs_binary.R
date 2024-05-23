@@ -5,10 +5,10 @@ vpre_cost = (vpre_births * 204083)/10^9
 vpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
 vpre_cost_se = (vpre_births_se * 204083)/10^9
 
-mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0011 #49.11458
+mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
 mpre_cost = (mpre_births * 205041)/10^9
 #standard error: 
-mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0023 #53.04375
+mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
 mpre_cost_se = (mpre_births_se *  205041)/10^9
 
 lpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
@@ -25,20 +25,20 @@ vlbw_cost = (vlbw_births * 5133739.83)/10^9
 vlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
 vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
 
-mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.000032 #-0.9822917
+mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
 mlbw_cost = (mlbw_births * 1634411.22)/10^9
 #standard error: 
-mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.001854 #36.34479
+mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
 mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
 
-lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0190
+lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0204
 lbw_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0086
 
-#stillbirths
-still_births = sum(bs[which(bs$down == 1), ]$births) * 0.00111
-still_cost = (still_births * 11446900.66)/10^9
-still_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.00057
-still_cost_se = (still_births_se * 11446900.66)/10^9
+#infant mortality
+mort_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061
+mort_cost = (mort_births * 6581967.8795)/10^9
+mort_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0018
+mort_cost_se = (mort_births_se * 6581967.8795)/10^9
 
 
 
@@ -88,7 +88,7 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.text.y = element_text(size = 60), 
         legend.text = element_text(size = 60), 
         axis.text.x = element_text(size = 60),
-        plot.title = element_text(hjust = 0.5, size = 80), 
+        plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         axis.text.y.right = element_blank()) +
@@ -154,7 +154,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.text.y = element_blank(),
         legend.text = element_text(size = 60),
         axis.text.x = element_text(size = 50),
-        plot.title = element_text(hjust = 0.5, size = 80), 
+        plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
         axis.text.y.right = element_blank(), 
@@ -176,26 +176,26 @@ lbw_cost = lbw_cost + geom_text(aes(label=se,
 
 
 
-data_still = data.frame(
-  Weeks = factor(rep(c("Stillbirth"), 2), 
-                 levels = c("Stillbirth")),
-  Value = c(round(still_births), round(still_cost, digits = 2)), 
+data_mort = data.frame(
+  Weeks = factor(rep(c("Infant Mortalities"), 2), 
+                 levels = c("Infant Mortalities")),
+  Value = c(round(mort_births), round(mort_cost, digits = 2)), 
   Axis = factor(c("Left", "Right")),
-  se = c(paste0("(", round(still_births_se), ")"), 
-         paste0("(", round(still_cost_se, digits = 2), ")"))
+  se = c(paste0("(", round(mort_births_se), ")"), 
+         paste0("(", round(mort_cost_se, digits = 2), ")"))
 )
 
 # Scaling factor
-scale_factor_still = 600/1
+scale_factor_mort = 600/1
 
-data_still$Axis = factor(data_still$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
-data_still$Weeks = factor(data_still$Weeks, 
-                          levels = c("Stillbirth"),
-                          labels = c("Stillbirth"))
+data_mort$Axis = factor(data_mort$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
+data_mort$Weeks = factor(data_mort$Weeks, 
+                          levels = c("Infant Mortalities"),
+                          labels = c("Infant Mortalities"))
 
 
 # Updated ggplot code
-still_cost_fig = ggplot(data_still, aes(x=Weeks, y=Value, fill=Axis)) +
+mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   geom_bar_pattern(
     stat="identity", 
     position=position_dodge(),
@@ -211,7 +211,7 @@ still_cost_fig = ggplot(data_still, aes(x=Weeks, y=Value, fill=Axis)) +
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
     limits = c(NA, 600) 
   ) +
-  ggtitle("Stillbirths") +
+  ggtitle("Infant Mortalities") +
   theme_minimal() +
   theme(legend.position = "bottom",
         legend.key.size = unit(4, "lines"),
@@ -221,28 +221,28 @@ still_cost_fig = ggplot(data_still, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.text.y = element_blank(),
         legend.text = element_text(size = 60),
         axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 80), 
+        plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
         axis.text.y.right = element_text(size = 60), 
         legend.spacing.x = unit(1, 'cm')) + 
   scale_pattern_manual(values = c("none", "stripe")) + 
   guides(alpha = "none", fill = "none", pattern = "none")
-still_cost_fig = still_cost_fig + geom_text(aes(label=round(Value, digits=2), 
-                                                y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_still) + 15),
+mort_cost_fig = mort_cost_fig + geom_text(aes(label=round(Value, digits=2), 
+                                                y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 15),
                                             position=position_dodge(width=0.9), 
                                             vjust=0, 
                                             size=18)
 
-still_cost_fig = still_cost_fig + geom_text(aes(label=se, 
+mort_cost_fig = mort_cost_fig + geom_text(aes(label=se, 
                                                 y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +5),
                                             position=position_dodge(width=0.9), 
                                             vjust=0, 
                                             size=16)
 
 p_costs = p_costs + guides(pattern = "none")
-still_cost_fig = still_cost_fig + guides(pattern = "none")
-figure_s7 = (p_costs | lbw_cost | still_cost_fig) + plot_layout(widths = c(3, 3, 1), guides = "collect")& 
+mort_cost_fig = mort_cost_fig + guides(pattern = "none")
+figure_s7 = (p_costs | lbw_cost | mort_cost_fig) + plot_layout(widths = c(3, 3, 1), guides = "collect")& 
   theme(legend.position = 'bottom')
 ggsave(modify_path3("Figures/National Costs/bin_cost.png"), figure_s7, width = 10416, height = 11291, units = "px", device = "png")
 
