@@ -217,7 +217,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-pre_late = figure2_fun(data, "Slightly", FALSE, FALSE, "Slightly", TRUE)
+pre_late = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", TRUE)
 
 
 #moderately preterm
@@ -368,7 +368,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-pre_mod = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", TRUE)
+pre_mod = figure2_fun(data, "Very", FALSE, FALSE, "Very", TRUE)
 
 
 
@@ -522,7 +522,7 @@ data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
 
-pre_very = figure2_fun(data, "Very", TRUE, FALSE, "Very", TRUE)
+pre_very = figure2_fun(data, "Extremely", TRUE, FALSE, "Extremely", TRUE)
 
 pre_fig = pre_any/pre_late/pre_mod/pre_very
 
@@ -829,7 +829,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_slight = figure2_fun(data, "Slightly", FALSE, FALSE, "Slightly", FALSE)
+lbw_slight = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", FALSE)
 
 
 
@@ -982,7 +982,7 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_mod = figure2_fun(data, "Moderately", FALSE, FALSE, "Moderately", FALSE)
+lbw_mod = figure2_fun(data, "Very", FALSE, FALSE, "Very", FALSE)
 
 
 #very low birthweight
@@ -1135,13 +1135,13 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_very = figure2_fun(data, "Very", TRUE, FALSE, "Very", FALSE)
+lbw_very = figure2_fun(data, "Extremely", TRUE, FALSE, "Extremely", FALSE)
 
 
 lbw = lbw_all/lbw_slight/lbw_mod/lbw_very
 
 legend_data <- data.frame(
-  category = factor(c("Any", "Slightly", "Moderately", "Very"), levels = c("Any", "Slightly", "Moderately", "Very")),
+  category = factor(c("Any", "Moderately", "Very", "Extremely"), levels = c("Any", "Moderately", "Very", "Extremely")),
   color = c("dodgerblue", "coral", "darkseagreen", "orchid4")
 )
 

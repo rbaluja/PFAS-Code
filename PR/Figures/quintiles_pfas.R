@@ -342,7 +342,7 @@ lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
     axis.text.y = element_text(size = 24)
     
   )+
-  xlab("") + ylab("Slightly (32-36 Weeks)") + 
+  xlab("") + ylab("Moderately (32-36 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 
@@ -364,7 +364,7 @@ mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
     axis.text.y = element_text(size = 24)
     
   )+
-  xlab("") + ylab("Moderately (28-31 Weeks)") + 
+  xlab("") + ylab("Very (28-31 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 
@@ -376,7 +376,7 @@ vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
   theme_minimal() + 
   theme(axis.text = element_text(size = 24), 
         axis.title = element_text(size = 28)) + 
-  xlab("Predicted PFAS Quintile") + ylab("Very (<28 Weeks)") + 
+  xlab("Predicted PFAS Quintile") + ylab("Extremely (<28 Weeks)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 
@@ -433,7 +433,7 @@ llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
     axis.text.y = element_text(size = 24)
     
   ) + 
-  xlab("") + ylab("Slightly (1500-2499g)") + ylim(c(-0.06, 0.09))
+  xlab("") + ylab("Moderately (1500-2499g)") + ylim(c(-0.06, 0.09))
 
 
 mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
@@ -454,7 +454,7 @@ mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
     axis.text.y = element_text(size = 24)
     
   ) + 
-  xlab("") + ylab("Moderately (1000-1499g)")+ ylim(c(-0.06, 0.09))
+  xlab("") + ylab("Very (1000-1499g)")+ ylim(c(-0.06, 0.09))
 
 
 vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
@@ -465,7 +465,7 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   theme_minimal() + 
   theme(axis.text = element_text(size = 24), 
         axis.title = element_text(size = 28)) + 
-  xlab("Predicted PFAS Quintile") + ylab("Very (<1000g)") + 
+  xlab("Predicted PFAS Quintile") + ylab("Extremely (<1000g)") + 
   scale_x_continuous(breaks = breaks, labels = labels) + ylim(c(-0.06, 0.09))
 
 mort_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mort_coef)) +

@@ -106,8 +106,8 @@ mort_cost_se = (mort_births_se * 6581967.8795)/10^9
 
 #social cost figure
 data = data.frame(
-  Weeks = factor(rep(c("Slightly", "Moderately", "Very"), 2), 
-                 levels = c("Slightly", "Moderately", "Very")),
+  Weeks = factor(rep(c("Moderately", "Very", "Extremely"), 2), 
+                 levels = c("Moderately", "Very", "Extremely")),
   Value = c(round(lpre_births), round(mpre_births), round(vpre_births), round(lpre_cost, digits = 2), round(mpre_cost, digits = 2), round(vpre_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
   se = c(paste0("(", round(lpre_births_se), ")"), paste0("(", round(mpre_births_se), ")"), paste0("(", round(vpre_births_se), ")"), 
@@ -121,8 +121,8 @@ scale_factor = 2000/6
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data$Weeks = factor(data$Weeks, 
-                    levels = c("Slightly", "Moderately", "Very"),
-                    labels = c("Slightly", "Moderately", "Very"))
+                    levels = c("Moderately", "Very", "Extremely"),
+                    labels = c("Moderately", "Very", "Extremely"))
 
 
 p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
@@ -171,8 +171,8 @@ p_costs = p_costs + geom_text(aes(label=se,
 
 #Birthweight
 data_bw = data.frame(
-  Weeks = factor(rep(c("Slightly", "Moderately", "Very"), 2), 
-                 levels = c("Slightly", "Moderately", "Very")),
+  Weeks = factor(rep(c("Moderately", "Very", "Extremely"), 2), 
+                 levels = c("Moderately", "Very", "Extremely")),
   Value = c(round(lbw_births), round(mlbw_births), round(vlbw_births), 0, round(mlbw_cost, digits = 2), round(vlbw_cost, digits = 2)), 
   Axis = factor(c("Left", "Left", "Left", "Right", "Right", "Right")),
   se = c(paste0("(", round(lbw_births_se), ")"), paste0("(", round(mlbw_births_se), ")"), paste0("(", round(vlbw_births_se), ")"), 
@@ -184,8 +184,8 @@ scale_factor_bw = 2000/6
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_bw$Weeks = factor(data_bw$Weeks, 
-                       levels = c("Slightly", "Moderately", "Very"),
-                       labels = c("Slightly","Moderately", "Very"))
+                       levels = c("Moderately", "Very", "Extremely"),
+                       labels = c("Moderately","Very", "Extremely"))
 
 
 # Updated ggplot code
@@ -213,7 +213,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.title = element_blank(),
         axis.text.y = element_blank(),
         legend.text = element_text(size = 60),
-        axis.text.x = element_text(size = 50),
+        axis.text.x = element_text(size = 60),
         plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
@@ -222,7 +222,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         legend.spacing.x = unit(1.5, 'cm')) + 
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
-lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Slightly" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
+lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Moderately" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 120),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 

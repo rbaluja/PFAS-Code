@@ -369,7 +369,7 @@ lp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = lpre_dlower, ymax = lpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = lpre_dupper, label = lpre_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Slightly (32-36 Weeks)") + 
+  ylab("Moderately (32-36 Weeks)") + 
   xlab("") +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -383,7 +383,7 @@ mp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = mpre_dlower, ymax = mpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = mpre_dupper, label = mpre_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Moderately (28-31 Weeks)") + 
+  ylab("Very (28-31 Weeks)") + 
   xlab("") +
   theme_minimal() + 
   theme(legend.position = "bottom", 
@@ -398,7 +398,7 @@ vp_combined = ggplot() +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vpre_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = vpre_dlower, ymax = vpre_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vpre_dupper, label = vpre_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Very (<28 Weeks)") + 
+  ylab("Extremely (<28 Weeks)") + 
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme(legend.position = "bottom", 
@@ -467,7 +467,7 @@ llbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = llbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = llbw_dlower, ymax = llbw_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = llbw_dupper, label = llbw_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Slightly (1500-2499g)") + 
+  ylab("Moderately (1500-2499g)") + 
   theme_minimal() + 
   xlab("") + 
   theme(legend.position = "bottom", 
@@ -481,7 +481,7 @@ vlbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_point(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vlbw_down)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = vlbw_dlower, ymax = vlbw_dupper), width = 0.1) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = vlbw_dupper, label = vlbw_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Moderately (1000-1499g)") + 
+  ylab("Very (1000-1499g)") + 
   theme_minimal() + 
   xlab("") + 
   theme(legend.position = "bottom", 
@@ -497,7 +497,7 @@ elbw_combined = ggplot(reg_data, aes(x = km)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, ymin = elbw_dlower, ymax = elbw_dupper), width = 0.1,) +
   geom_text(data = reg_data_upgradient, aes(x = theta_cutoff_adjusted, y = elbw_dupper, 
                                             label = elbw_down_p_label), nudge_y = 0.01, size = 7) +
-  ylab("Very (<1000g)") + 
+  ylab("Extremely (<1000g)") + 
   theme_minimal() + 
   xlab("Buffer (km)") +
   theme_minimal() + 

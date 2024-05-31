@@ -32,26 +32,26 @@ if (nb_cbg){
   births = cbg_births
   rm(cbg_births)
 }else{
-  births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"), colClasses = c(county = "character"))
+  births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"), colClasses = c(county = "character", tract = "character"))
 }
 
 #get watershed for each cont site
 if (nat_run_cont_ws){
   source("PFAS-Code/PR/National Costs/nat_watersheds.R")  
   cont_ws = get(load(modify_path("Data_Verify/RData/nat_cont_watershed.RData")))
-  wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
+  births_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
   births = fread(modify_path("Data_Verify/National/births_cbg_cleaned_2010.csv"), colClasses = c(county = "character"))
 }else{
   #load in watersheds
   cont_ws = get(load(modify_path("Data_Verify/RData/nat_cont_watershed.RData")))
-  wells_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
+  births_ws = get(load(modify_path("Data_Verify/GIS/nat_cbg_watershed.RData")))
 }
 
 #assign cbg to sites
 if (nat_reassn){
   source("PFAS-Code/PR/National Costs/nat_assn.R")
 }else{
-  load(modify_path("Data_Verify/National/births_sites_assigned5.RData"))
+  load(modify_path("Data_Verify/National/births_sites_assigned.RData"))
 }
 
 #run national costs (primary - Figure 3 part 1)
@@ -62,9 +62,6 @@ source("PFAS-Code/PR/Figures/figure3_map.R")
 
 #national costs map preterm (figure 3)
 source("PFAS-Code/PR/Figures/figure3_map_preterm.R")
-
-#predicted PFAS map (figure 3 part 3)
-source("PFAS-Code/PR/Figures/figure3_predicted_pfas_map.R")
 
 #full national costs (figure 3)
 source("PFAS-Code/PR/Figures/full_natcost_figure.R")

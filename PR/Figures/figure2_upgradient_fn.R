@@ -1,11 +1,11 @@
 figure2_fun = function(data, category, keep_x, header, ti, left){
   if (category == "Any" | category == "Any"){
     col = "dodgerblue"
-  }else if (category == "Slightly" | category == "Slightly"){
-    col = "coral"
   }else if (category == "Moderately" | category == "Moderately"){
-    col = "darkseagreen"
+    col = "coral"
   }else if (category == "Very" | category == "Very"){
+    col = "darkseagreen"
+  }else if (category == "Extremely" | category == "Extremely"){
     col = "orchid4"
   }
   

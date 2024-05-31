@@ -51,7 +51,7 @@ cont_ws = cont_ws %>%
   left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, state, pfas = sum_pfoa_pfos))
 
 #births
-births_ws = wells_ws %>%  #this is how the original object was named. It isnt actually wells
+births_ws = births_ws %>%  #this is how the original object was named. It isnt actually wells
   left_join(births %>% as_tibble() %>% dplyr::select(geoid, births))
 
 

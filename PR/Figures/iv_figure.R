@@ -19,21 +19,21 @@ index = 1
 
 #preterm
 r1 = fixest::feols(I(gestation < 37) ~ pred_pfas + asinh(pfas) + 
-                                         n_sites + wind_exposure + 
-                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 r_coefs[1, "sev"] = "Any"
 r_coefs[1, "coef"] = r1$coeftable["pred_pfas", 1]
 r_coefs[1, "se"] = preterm_sd
 
-r_coefs[1, "effect_size"] = (r1$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 37) * 100* 1000
-r_coefs[1, "es_se"] = (preterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 37) * 100* 1000
-r_coefs[1, "lower_es"] = (r1$coefficients["pred_pfas"] - 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 37) * 100* 1000
-r_coefs[1, "upper_es"] = (r1$coefficients["pred_pfas"] + 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 37) * 100* 1000
+r_coefs[1, "effect_size"] = (r1$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 37) * 100* 100
+r_coefs[1, "es_se"] = (preterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 37) * 100* 100
+r_coefs[1, "lower_es"] = (r1$coefficients["pred_pfas"] - 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 37) * 100* 100
+r_coefs[1, "upper_es"] = (r1$coefficients["pred_pfas"] + 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 37) * 100* 100
 r_coefs[1, "b_outcome"] = "Preterm"
 r_coefs[1, "sig"] = "Yes"
 r_coefs[1, "p_value"] = 1 - pnorm(r1$coefficients["pred_pfas"]/preterm_sd)
@@ -41,61 +41,61 @@ r_coefs[1, "p_value_s"] = ifelse(r_coefs[1, "p_value"] < 0.001, "<0.001", round(
 
 
 r2 = fixest::feols(I(gestation < 37 & gestation >= 32) ~ pred_pfas + asinh(pfas) + 
-                                          n_sites + wind_exposure + 
-                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
-r_coefs[2, "sev"] = "Slightly"
+r_coefs[2, "sev"] = "Moderately"
 r_coefs[2, "coef"] = r2$coeftable["pred_pfas", 1]
 r_coefs[2, "se"] = lpreterm_sd
 
-r_coefs[2, "effect_size"] = (r2$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 1000
-r_coefs[2, "es_se"] = (lpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 1000
-r_coefs[2, "lower_es"] = (r2$coefficients["pred_pfas"] - 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 1000
-r_coefs[2, "upper_es"] = (r2$coefficients["pred_pfas"] + 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 1000
+r_coefs[2, "effect_size"] = (r2$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 100
+r_coefs[2, "es_se"] = (lpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 100
+r_coefs[2, "lower_es"] = (r2$coefficients["pred_pfas"] - 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 100
+r_coefs[2, "upper_es"] = (r2$coefficients["pred_pfas"] + 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 32 & df$gestation < 37) * 100* 100
 r_coefs[2, "b_outcome"] = "Preterm"
 r_coefs[2, "sig"] = "Yes"
 r_coefs[2, "p_value"] = 1 - pnorm(r2$coefficients["pred_pfas"]/lpreterm_sd)
 r_coefs[2, "p_value_s"] = ifelse(r_coefs[2, "p_value"] < 0.001, "<0.001", round(r_coefs[2, "p_value"], 3))
 
 r3 = fixest::feols(I(gestation < 32 & gestation >= 28) ~ pred_pfas + asinh(pfas) + 
-                                                n_sites + wind_exposure + 
-                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
-r_coefs[3, "sev"] = "Moderately"
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+r_coefs[3, "sev"] = "Very"
 r_coefs[3, "coef"] = r3$coeftable["pred_pfas", 1]
 r_coefs[3, "se"] = mpreterm_sd
 
-r_coefs[3, "effect_size"] = (r3$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 1000
-r_coefs[3, "es_se"] = (mpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 1000
-r_coefs[3, "lower_es"] = (r3$coefficients["pred_pfas"] - 1.96 * mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 1000
-r_coefs[3, "upper_es"] = (r3$coefficients["pred_pfas"] + 1.96 * mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 1000
+r_coefs[3, "effect_size"] = (r3$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 100
+r_coefs[3, "es_se"] = (mpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 100
+r_coefs[3, "lower_es"] = (r3$coefficients["pred_pfas"] - 1.96 * mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 100
+r_coefs[3, "upper_es"] = (r3$coefficients["pred_pfas"] + 1.96 * mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation >= 28 & df$gestation < 32) * 100* 100
 r_coefs[3, "b_outcome"] = "Preterm"
 r_coefs[3, "sig"] = "Yes"
 r_coefs[3, "p_value"] = 1 - pnorm(r3$coefficients["pred_pfas"]/mpreterm_sd)
 r_coefs[3, "p_value_s"] = ifelse(r_coefs[3, "p_value"] < 0.001, "<0.001", round(r_coefs[3, "p_value"], 3))
 
 r4 = fixest::feols(I(gestation < 28) ~ pred_pfas + asinh(pfas) + 
-                                          n_sites + wind_exposure + 
-                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
-r_coefs[4, "sev"] = "Very"
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+r_coefs[4, "sev"] = "Extremely"
 r_coefs[4, "coef"] = r4$coeftable["pred_pfas", 1]
 r_coefs[4, "se"] = vpreterm_sd
 
-r_coefs[4, "effect_size"] = r4$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 1000
-r_coefs[4, "es_se"] = (vpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 28) * 100* 1000
-r_coefs[4, "lower_es"] = (r4$coefficients["pred_pfas"] - 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 1000
-r_coefs[4, "upper_es"] = (r4$coefficients["pred_pfas"] + 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 1000
+r_coefs[4, "effect_size"] = r4$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 100
+r_coefs[4, "es_se"] = (vpreterm_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$gestation < 28) * 100* 100
+r_coefs[4, "lower_es"] = (r4$coefficients["pred_pfas"] - 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 100
+r_coefs[4, "upper_es"] = (r4$coefficients["pred_pfas"] + 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$gestation < 28) * 100* 100
 r_coefs[4, "b_outcome"] = "Preterm"
 r_coefs[4, "sig"] = "Yes"
 r_coefs[4, "p_value"] = 1 - pnorm(r4$coefficients["pred_pfas"]/vpreterm_sd)
@@ -103,83 +103,83 @@ r_coefs[4, "p_value_s"] = ifelse(r_coefs[4, "p_value"] < 0.001, "<0.001", round(
 
 
 r5 = fixest::feols(I(bweight < 2500 ) ~ pred_pfas + asinh(pfas) +
-                                                 n_sites + wind_exposure + 
-                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                 m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 r_coefs[5, "sev"] = "Any"
 r_coefs[5, "coef"] = r5$coeftable["pred_pfas", 1]
 r_coefs[5, "se"] = lbw_sd
 
-r_coefs[5, "effect_size"] = (r5$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500) * 100* 1000
-r_coefs[5, "es_se"] = (lbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500) * 100* 1000
-r_coefs[5, "lower_es"] = (r5$coefficients["pred_pfas"] - 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 1000
-r_coefs[5, "upper_es"] = (r5$coefficients["pred_pfas"] + 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 1000
+r_coefs[5, "effect_size"] = (r5$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500) * 100* 100
+r_coefs[5, "es_se"] = (lbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500) * 100* 100
+r_coefs[5, "lower_es"] = (r5$coefficients["pred_pfas"] - 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 100
+r_coefs[5, "upper_es"] = (r5$coefficients["pred_pfas"] + 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 100
 r_coefs[5, "b_outcome"] = "Low-Birthweight"
 r_coefs[5, "sig"] = "Yes"
 r_coefs[5, "p_value"] = 1 - pnorm(r5$coefficients["pred_pfas"]/lbw_sd)
 r_coefs[5, "p_value_s"] = ifelse(r_coefs[5, "p_value"] < 0.001, "<0.001", round(r_coefs[5, "p_value"], 3))
 
 r6 = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ pred_pfas + asinh(pfas) +
-                                                  n_sites + wind_exposure + 
-                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                  m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
-r_coefs[6, "sev"] = "Slightly"
+r_coefs[6, "sev"] = "Moderately"
 r_coefs[6, "coef"] = r6$coeftable["pred_pfas", 1]
 r_coefs[6, "se"] = llbw_sd
 
-r_coefs[6, "effect_size"] = (r6$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 1000
-r_coefs[6, "es_se"] = (llbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 1000
-r_coefs[6, "lower_es"] = (r6$coefficients["pred_pfas"] - 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 1000
-r_coefs[6, "upper_es"] = (r6$coefficients["pred_pfas"] + 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 1000
+r_coefs[6, "effect_size"] = (r6$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
+r_coefs[6, "es_se"] = (llbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
+r_coefs[6, "lower_es"] = (r6$coefficients["pred_pfas"] - 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
+r_coefs[6, "upper_es"] = (r6$coefficients["pred_pfas"] + 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
 r_coefs[6, "b_outcome"] = "Low-Birthweight"
 r_coefs[6, "sig"] = "Yes"
 r_coefs[6, "p_value"] = 1 - pnorm(r6$coefficients["pred_pfas"]/llbw_sd)
 r_coefs[6, "p_value_s"] = ifelse(r_coefs[6, "p_value"] < 0.001, "<0.001", round(r_coefs[6, "p_value"], 3))
 
 r7 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ pred_pfas + asinh(pfas) +
-                                                  n_sites + wind_exposure + 
-                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                  m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
-r_coefs[7, "sev"] = "Moderately"
+r_coefs[7, "sev"] = "Very"
 r_coefs[7, "coef"] = r7$coeftable["pred_pfas", 1]
 r_coefs[7, "se"] = mlbw_sd
 
-r_coefs[7, "effect_size"] = (r7$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 1000
-r_coefs[7, "es_se"] = (mlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 1000
-r_coefs[7, "lower_es"] = (r7$coefficients["pred_pfas"] - 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 1000
-r_coefs[7, "upper_es"] = (r7$coefficients["pred_pfas"] + 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 1000
+r_coefs[7, "effect_size"] = (r7$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
+r_coefs[7, "es_se"] = (mlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
+r_coefs[7, "lower_es"] = (r7$coefficients["pred_pfas"] - 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
+r_coefs[7, "upper_es"] = (r7$coefficients["pred_pfas"] + 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
 r_coefs[7, "b_outcome"] = "Low-Birthweight"
 r_coefs[7, "sig"] = "Yes"
 r_coefs[7, "p_value"] = 1 - pnorm(r7$coefficients["pred_pfas"]/mlbw_sd)
 r_coefs[7, "p_value_s"] = ifelse(r_coefs[7, "p_value"] < 0.001, "<0.001", round(r_coefs[7, "p_value"], 3))
 
 r8 = fixest::feols(I(bweight < 1000) ~ pred_pfas + asinh(pfas) +
-                                                      n_sites + wind_exposure + 
-                                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                     n_sites + wind_exposure + 
+                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
-r_coefs[8, "sev"] = "Very"
+r_coefs[8, "sev"] = "Extremely"
 r_coefs[8, "coef"] = r8$coeftable["pred_pfas", 1]
 r_coefs[8, "se"] = vlbw_sd
 
-r_coefs[8, "effect_size"] = (r8$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1000) * 100* 1000
-r_coefs[8, "es_se"] = (vlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1000) * 100* 1000
-r_coefs[8, "lower_es"] = (r8$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 1000
-r_coefs[8, "upper_es"] = (r8$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 1000
+r_coefs[8, "effect_size"] = (r8$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1000) * 100* 100
+r_coefs[8, "es_se"] = (vlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1000) * 100* 100
+r_coefs[8, "lower_es"] = (r8$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 100
+r_coefs[8, "upper_es"] = (r8$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 100
 r_coefs[8, "b_outcome"] = "Low-Birthweight"
 r_coefs[8, "sig"] = "Yes"
 r_coefs[8, "p_value"] = 1 - pnorm(r8$coefficients["pred_pfas"]/vlbw_sd)
@@ -196,16 +196,16 @@ r_coefs[9, "sev"] = "Infant Mortality"
 r_coefs[9, "coef"] = r9$coeftable["pred_pfas", 1]
 r_coefs[9, "se"] = mort_sd
 
-r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100 * 1000
-r_coefs[9, "es_se"] = (mort_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100* 1000
-r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 1000
-r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 1000
+r_coefs[9, "effect_size"] = (r9$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100 * 100
+r_coefs[9, "es_se"] = (mort_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$death) * 100* 100
+r_coefs[9, "lower_es"] = (r9$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 100
+r_coefs[9, "upper_es"] = (r9$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$death) * 100* 100
 r_coefs[9, "b_outcome"] = "Infant Mortality"
 r_coefs[9, "sig"] = "Yes"
 r_coefs[9, "p_value"] = 1 - pnorm(r9$coefficients["pred_pfas"]/mort_sd)
 r_coefs[9, "p_value_s"] = ifelse(r_coefs[9, "p_value"] < 0.001, "<0.001", round(r_coefs[9, "p_value"], 3))
 
-r_coefs$sev = factor(r_coefs$sev, levels = c("Infant Mortality", "Any", "Slightly", "Moderately", "Very"))
+r_coefs$sev = factor(r_coefs$sev, levels = c("Infant Mortality", "Any", "Moderately", "Very", "Extremely"))
 
 
 
@@ -234,7 +234,7 @@ iv_fig =  ggplot() +
   geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
   scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
   scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
-  labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +1000 ppt PFAS)", color = "Birth Outcome") +
+  labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +100 ppt PFAS)", color = "") +
   theme_minimal() +
   theme(axis.text = element_text(size = 50), 
         axis.title = element_text(size = 52), 
@@ -246,7 +246,7 @@ iv_fig =  ggplot() +
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         legend.key.size = unit(5, "lines")) + 
-  ylim(-50, 850) + 
+  ylim(0, 100) + 
   geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5)
 
@@ -263,10 +263,10 @@ iv_fig = iv_fig +
                                                          paste0("p = ", p_value_s)), 
                                           vjust = -1), size = 10)+ 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
-                                      label = ifelse(p_value_s == "<0.001", 
-                                                     paste0("p ", p_value_s),
-                                                     paste0("p = ", p_value_s)), 
-                                      vjust = -1), size = 10)
+                                     label = ifelse(p_value_s == "<0.001", 
+                                                    paste0("p ", p_value_s),
+                                                    paste0("p = ", p_value_s)), 
+                                     vjust = -1), size = 10)
 
 #add effect size label
 iv_fig = iv_fig + 
@@ -277,8 +277,8 @@ iv_fig = iv_fig +
                                           label = format(round(effect_size, 2), nsmall = 2), 
                                           vjust = -4), size = 12)+ 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
-                                      label = format(round(effect_size, 2), nsmall = 2), 
-                                      vjust = -4), size = 12)
+                                     label = format(round(effect_size, 2), nsmall = 2), 
+                                     vjust = -4), size = 12)
 
 #add se label
 iv_fig + 
@@ -289,8 +289,8 @@ iv_fig +
                                           label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
                                           vjust = -3), size = 10) + 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
-                                      label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
-                                      vjust = -3), size = 10)
+                                     label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
+                                     vjust = -3), size = 10)
 
 
 ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")

@@ -11,13 +11,12 @@ births =births %>%
 #get population at block group
 
 #This is a crosswalk for state name to state number to state abbreviation 
-states = fread('https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv')
-sc = as.character(states$st)
-sc = stringr::str_pad(sc, 2, "left", "0")
+states = fread(modify_path("Data_Verify/Supplemental/state_name_code_cross.csv"), colClasses = "character")
+sc = stringr::str_pad(states$st, 2, "left", "0")
 #This downloads the cbg-level populations from the census, iterating over state number
-cbg_ll = fread(paste0("https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG", sc[1], ".txt"))
+cbg_ll = fread(paste0("https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG", sc[1], ".txt"), colClasses = "character")
 for (i in 2:length(sc)){
-  cll = fread(paste0("https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG", sc[i], ".txt"))
+  cll = fread(paste0("https://www2.census.gov/geo/docs/reference/cenpop2010/blkgrp/CenPop2010_Mean_BG", sc[i], ".txt"), colClasses = "character")
   cbg_ll = rbind(cbg_ll, cll)
 }
 
@@ -30,7 +29,11 @@ cbg_ll = cbg_ll %>%
                 tract = TRACTCE, 
                 cbg = BLKGRPCE) %>%
   mutate(state = stringr::str_pad(state, 2, "left", "0"), 
-         county = stringr::str_pad(county, 3, "left", "0"))
+         county = stringr::str_pad(county, 3, "left", "0"), 
+         tract = stringr::str_pad(tract, 6, "left", "0"), 
+         pop = as.numeric(pop), 
+         lat = as.numeric(lat), 
+         lng = as.numeric(lng))
 
 cbg_ll$county = paste0(cbg_ll$state, cbg_ll$county)
 
@@ -46,8 +49,7 @@ cbg_births = cbg_ll %>%
 
 
 cbg_births = cbg_births %>% 
-  dplyr::select(county, tract, cbg, lat, lng, births) %>% 
-  dplyr::mutate(tract = stringr::str_pad(tract, 6, "left", "0"))
+  dplyr::select(county, tract, cbg, lat, lng, births)
 
 
 #save cbg-level birth information
