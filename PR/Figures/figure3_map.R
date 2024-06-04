@@ -35,7 +35,7 @@ bs_c = bs %>%
   dplyr::summarise(add_vlbw = sum(add_vlbw), 
                    add_mlbw = sum(add_mlbw))
 
-bs_c$cost = (bs_c$add_vlbw * 5133739.83 + bs_c$add_mlbw * 1634411.22)/10^6
+bs_c$cost = (bs_c$add_vlbw * 2636967.91356 + bs_c$add_mlbw * 1767021.261968)/10^6
 
 
 cs = tigris::states() %>% 
@@ -119,9 +119,9 @@ cost_map = ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
   scale_fill_gradient(low = "white", high = "firebrick4",
-                      limits =c(0, 2500),
-                      breaks = c(0, 500, 1000, 1500, 2000, 2500),
-                      labels = c("0", "$0.5B", "$1B", "$1.5B", "$2B", "$2.5B"),
+                      limits =c(0, 1500),
+                      breaks = c(0, 500, 1000, 1500),
+                      labels = c("0", "$0.5B", "$1B", "$1.5B"),
                       name = "Annual Low-Birthweight Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title.position = "top",

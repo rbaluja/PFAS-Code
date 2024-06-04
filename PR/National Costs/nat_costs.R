@@ -75,18 +75,18 @@ lpre_cost_se = (lpre_births_se * 36728)/10^9
 #vlbw
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
 vlbw_births = sum(bs$add_vlbw)
-vlbw_cost = (vlbw_births * 5133739.83)/10^9
+vlbw_cost = (vlbw_births * 2636967.91356)/10^9
 bs$add_vlbw_se = bs$pred_pfas * bs$births * vlbw_sd
 vlbw_births_se = sum(bs$add_vlbw_se)
-vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
+vlbw_cost_se = (vlbw_births_se * 2636967.91356)/10^9
 
 #mlbw
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
 mlbw_births = sum(bs$add_mlbw) 
-mlbw_cost = (mlbw_births * 1634411.22)/10^9
+mlbw_cost = (mlbw_births * 1767021.261968)/10^9
 bs$add_mlbw_se = bs$pred_pfas * bs$births * mlbw_sd
 mlbw_births_se = sum(bs$add_mlbw_se)
-mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
+mlbw_cost_se = (mlbw_births_se * 1767021.261968)/10^9
 
 #lbw 
 bs$add_lbw = bs$pred_pfas * bs$births * 0.0051
@@ -98,10 +98,10 @@ lbw_births_se = sum(bs$add_lbw_se)
 #infant mortality
 bs$add_mort = bs$pred_pfas * bs$births * 0.0016
 mort_births = sum(bs$add_mort)
-mort_cost = (mort_births * 6581967.8795)/10^9
+mort_cost = (mort_births * 6277274.64)/10^9
 bs$add_mort_se = bs$pred_pfas * bs$births * mort_sd
 mort_births_se = sum(bs$add_mort_se)
-mort_cost_se = (mort_births_se * 6581967.8795)/10^9
+mort_cost_se = (mort_births_se * 6277274.64)/10^9
 
 
 #social cost figure
@@ -117,7 +117,7 @@ data = data.frame(
 
 
 # Scaling factor for right axis values
-scale_factor = 2000/6
+scale_factor = 2000/4
 
 data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data$Weeks = factor(data$Weeks, 
@@ -180,7 +180,7 @@ data_bw = data.frame(
 )
 
 # Scaling factor
-scale_factor_bw = 2000/6
+scale_factor_bw = 2000/4
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_bw$Weeks = factor(data_bw$Weeks, 
@@ -246,7 +246,7 @@ data_mort = data.frame(
 )
 
 # Scaling factor
-scale_factor_mort = 2000/6
+scale_factor_mort = 2000/4
 
 data_mort$Axis = factor(data_mort$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_mort$Weeks = factor(data_mort$Weeks, 
