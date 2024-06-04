@@ -20,25 +20,25 @@ lpre_cost_se = (lpre_births_se * 36728)/10^9
 
 #birthweight
 vlbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #119.8396
-vlbw_cost = (vlbw_births * 5133739.83)/10^9
+vlbw_cost = (vlbw_births * 2636968.91356)/10^9
 #standard error: 
 vlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
-vlbw_cost_se = (vlbw_births_se * 5133739.83)/10^9
+vlbw_cost_se = (vlbw_births_se * 2636968.91356)/10^9
 
 mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
-mlbw_cost = (mlbw_births * 1634411.22)/10^9
+mlbw_cost = (mlbw_births * 1767021.261968)/10^9
 #standard error: 
 mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
-mlbw_cost_se = (mlbw_births_se * 1634411.22)/10^9
+mlbw_cost_se = (mlbw_births_se * 1767021.261968)/10^9
 
 lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0204
 lbw_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0086
 
 #infant mortality
 mort_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061
-mort_cost = (mort_births * 6581967.8795)/10^9
+mort_cost = (mort_births * 4230796.86)/10^9
 mort_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0018
-mort_cost_se = (mort_births_se * 6581967.8795)/10^9
+mort_cost_se = (mort_births_se * 4230796.86)/10^9
 
 
 
@@ -84,14 +84,13 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 60), 
-        axis.text.y = element_text(size = 60), 
+        axis.title.y = element_blank(), 
         legend.text = element_text(size = 60), 
         axis.text.x = element_text(size = 60),
         plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
-        axis.text.y.right = element_blank()) +
+        axis.text.y = element_blank()) +
   guides(alpha = "none", fill = "none", pattern = "none") +
   scale_pattern_manual(values = c("none", "stripe")) 
 
@@ -128,7 +127,6 @@ data_bw$Weeks = factor(data_bw$Weeks,
                        labels = c("Moderately","Very", "Extremely"))
 
 
-# Updated ggplot code
 lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   geom_bar_pattern(
     stat="identity", 
@@ -153,14 +151,16 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         axis.title = element_blank(),
         axis.text.y = element_blank(),
         legend.text = element_text(size = 60),
-        axis.text.x = element_text(size = 50),
+        axis.text.x = element_text(size = 60),
         plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_blank(), 
-        legend.spacing.x = unit(1, 'cm')) + 
+        axis.text.y.right = element_text(size = 60), 
+        axis.title.y.right = element_text(size = 60),
+        legend.spacing.x = unit(1.5, 'cm')) + 
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
+
 lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Moderately" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 25),
                                 position=position_dodge(width=0.9), 
@@ -207,27 +207,26 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   ) +
   scale_fill_manual(values=c("↑ Births (Left Axis)" = "dodgerblue3", "Costs (Right Axis)" = "firebrick4")) +
   scale_y_continuous(
-    "",
-    sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
+    "Annual Additional Births",
+    sec.axis = sec_axis(~./scale_factor_bw, name=""), 
     limits = c(NA, 600) 
   ) +
-  ggtitle("Infant Mortalities") +
+  ggtitle("Infant Mortality") +
   theme_minimal() +
-  theme(legend.position = "bottom",
-        legend.key.size = unit(4, "lines"),
-        legend.title = element_blank(),
-        axis.title.x = element_blank(),
-        axis.title.y = element_text(size = 60),
-        axis.text.y = element_blank(),
-        legend.text = element_text(size = 60),
+  theme(legend.position = "bottom", 
+        legend.title = element_blank(), 
+        axis.title.x = element_blank(), 
+        axis.title.y = element_text(size = 60), 
+        axis.text.y = element_text(size = 60), 
+        legend.text = element_text(size = 60), 
         axis.text.x = element_blank(),
         plot.title = element_text(hjust = 0.5, size = 70), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
-        panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_text(size = 60), 
-        legend.spacing.x = unit(1, 'cm')) + 
+        panel.grid.minor = element_line(color = "grey60", size = 0.25), 
+        axis.text.y.right = element_blank()) + 
   scale_pattern_manual(values = c("none", "stripe")) + 
   guides(alpha = "none", fill = "none", pattern = "none")
+
 mort_cost_fig = mort_cost_fig + geom_text(aes(label=round(Value, digits=2), 
                                                 y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 15),
                                             position=position_dodge(width=0.9), 
@@ -240,9 +239,12 @@ mort_cost_fig = mort_cost_fig + geom_text(aes(label=se,
                                             vjust=0, 
                                             size=16)
 
+
+
+
 p_costs = p_costs + guides(pattern = "none")
 mort_cost_fig = mort_cost_fig + guides(pattern = "none")
-figure_s7 = (p_costs | lbw_cost | mort_cost_fig) + plot_layout(widths = c(3, 3, 1), guides = "collect")& 
+figure_s7 = (mort_cost_fig | p_costs | lbw_cost) + plot_layout(widths = c(1, 3, 3), guides = "collect")& 
   theme(legend.position = 'bottom')
 ggsave(modify_path3("Figures/National Costs/bin_cost.png"), figure_s7, width = 10416, height = 11291, units = "px", device = "png")
 

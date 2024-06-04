@@ -35,7 +35,7 @@ bs_c = bs %>%
   dplyr::summarise(add_vlbw = sum(add_vlbw), 
                    add_mlbw = sum(add_mlbw))
 
-bs_c$cost = (bs_c$add_vlbw * 2636967.91356 + bs_c$add_mlbw * 1767021.261968)/10^6
+bs_c$cost = (bs_c$add_vlbw * 2636968.91356 + bs_c$add_mlbw * 1767021.261968)/10^6
 
 
 cs = tigris::states() %>% 

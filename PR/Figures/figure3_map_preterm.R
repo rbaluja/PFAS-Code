@@ -37,7 +37,7 @@ bs_c = bs %>%
                    add_lpre = sum(add_lpre), 
                    add_mort = sum(add_mort))
 
-bs_c$cost = (bs_c$add_vpre * 204083 + bs_c$add_mpre * 205041 + bs_c$add_lpre * 36728 + bs_c$add_mort * 6277274.64)/10^6
+bs_c$cost = (bs_c$add_vpre * 204083 + bs_c$add_mpre * 205041 + bs_c$add_lpre * 36728 + bs_c$add_mort * 4230796.86)/10^6
 
 cs = tigris::states() %>% 
   dplyr::filter(STATEFP %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55")) %>% 
@@ -120,9 +120,9 @@ cost_map = ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
   scale_fill_gradient(low = "white", high = "firebrick4",
-                      limits =c(0, 1500),
-                      breaks = c(0, 250, 500, 750,  1000, 1250, 1500),
-                      labels = c("0", "$0.25B", "$0.5B", "$0.75B", "$1B", "$1.25B", "$1.5B"),
+                      limits =c(0, 1000),
+                      breaks = c(0, 250, 500, 750,  1000),
+                      labels = c("0", "$0.25B", "$0.5B", "$0.75B", "$1B"),
                       name = "Annual Infant Mortality + Preterm Births Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title.position = "top",

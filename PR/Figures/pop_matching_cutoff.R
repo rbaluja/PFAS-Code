@@ -145,12 +145,14 @@ figure_s2b = ggplot(reg_data_long, aes(x = km, y = Value, color = Category)) +
   geom_line(size = 2) +
   ylab('Sample Size') + 
   xlab('Buffer (km)') + 
-  theme_minimal() + guides(color = "none") + 
+  theme_minimal() + 
+  guides(color = "none") + 
   annotate("text", x = 6, y = 14000, label = "Total Sample", angle = 25, size = 16) + 
-  annotate("text", x = 5.4, y = 8500, label = "Downgradient", angle = 5, size = 16)+ 
+  annotate("text", x = 5.4, y = 8500, label = "Downgradient", angle = 5, size = 16) + 
   annotate("text", x = 7.6, y = 3500, label = "Upgradient", angle = 0, size = 16) + 
   theme(axis.text = element_text(size = 35), 
         axis.title = element_text(size = 35)) + 
-  scale_x_continuous(breaks = 1:10)
+  scale_x_continuous(breaks = 1:10) +
+  geom_point(data = subset(reg_data_long, km == 5), aes(x = km, y = Value, color = Category), size = 7)
 
 ggsave(modify_path3("Figures/figure_s2b.png"), figure_s2b, width = 4421, height = 2937, units = "px")

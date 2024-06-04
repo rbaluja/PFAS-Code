@@ -55,7 +55,7 @@ vpre_births_se = sum(bs$add_vpre_se)
 vpre_cost_se = (vpre_births_se * 204083)/10^9
 
 #mpre
-bs$add_mpre = bs$pred_pfas * bs$births * 0.00128
+bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
 mpre_births = sum(bs$add_mpre) #339.5661
 mpre_cost = (mpre_births * 205041)/10^9
 bs$add_mpre_se = bs$pred_pfas * bs$births * mpreterm_sd
@@ -63,7 +63,7 @@ mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
 mpre_cost_se = (mpre_births_se *  205041)/10^9
 
 #lpre
-bs$add_lpre = bs$pred_pfas * bs$births * 0.0059
+bs$add_lpre = bs$pred_pfas * bs$births * 0.0060
 lpre_births = sum(bs$add_lpre)
 lpre_cost = (lpre_births * 36728)/10^9
 bs$add_lpre_se = bs$pred_pfas * bs$births *  lpreterm_sd
@@ -72,15 +72,15 @@ lpre_cost_se = (lpre_births_se * 36728)/10^9
 
 
 #birthweight
-#vlbw
+#elbw
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
 vlbw_births = sum(bs$add_vlbw)
-vlbw_cost = (vlbw_births * 2636967.91356)/10^9
+vlbw_cost = (vlbw_births * 2636968.91356)/10^9
 bs$add_vlbw_se = bs$pred_pfas * bs$births * vlbw_sd
 vlbw_births_se = sum(bs$add_vlbw_se)
-vlbw_cost_se = (vlbw_births_se * 2636967.91356)/10^9
+vlbw_cost_se = (vlbw_births_se * 2636968.91356)/10^9
 
-#mlbw
+#vlbw
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
 mlbw_births = sum(bs$add_mlbw) 
 mlbw_cost = (mlbw_births * 1767021.261968)/10^9
@@ -89,7 +89,7 @@ mlbw_births_se = sum(bs$add_mlbw_se)
 mlbw_cost_se = (mlbw_births_se * 1767021.261968)/10^9
 
 #lbw 
-bs$add_lbw = bs$pred_pfas * bs$births * 0.0051
+bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
 lbw_births = sum(bs$add_lbw)
 bs$add_lbw_se = bs$pred_pfas * bs$births * llbw_sd
 lbw_births_se = sum(bs$add_lbw_se)
@@ -98,10 +98,10 @@ lbw_births_se = sum(bs$add_lbw_se)
 #infant mortality
 bs$add_mort = bs$pred_pfas * bs$births * 0.0016
 mort_births = sum(bs$add_mort)
-mort_cost = (mort_births * 6277274.64)/10^9
+mort_cost = (mort_births * 4230796.86)/10^9
 bs$add_mort_se = bs$pred_pfas * bs$births * mort_sd
 mort_births_se = sum(bs$add_mort_se)
-mort_cost_se = (mort_births_se * 6277274.64)/10^9
+mort_cost_se = (mort_births_se * 4230796.86)/10^9
 
 
 #social cost figure
@@ -271,7 +271,7 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
     sec.axis = sec_axis(~./scale_factor_bw, name=""), 
     limits = c(NA, 2000) 
   ) +
-  ggtitle("Infant Mortalities") +
+  ggtitle("Infant Mortality") +
   theme_minimal() +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 

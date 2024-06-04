@@ -471,6 +471,14 @@ mort_table[["Distance Interaction"]] = fixest::feols(death ~ (updown + down) *I(
                                                         m_height + tri5 + fa_resid + wind_exposure
                                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
+mort_table[["Contr. Health"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                         m_height + tri5 +fa_resid + wind_exposure + gestation + bweight
+                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
 mort_table[["IV"]] = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
                                       n_sites + wind_exposure + 
                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -491,7 +499,9 @@ modelsummary::modelsummary(mort_table,
                                                    "updown:I(dist/1000)" = "Upgradient \times Dist.",
                                                    "down:I(pfas/10^3)" ="Downgradient \times PFAS",
                                                    "updown:I(pfas/10^3)"="Upgradient \times PFAS",
-                                                   "pred_pfas" = "Predicted PFAS"),
+                                                   "pred_pfas" = "Predicted PFAS", 
+                                                   "gestation" = "Gestational Age", 
+                                                   "bweight" = "Birthweight"),
                                       gof_map = c("nobs", "r.squared"), 
                                       output = modify_path2("Tables/table_s4.tex")) 
 
@@ -500,6 +510,11 @@ mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
 save(mort_sd, file = modify_path("Data_Verify/RData/mort_sd.RData"))
 #p value for IV
 1 - pnorm(mort_table[["IV"]]$coefficients["pred_pfas"]/mort_sd)
+
+#mortality marginal effect
+mort_table[["IV"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
 
 if (bs_cov){
   cov_mort_pl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "lpreterm", table2_preterm[["Slightly"]])
@@ -767,8 +782,8 @@ modelsummary::modelsummary(tables8_preterm,
                                               fmt = modelsummary::fmt_significant(2, scientific = F), 
                                               coef_map = c("down" = "Downgradient", 
                                                            "updown" = "Upgradient",
-                                                           "bweight" = "Birtheight", 
-                                                           "gestation" = "Gestation"),
+                                                           "bweight" = "Birthweight", 
+                                                           "gestation" = "Gestational Age"),
                                               gof_map = c("nobs", "r.squared"), 
                                               output = modify_path2("Tables/table_s8_preterm.tex"))
 
@@ -822,8 +837,8 @@ modelsummary::modelsummary(tables8_lbw,
                                           fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down" = "Downgradient", 
                                         "updown" = "Upgradient",
-                                        "bweight" = "Birtheight", 
-                                        "gestation" = "Gestation"),
+                                        "bweight" = "Birthweight", 
+                                        "gestation" = "Gestational Age"),
                                           gof_map = c("nobs", "r.squared"), 
                                           output = modify_path2("Tables/table_s8_lbw.tex"))
 

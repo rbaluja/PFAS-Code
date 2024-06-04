@@ -540,7 +540,7 @@ reg2_nd = fixest::feols(percent_infant_deaths  ~
                                     I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-modelsummary::modelsummary(list(reg_prim1, reg1_c, reg_prim2, reg2_c, reg1_nd, reg2_nd), 
+modelsummary::modelsummary(list(reg1_nd, reg2_nd, reg_prim1, reg1_c, reg_prim2, reg2_c), 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #one-sided stars 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("treatment1" = "Downgradient", 
