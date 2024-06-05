@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 dir.create(modify_path("Data_Verify/GIS/cs_down"))
 dir.create(modify_path("Data_Verify/GIS/cs_down/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/cs_down/cont_watershed"))

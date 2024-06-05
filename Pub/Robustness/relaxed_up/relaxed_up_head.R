@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 #set up environment
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = TRUE #relaxed upgradient robustness spec?

@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 set.seed(1)
 wbt_verbose(FALSE)
 

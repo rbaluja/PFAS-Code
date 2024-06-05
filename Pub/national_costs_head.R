@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 #clean raw births data
 if (nb_cbg){
   source("PFAS-Code/Pub/National Costs/nat_births.R") 

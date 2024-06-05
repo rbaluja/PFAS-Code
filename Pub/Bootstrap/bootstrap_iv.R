@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 source("PFAS-Code/Pub/Data/data_head.R")
 
 source("PFAS-Code/Pub/Main Analysis/binary.R")

@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 #data cleaning
 source("PFAS-Code/Pub/Data/data_head.R")
 

@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 index = 1
 if (!code_check){
   load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData")) 
