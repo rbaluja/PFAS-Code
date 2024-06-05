@@ -41,6 +41,3 @@ awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif")
 b_awc = exactextractr::exact_extract(awc, births_fa)
 
 births = dplyr::bind_rows(pblapply(1:nrow(births), flowacc, b_awc, births, "awc"))
-
-fwrite(births, modify_path("Data_Verify/National/nat_births_fcleaned5.csv"))
-

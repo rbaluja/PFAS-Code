@@ -1,10 +1,10 @@
 #data cleaning
-source("PFAS-Code/PR/Data/data_head.R")
+source("PFAS-Code/Pub/Data/data_head.R")
 
 #main analysis
-source("PFAS-Code/PR/Main Analysis/main_analy_head.R")
+source("PFAS-Code/Pub/Main Analysis/main_analy_head.R")
 
-source("PFAS-Code/PR/Tables/bs_functions.R")
+source("PFAS-Code/Pub/Tables/bs_functions.R")
 
 
 

@@ -1,8 +1,8 @@
 setwd("~/Dropbox/PFAS Infants")
 
 #load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
+source("PFAS-Code/Pub/env_functions.R")
+source("PFAS-Code/Pub/Main Analysis/watershed_functions.R")
 
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
@@ -38,3 +38,20 @@ IV = TRUE #Run IV spec?
 nat_run_cont_ws = FALSE#recreate national watershed shapes?
 nat_reassn = FALSE #reassign national CBGs to release sites?
 nb_cbg = FALSE
+#cost per birth by birth outcome (2023 dollars)
+lpre_pc = 36728
+mpre_pc = 205041
+vpre_pc = 204083
+vlbw_pc = 2636968.91356
+mlbw_pc = 1767021.261968
+mort_pc = 4230796.86
+
+#new york
+all_wells = T
+population_weighted = T
+gw_dist_allowance = 5000
+nyc = F
+longisland = F
+rerun_weather = F
+rerun_pollution = F
+rerun_birthdata = F

@@ -55,4 +55,4 @@ births_ws = births_ws %>%  #this is how the original object was named. It isnt a
   left_join(births %>% as_tibble() %>% dplyr::select(geoid, births))
 
 
-source("PFAS-Code/PR/National Costs/well_assn.R") 
+source("PFAS-Code/Pub/National Costs/well_assn.R") 

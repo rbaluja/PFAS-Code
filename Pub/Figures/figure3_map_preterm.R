@@ -37,7 +37,7 @@ bs_c = bs %>%
                    add_lpre = sum(add_lpre), 
                    add_mort = sum(add_mort))
 
-bs_c$cost = (bs_c$add_vpre * 204083 + bs_c$add_mpre * 205041 + bs_c$add_lpre * 36728 + bs_c$add_mort * 4230796.86)/10^6
+bs_c$cost = (bs_c$add_vpre * vpre_pc + bs_c$add_mpre * mpre_pc + bs_c$add_lpre * lpre_pc + bs_c$add_mort * mort_pc)/10^6
 
 cs = tigris::states() %>% 
   dplyr::filter(STATEFP %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55")) %>% 

@@ -32,4 +32,4 @@ wells = wells %>%
 length(unique(wells$sys_id))
 
 #return sys_skip (systems with no active groundwater wells)
-source("PFAS-Code/PR/Data/no_wells.R")
+source("PFAS-Code/Pub/Data/no_wells.R")

@@ -1,5 +1,5 @@
 #robustness figure
-source("PFAS-Code/PR/Figures/figure2_function.R")
+source("PFAS-Code/Pub/Figures/figure2_function.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -10,7 +10,6 @@ one_sp = function(tval, pval){
 }
 #preterm
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
-load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
 full = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -145,8 +144,6 @@ data = data.frame(
            one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
   )
 )
-data = data %>% 
-  dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", "Relax Upgradient Def'n", 

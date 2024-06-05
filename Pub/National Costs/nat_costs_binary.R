@@ -1,44 +1,44 @@
 #getting impacts in states with initiatives
 vpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0047 # 92.33542
-vpre_cost = (vpre_births * 204083)/10^9
+vpre_cost = (vpre_births * vpre_pc)/10^9
 #standard error: 
 vpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0018 #35.3625
-vpre_cost_se = (vpre_births_se * 204083)/10^9
+vpre_cost_se = (vpre_births_se * vpre_pc)/10^9
 
 mpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0025 #49.11458
-mpre_cost = (mpre_births * 205041)/10^9
+mpre_cost = (mpre_births * mpre_pc)/10^9
 #standard error: 
 mpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0027 #53.04375
-mpre_cost_se = (mpre_births_se *  205041)/10^9
+mpre_cost_se = (mpre_births_se *  mpre_pc)/10^9
 
 lpre_births = sum(bs[which(bs$down == 1), ]$births) * 0.0076 # 149.3083
-lpre_cost = (lpre_births * 36728)/10^9
+lpre_cost = (lpre_births * lpre_pc)/10^9
 #standard error: 
 lpre_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0079 #155.2021
-lpre_cost_se = (lpre_births_se * 36728)/10^9
+lpre_cost_se = (lpre_births_se * lpre_pc)/10^9
 
 
 #birthweight
 vlbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061 #119.8396
-vlbw_cost = (vlbw_births * 2636968.91356)/10^9
+vlbw_cost = (vlbw_births * vlbw_pc)/10^9
 #standard error: 
 vlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.0021 #41.25625
-vlbw_cost_se = (vlbw_births_se * 2636968.91356)/10^9
+vlbw_cost_se = (vlbw_births_se * vlbw_pc)/10^9
 
 mlbw_births = sum(bs[which(bs$down == 1), ]$births) * -0.00005 #-0.9822917
-mlbw_cost = (mlbw_births * 1767021.261968)/10^9
+mlbw_cost = (mlbw_births * mlbw_pc)/10^9
 #standard error: 
 mlbw_births_se =sum(bs[which(bs$down == 1), ]$births) * 0.00185 #36.34479
-mlbw_cost_se = (mlbw_births_se * 1767021.261968)/10^9
+mlbw_cost_se = (mlbw_births_se * mlbw_pc)/10^9
 
 lbw_births = sum(bs[which(bs$down == 1), ]$births) * 0.0204
 lbw_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0086
 
 #infant mortality
 mort_births = sum(bs[which(bs$down == 1), ]$births) * 0.0061
-mort_cost = (mort_births * 4230796.86)/10^9
+mort_cost = (mort_births * mort_pc)/10^9
 mort_births_se = sum(bs[which(bs$down == 1), ]$births) * 0.0018
-mort_cost_se = (mort_births_se * 4230796.86)/10^9
+mort_cost_se = (mort_births_se * mort_pc)/10^9
 
 
 

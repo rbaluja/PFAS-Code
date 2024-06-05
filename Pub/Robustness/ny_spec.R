@@ -1,31 +1,8 @@
-#set working directory
-setwd("~/Dropbox/PFAS Infants/")
-
-#load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
-
 #load necessary packages
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              units, tidycensus, ggpattern, forcats, zipcodeR)
-
-options("modelsummary_format_numeric_latex" = "plain")
-config_modelsummary(factory_latex = "kableExtra")
-
-#set options
-all_wells = T
-population_weighted = T
-gw_dist_allowance = 5000
-nyc = F
-longisland = F
-rerun_weather = F
-rerun_pollution = F
-rerun_birthdata = F
-code_check = F
-census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-n_cores = 1
 
 
 #read in the water measurement data
@@ -151,7 +128,7 @@ if(rerun_birthdata == T){
     gw_ny$lng[is.na(gw_ny$lng)] = -76.12
   }else{
     pop_weighted_location = read_csv(modify_path4('New York/Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv')) %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
-      dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PREF_STATE_1221, lng = LGT, lat = LAT) %>% 
+      dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PubEF_STATE_1221, lng = LGT, lat = LAT) %>% 
       dplyr::filter(state == "NY") %>% 
       dplyr::select(!state)
 
@@ -394,13 +371,13 @@ gw_ny$mean_pm25 = ifelse(gw_ny$year == "2010-2012", gw_ny$mean_pm25_12, ifelse(g
 
 #bringing in temperature data
 if (rerun_weather == T){
-  weather = raster(modify_path4('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_2010_bil.bil'))
+  weather = raster(modify_path4('New York/Data/Temperature/PubISM_tmean_stable_4kmM3_2010_bil.bil'))
   weather.value = raster::extract(weather, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
   d = as.data.frame(weather.value)
   d = d[, c(2, ncol(d))]
   colnames(d) = c('zcta', 'temp_2010') 
   for (i in c('2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018')){
-    path = modify_path4(paste0('New York/Data/Temperature/PRISM_tmean_stable_4kmM3_' , i, '_bil.bil'))
+    path = modify_path4(paste0('New York/Data/Temperature/PubISM_tmean_stable_4kmM3_' , i, '_bil.bil'))
     weather_i = raster(path)
     weather_i.value = raster::extract(weather_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
     d_i = as.data.frame(weather_i.value)

@@ -1,5 +1,5 @@
 #robustness figure
-source("PFAS-Code/PR/Figures/figure2_mortfun.R")
+source("PFAS-Code/Pub/Figures/figure2_mortfun.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -98,8 +98,6 @@ data = data.frame(
            one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
   )
 )
-data = data %>% 
-  dplyr::filter(Check != "No Downgradient Homes")
 
 data$Check = factor(data$Check, c("Site Fixed Effects", "No Medical Controls", 
                                   "No Demographics", "Relax Upgradient Def'n", 
@@ -131,18 +129,18 @@ data = data.frame(
             "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$death) * 100, 
                drop_close$coefficients["updown"]/mean(df$death) * 100, pre_2016$coefficients["updown"]/mean(df$death) * 100, 
-               stillbrn_ds$coefficients["updown"]/mean(df$death) * 100,  
+               mort_ds$coefficients["updown"]/mean(df$death) * 100,  
                no_pers$coefficients["updown"]/mean(df$death) * 100, 
                no_med$coefficients["updown"]/mean(df$death) * 100, site$coefficients["updown"]/mean(df$death) * 100),
   StdError = c(full$se["updown"]/mean(df$death) * 100, 
                drop_close$se["updown"]/mean(df$death) * 100, pre_2016$se["updown"]/mean(df$death) * 100, 
-               stillbrn_ds$se["updown"]/mean(df$death) * 100, 
+               mort_ds$se["updown"]/mean(df$death) * 100, 
                no_pers$se["updown"]/mean(df$death) * 100, 
                no_med$se["updown"]/mean(df$death) * 100, site$se["updown"]/mean(df$death) * 100),
   pval = c(1 - one_sp(full$coeftable["updown", "t value"], full$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(drop_close$coeftable["updown", "t value"], drop_close$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(pre_2016$coeftable["updown", "t value"], pre_2016$coeftable["updown", "Pr(>|t|)"]), 
-           1 - one_sp(stillbrn_ds$coeftable["updown", "t value"], stillbrn_ds$coeftable["updown", "Pr(>|t|)"]), 
+           1 - one_sp(mort_ds$coeftable["updown", "t value"], mort_ds$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(no_pers$coeftable["updown", "t value"], no_pers$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(no_med$coeftable["updown", "t value"], no_med$coeftable["updown", "Pr(>|t|)"]), 
            1 - one_sp(site$coeftable["updown", "t value"], site$coeftable["updown", "Pr(>|t|)"])

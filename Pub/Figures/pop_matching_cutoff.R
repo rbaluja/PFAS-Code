@@ -18,15 +18,15 @@ if (!code_check){
   load(modify_path("Data_Verify/fake_natality.RData"))
   
   #get covariates for birth records
-  source("PFAS-Code/PR/Data/birth_covars.R")
+  source("PFAS-Code/Pub/Data/birth_covars.R")
 
   #well location and service area data (NHDES)
-  source("PFAS-Code/PR/Data/NHDES_PWS.R")
+  source("PFAS-Code/Pub/Data/NHDES_PWS.R")
   #match residences to water wells
-  source("PFAS-Code/PR/Data/natality_wells.R")
+  source("PFAS-Code/Pub/Data/natality_wells.R")
   
   #get elevation at relevant well and residence
-  source("PFAS-Code/PR/Data/elev_setup.R")
+  source("PFAS-Code/Pub/Data/elev_setup.R")
 }
 dfs = df
 reg_data = data.frame(matrix(ncol = 4, nrow = 0))
@@ -38,16 +38,16 @@ for (meters in seq(3000, 10000, by = 1000)){
   df = dfs
   
   #obtain theta info for Northeastern contamination data
-  source("PFAS-Code/PR/Data/pfas_lab_sites.R")
+  source("PFAS-Code/Pub/Data/pfas_lab_sites.R")
   
   #well location and service area data (NHDES)
-  source("PFAS-Code/PR/Data/NHDES_PWS.R")
+  source("PFAS-Code/Pub/Data/NHDES_PWS.R")
   
   #set up wind
-  source("PFAS-Code/PR/Data/wind.R")
+  source("PFAS-Code/Pub/Data/wind.R")
   
   #binary setup
-  source("PFAS-Code/PR/Main Analysis/binary.R")
+  source("PFAS-Code/Pub/Main Analysis/binary.R")
   
 
 

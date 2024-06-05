@@ -22,14 +22,6 @@ e = get_elev_raster(states, z = 14)
 elev_mat = terra::extract(rast(e), pd)
 
 elmat = raster_to_matrix(e)
-#2d figure
-elmat %>%
-  sphere_shade(texture = "imhof4") %>%
-  add_overlay(generate_point_overlay(pd %>% st_transform(st_crs(e)), extent = e, heightmap = elmat, size = 80, 
-                                     color =c("C" = "black", "omega1" = "dodgerblue4", "omega2" = "white", "omega3" = "firebrick"), pch = 19)) %>%
-  add_overlay(generate_polygon_overlay(f1_ws%>% st_transform(st_crs(e)), extent = e, heightmap = elmat, linewidth = 10, 
-                                       palette = "transparent", linecolor = c("C" = "black", "omega1" = "dodgerblue4", "omega2" = "white", "omega3" = "firebrick"))) %>%
-  plot_map()
 
 #3d figure
 elmat %>%

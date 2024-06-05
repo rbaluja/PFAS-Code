@@ -2,7 +2,7 @@ set.seed(1)
 wbt_verbose(FALSE)
 
 #data cleaning
-source("PFAS-Code/PR/Data/data_head.R")
+source("PFAS-Code/Pub/Data/data_head.R")
 
 nh_shape = tigris::states() %>% 
   dplyr::filter(STUSPS == "NH") %>% 
@@ -18,7 +18,7 @@ wbt_d8_flow_accumulation(modify_path("Data_Verify/GIS/filled_dem.tiff"), modify_
 wbt_d8_pointer(modify_path("Data_Verify/GIS/filled_dem.tiff"), modify_path("Data_Verify/GIS/flow_dir.tiff"))
 
 #read in placebo functions
-source("PFAS-Code/PR/Placebo/placebo_functions.R")
+source("PFAS-Code/Pub/Placebo/placebo_functions.R")
 
 if (rerun_placebos == TRUE){
   placebos_1 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))

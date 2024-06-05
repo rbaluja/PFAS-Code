@@ -1,5 +1,5 @@
 #soil stuff
-source("PFAS-Code/PR/National Costs/soil.R")
+source("PFAS-Code/Pub/National Costs/soil.R")
 
 cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
   dplyr::filter(`Matrix Type` == 'Groundwater' & State != "Alaska") %>% 
@@ -47,46 +47,46 @@ load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 load(modify_path("Data_Verify/RData/mort_sd.RData"))
 #getting impacts in states with initiatives
 #vpre
-bs$add_vpre = bs$pred_pfas * bs$births * 0.0027
+bs$add_vpre = bs$pred_pfas * bs$births * 0.0027 #iv coefficient
 vpre_births = sum(bs$add_vpre) #664.3684
-vpre_cost = (vpre_births * 204083)/10^9
+vpre_cost = (vpre_births * vpre_pc)/10^9
 bs$add_vpre_se = bs$pred_pfas * bs$births * vpreterm_sd
 vpre_births_se = sum(bs$add_vpre_se)
-vpre_cost_se = (vpre_births_se * 204083)/10^9
+vpre_cost_se = (vpre_births_se * vpre_pc)/10^9
 
 #mpre
 bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
 mpre_births = sum(bs$add_mpre) #339.5661
-mpre_cost = (mpre_births * 205041)/10^9
+mpre_cost = (mpre_births * mpre_pc)/10^9
 bs$add_mpre_se = bs$pred_pfas * bs$births * mpreterm_sd
 mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
-mpre_cost_se = (mpre_births_se *  205041)/10^9
+mpre_cost_se = (mpre_births_se *  mpre_pc)/10^9
 
 #lpre
 bs$add_lpre = bs$pred_pfas * bs$births * 0.0060
 lpre_births = sum(bs$add_lpre)
-lpre_cost = (lpre_births * 36728)/10^9
+lpre_cost = (lpre_births * lpre_pc)/10^9
 bs$add_lpre_se = bs$pred_pfas * bs$births *  lpreterm_sd
 lpre_births_se = sum(bs$add_lpre_se)
-lpre_cost_se = (lpre_births_se * 36728)/10^9
+lpre_cost_se = (lpre_births_se * lpre_pc)/10^9
 
 
 #birthweight
 #elbw
 bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
 vlbw_births = sum(bs$add_vlbw)
-vlbw_cost = (vlbw_births * 2636968.91356)/10^9
+vlbw_cost = (vlbw_births * vlbw_pc)/10^9
 bs$add_vlbw_se = bs$pred_pfas * bs$births * vlbw_sd
 vlbw_births_se = sum(bs$add_vlbw_se)
-vlbw_cost_se = (vlbw_births_se * 2636968.91356)/10^9
+vlbw_cost_se = (vlbw_births_se * vlbw_pc)/10^9
 
 #vlbw
 bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
 mlbw_births = sum(bs$add_mlbw) 
-mlbw_cost = (mlbw_births * 1767021.261968)/10^9
+mlbw_cost = (mlbw_births * mlbw_pc)/10^9
 bs$add_mlbw_se = bs$pred_pfas * bs$births * mlbw_sd
 mlbw_births_se = sum(bs$add_mlbw_se)
-mlbw_cost_se = (mlbw_births_se * 1767021.261968)/10^9
+mlbw_cost_se = (mlbw_births_se * mlbw_pc)/10^9
 
 #lbw 
 bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
@@ -98,10 +98,10 @@ lbw_births_se = sum(bs$add_lbw_se)
 #infant mortality
 bs$add_mort = bs$pred_pfas * bs$births * 0.0016
 mort_births = sum(bs$add_mort)
-mort_cost = (mort_births * 4230796.86)/10^9
+mort_cost = (mort_births * mort_pc)/10^9
 bs$add_mort_se = bs$pred_pfas * bs$births * mort_sd
 mort_births_se = sum(bs$add_mort_se)
-mort_cost_se = (mort_births_se * 4230796.86)/10^9
+mort_cost_se = (mort_births_se * mort_pc)/10^9
 
 
 #social cost figure

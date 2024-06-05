@@ -1,13 +1,13 @@
-source("PFAS-Code/PR/Data/data_head.R")
+source("PFAS-Code/Pub/Data/data_head.R")
 
-source("PFAS-Code/PR/Main Analysis/binary.R")
+source("PFAS-Code/Pub/Main Analysis/binary.R")
 
-source("PFAS-Code/PR/Main Analysis/flow_accumulation.R")
+source("PFAS-Code/Pub/Main Analysis/flow_accumulation.R")
 
 #bootstrap IV
 bts = 10000
 n_boot_cont = 9310
-source("PFAS-Code/PR/Bootstrap/bootstrap_setup.R")
+source("PFAS-Code/Pub/Bootstrap/bootstrap_setup.R")
 
 boot_err = function(i, df, fs_cont){
   boot_coefs = data.frame(matrix(ncol = 11, nrow = 1))

@@ -1,5 +1,5 @@
 #data cleaning
-source("PFAS-Code/PR/Data/data_head.R")
+source("PFAS-Code/Pub/Data/data_head.R")
 
 #read in and set cont site watersheds 
 load(modify_path("Data_Verify/GIS/cont_watershed.RData"))

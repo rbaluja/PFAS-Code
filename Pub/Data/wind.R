@@ -1,4 +1,4 @@
-source("PFAS-Code/PR/Data/wind_functions.R")
+source("PFAS-Code/Pub/Data/wind_functions.R")
 
 #first, subset contamination dataset to only Saint Gobain
 c_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab Known Contamination Site Database for sharing 10_09_2022.xlsx'), sheet = 2) %>% 
