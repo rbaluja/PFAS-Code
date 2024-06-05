@@ -14,13 +14,14 @@ config_modelsummary(factory_latex = "kableExtra")
 options(tigris_use_cache = TRUE)
 
 
-census_key = "Enter your Census API key:"
-code_check = FALSE
+census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
+code_check = TRUE
 n_cores = 1
 
 #preliminaries environment
 redo_GIS = FALSE
 rerun_fs_clean = FALSE
+rerun_placebos = TRUE
 
 #infant_health head environment
 natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
