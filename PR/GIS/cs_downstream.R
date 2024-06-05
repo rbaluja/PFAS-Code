@@ -1,19 +1,3 @@
-#set working directory
-setwd("~/Dropbox/PFAS Infants")
-
-#load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
-
-#load necessary packages
-load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
-             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus, ggpattern, forcats)
-
-code_check = TRUE
-ppt = 1000 #cutoff for primary contamination site
-
 dir.create(modify_path("Data_Verify/GIS/cs_down"))
 dir.create(modify_path("Data_Verify/GIS/cs_down/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/cs_down/cont_watershed"))

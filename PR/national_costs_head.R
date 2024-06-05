@@ -1,31 +1,3 @@
-#set working directory
-setwd("~/Dropbox/PFAS Infants")
-
-#load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
-
-#load necessary packages
-load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
-             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus, ggpattern, forcats)
-options(modelsummary_format_numeric_latex = "mathmode")
-options(tigris_use_cache = TRUE)
-
-#set up environment
-natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
-meters = 5000 #buffer for base spec
-wind_dist= dist_allow = 10000 #wind distance cutoff
-ppt = 1000 #cutoff for primary contamination site
-nat_run_cont_ws = FALSE#recreate national watershed shapes?
-nat_reassn = FALSE #reassign national CBGs to release sites?
-nb_cbg = FALSE
-census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82"
-code_check = FALSE
-n_cores = 1
-
-
 #clean raw births data
 if (nb_cbg){
   source("PFAS-Code/PR/National Costs/nat_births.R") 

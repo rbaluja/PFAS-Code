@@ -1,39 +1,3 @@
-#set working directory
-setwd("~/Dropbox/PFAS Infants")
-
-#load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
-
-#load necessary packages
-load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
-             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             units, tidycensus)
-options(modelsummary_format_numeric_latex = "mathmode")
-
-
-#set up environment
-natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/" #set path to natality data in Box Health
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE #needs to be false if calculating se on difference in theta
-drop_far_down = TRUE
-drop_far_up = FALSE
-rerun_fs_clean = FALSE #clean first stage data?
-drop_states = FALSE #running spec where we drop sites within meters of state border?
-relaxed_up = FALSE #relaxed upgradient robustness spec?
-code_check = FALSE
-n_cores = 1
-
-
-
-
 index = 1
 if (!code_check){
   load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData")) 

@@ -1,9 +1,3 @@
-#set working directory
-setwd("~/Dropbox/PFAS Infants")
-
-#load in helper functions
-source("PFAS-Code/PR/env_functions.R")
-source("PFAS-Code/PR/Main Analysis/watershed_functions.R")
 flowacc = function(i, d, w, option){
   d2 = d[[i]]
   w2 = w[i, ]
@@ -22,32 +16,6 @@ flowacc = function(i, d, w, option){
   
   return(w2)
 }
-
-#load necessary packages
-load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
-             pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
-             rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets)
-options(modelsummary_format_numeric_latex = "mathmode")
-
-#set up environment
-wind_dist= dist_allow = 10000
-ppt = 1000
-run_cleaning = FALSE
-match_wells = FALSE
-old_wells = FALSE
-domestic = FALSE
-system = FALSE
-drop_dups = TRUE #needs to be false if calculating se on difference in theta
-drop_far_down = TRUE
-drop_far_up = FALSE
-well_fd = test_fd = FALSE #flow line distance?
-IV = FALSE
-fa_resid = FALSE
-drop_states = FALSE
-relaxed_up = FALSE
-code_check = FALSE
-n_cores = 1
-natality_path = "/Users/robert/Library/CloudStorage/Box-Box/[UA Box Health] Economics/"
 
 index = 1
 if (code_check == FALSE){

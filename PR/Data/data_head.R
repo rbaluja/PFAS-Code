@@ -46,9 +46,7 @@ if (code_check == TRUE){
   } 
 }
 
-if (domestic == FALSE){
-  df = df[df$sys_id != "Domestic Well", ] #50874 individuals on domestic water
-}
+df = df[df$sys_id != "Domestic Well", ] #50874 individuals on domestic water
 
 #merge in death records for infant mortality
 path = paste0(natality_path, "[UA Box Health] VR2210_Deliverable/dr_6264_deliverable.xlsx")

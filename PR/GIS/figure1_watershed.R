@@ -4,10 +4,6 @@ dir.create(modify_path("Data_Verify/GIS/figure1/cont_pp"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed"))
 dir.create(modify_path("Data_Verify/GIS/figure1/cont_watershed/Shapes"))
 
-#get interpolated dem and related rasters for smoothed figure
-# dem = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff")) 
-# dem = terra::disagg(dem, 10, method = "bilinear")
-# writeRaster(dem, modify_path("Data_Verify/GIS/dem_smoothed.tiff"))
 
 states = tigris::states() %>% 
   dplyr::filter(STUSPS == "NH")
