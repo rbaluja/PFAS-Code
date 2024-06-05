@@ -10,7 +10,6 @@ one_sp = function(tval, pval){
 }
 #preterm
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
-load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
 full = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
