@@ -78,7 +78,7 @@ Note: These should each be run with a clean environment
 * **PFAS-Code/PR/Figures/quantiles_pfas.R**
   * This creates Figure Figure S-5 and Table S-12
 
-### Execution file: PR/infant_health_head.R  
+### New Hampshire impacts: PR/infant_health_head.R  
 ### Parameters:
 - natality_path: File path to UA Box Drive folder
 - meters: Buffer for defining ``nearby sites''
@@ -86,24 +86,18 @@ Note: These should each be run with a clean environment
 - ppt: Lower threshold of PFOA + PFOS for a primary release site
 - run_cleaning: Reclean natality data
 - match_wells: Rematch residences to water wells
-- domestic: Include domestic wells?
 - drop_far_down: When a well is downgradient of a release site further than 'meters' away, drop them?
 - drop_far_up: When a well is upgradient of a release site further than 'meters' away, drop them?
 - IV: Run IV spec?
 - drop_states: Remove all contamination sites within 'meters' of a state border? Used for robustness figure
 - relaxed_up: Remove upgradient classification? Used for robustness figure
-- GIS_create: Rebuild watersheds and flow accumulation files
 - create_figures: Build figures used in text
-- nat_run_cont_ws: Recreate national watershed files?
-- nat_reassn: Reassign CBG's to national release sites?
-- nat_redo_soil: Recalculate soil statistics for national data?
-- false_test: Run falsification test?
-- nb_cbg: Reclean national births (county -> cbg stats)
 - census_key: Census API key used for fetching tract and CBG-level covariates
 - tables: Create tables?
 - figures: create figures?
 - n_cores: number of cores used to parallelize tasks
 - rob_app_fig: Create and save Figure S-4
+- bs_cov: bootstrap and save to memory the covariance matrix for IV
 
 #### Files ran within the execution file (in order):
 
@@ -174,6 +168,10 @@ Note: These should each be run with a clean environment
 
 #### National Costs
 **PR/national_costs_head.R**
+- nat_run_cont_ws: Recreate national watershed files?
+- nat_reassn: Reassign CBG's to national release sites?
+- nat_redo_soil: Recalculate soil statistics for national data?
+
  * **PR/National Costs/nat_births.R**
  Note: This only runs if nb_cbg is true
  * Input: Raw CDC Wonder natality data (Data_Verify/National/nat_births10.txt), state name to number crosswalk (https://gist.githubusercontent.com/dantonnoriega/bf1acd2290e15b91e6710b6fd3be0a53/raw/11d15233327c8080c9646c7e1f23052659db251d/us-state-ansi-fips.csv), Census CBG population counts
