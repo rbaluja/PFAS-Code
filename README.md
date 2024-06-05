@@ -60,12 +60,7 @@
 Note: These should each be run with a clean environment  
 * **PR/Robustness/gw_verification.R**
   * This calculates the statistics from Appendix M  
-* **PR/GIS/df_watershed.R**
-  * NOTE: THIS MUST BE RUN PRIOR TO PR/Robustness/resid_side_comparison.R
-  * This calculates the watersheds shapes for each residence. They are used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
-* **PR/Robustness/resid_side_comparison.R**
-  * This calculates and saves to memory the regressions used for the robustness exercise where we drop all homes who are downgradient of a site (used in Figure S-4)
-* **PR/Robustness/New York/Groundwater_NY.R**
+* **PR/Robustness/ny_spec.R**
   * This calculates the results used for the New York section (Appendix N)
 * **PR/Placebo/placebo_head.R**
   * This calculates the number of false positives under the placebo test (Table S-8)
@@ -75,7 +70,7 @@ Note: These should each be run with a clean environment
   * This creates Figure S-2b
 * **PR/Figures/meters_cutoff.R**
   * This creates Figure S-3
-* **PFAS-Code/PR/Figures/quantiles_pfas.R**
+* **PFAS-Code/PR/Figures/quintiles_pfas.R**
   * This creates Figure Figure S-5 and Table S-12
 
 ### New Hampshire impacts: PR/infant_health_head.R  
