@@ -1,7 +1,5 @@
 source("PFAS-Code/Pub/config.R")
 #set up environment
-run_cleaning = TRUE #clean natality data?
-match_wells = TRUE #Re match natality data to wells?
 drop_states = FALSE #running spec where we drop sites within meters of state border?
 relaxed_up = FALSE #relaxed upgradient robustness spec?
 tables = TRUE
