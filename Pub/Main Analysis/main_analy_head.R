@@ -5,11 +5,11 @@ source("PFAS-Code/Pub/Main Analysis/binary.R")
 source("PFAS-Code/Pub/Main Analysis/flow_accumulation.R")
 
 if (drop_states == TRUE){
-  source("PFAS-Code/Pub/Robustness/drop_near_state.R")
+  source("PFAS-Code/Pub/Robustness/drop_near_state/drop_near_state.R")
 }
 
 if (relaxed_up == TRUE){
-  source("PFAS-Code/Pub/Robustness/relaxed_up_robustness.R")
+  source("PFAS-Code/Pub/Robustness/relaxed_up/relaxed_up_robustness.R")
 }
 
 

@@ -517,30 +517,13 @@ reg_prim2 = fixest::feols(percent_all_low  ~
                     percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg_prim2)
 
-
-reg1_c = fixest::feols(percent_premature  ~ 
-                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
-summary(reg1_c)
-
-reg2_c = fixest::feols(percent_all_low  ~ 
-                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
-summary(reg2_c)
-
 reg1_nd = fixest::feols(percent_infant_deaths  ~ 
                           treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                           I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                           percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-reg2_nd = fixest::feols(percent_infant_deaths  ~ 
-                                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-modelsummary::modelsummary(list(reg1_nd, reg2_nd, reg_prim1, reg1_c, reg_prim2, reg2_c), 
+modelsummary::modelsummary(list(reg1_nd, reg_prim1, reg_prim2), 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #one-sided stars 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("treatment1" = "Downgradient", 

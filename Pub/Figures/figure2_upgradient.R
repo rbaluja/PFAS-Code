@@ -9,7 +9,7 @@ one_sp_up = function(tval, pval){
   }
 }
 #preterm
-load(modify_path("Data_Verify/Robustness/side_robustness.RData"))
+load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
 full = fixest::feols(preterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -476,7 +476,7 @@ data = data.frame(
             "No Demographics", "No Medical Controls", "Site Fixed Effects"),
   Estimate = c(full$coefficients["updown"]/mean(df$gestation < 28) * 100, 
                drop_close$coefficients["updown"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["updown"]/mean(df$gestation < 28) * 100, 
-               no_pers$coefficients["updown"]/mean(df$gestation < 28) * 100, 
+               vp_ds$coefficients["updown"]/mean(df$gestation < 28) * 100, no_pers$coefficients["updown"]/mean(df$gestation < 28) * 100, 
                no_med$coefficients["updown"]/mean(df$gestation < 28) * 100, site$coefficients["updown"]/mean(df$gestation < 28) * 100),
   StdError = c(full$se["updown"]/mean(df$gestation < 28) * 100, 
                drop_close$se["updown"]/mean(df$gestation < 28) * 100, pre_2016$se["updown"]/mean(df$gestation < 28) * 100, 
@@ -1131,7 +1131,7 @@ ptplot = ggplot() +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.9, size = 70, face = "bold"))
 btplot = ggplot() +
-  labs(title = "Low-Birthweight") +
+  labs(title = "Low Birthweight") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.73, size = 70, face = "bold"))
 

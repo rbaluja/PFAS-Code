@@ -1,6 +1,8 @@
 source("PFAS-Code/Pub/config.R")
 set.seed(1)
 wbt_verbose(FALSE)
+drop_states = FALSE
+relaxed_up = FALSE
 
 #data cleaning
 source("PFAS-Code/Pub/Data/data_head.R")

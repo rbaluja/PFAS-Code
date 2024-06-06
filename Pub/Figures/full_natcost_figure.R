@@ -38,12 +38,12 @@ lbw_ct_sd = sd_lbw11 * 2.91
 cost_d = data.frame(costs = c(round(pre_mort_c11, digits = 2), round(lbw_c11, digits = 2), round(pre_mort_ct, digits = 2), round(lbw_ct, digits = 2)),
                     se = c(paste0("(", round(sd_pre11, digits = 2), ")"), paste0("(", round(sd_lbw11, digits = 2), ")"), 
                            paste0("(", round(pre_ct_sd, digits = 2), ")"), paste0("(", format(round(lbw_ct_sd, digits = 2), nsmall = 2), ")")) , 
-                    bout = c("Preterm (Lower) + Mortality (Upper)", "Low-Birthweight", "Preterm (Lower) + Mortality (Upper)", "Low-Birthweight"), 
+                    bout = c("Preterm (Lower) + Mortality (Upper)", "Low Birthweight", "Preterm (Lower) + Mortality (Upper)", "Low Birthweight"), 
                     geo = c("11 States", "11 States", "National", "National"), 
                     inner = c(pre_c11, 0, pre_ct, 0))
 
 cost_d$geo = factor(cost_d$geo, levels = c("11 States", "National"))
-cost_d$bout = factor(cost_d$bout, levels = c("Preterm (Lower) + Mortality (Upper)", "Low-Birthweight"))
+cost_d$bout = factor(cost_d$bout, levels = c("Preterm (Lower) + Mortality (Upper)", "Low Birthweight"))
 
 # Create the bar chart using ggpattern
 cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +

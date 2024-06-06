@@ -1,4 +1,8 @@
 source("PFAS-Code/Pub/config.R")
+drop_states = FALSE
+relaxed_up = FALSE
+
+
 flowacc = function(i, d, w, option){
   d2 = d[[i]]
   w2 = w[i, ]

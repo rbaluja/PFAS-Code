@@ -7,7 +7,7 @@ load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr,
              rgdal, modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
              units, tidycensus, ggpattern, forcats)
 
-code_check = TRUE
+code_check = FALSE
 redo_GIS = FALSE
 rerun_fs_clean = FALSE
 n_cores = 1

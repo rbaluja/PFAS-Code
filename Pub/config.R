@@ -36,9 +36,9 @@ drop_far_up = FALSE
 IV = TRUE #Run IV spec?
 
 #national environment
-nat_run_cont_ws = FALSE#recreate national watershed shapes?
-nat_reassn = FALSE #reassign national CBGs to release sites?
-nb_cbg = FALSE
+nat_run_cont_ws = TRUE#recreate national watershed shapes?
+nat_reassn = TRUE #reassign national CBGs to release sites?
+nb_cbg = TRUE
 #cost per birth by birth outcome (2023 dollars)
 lpre_pc = 36728
 mpre_pc = 205041
@@ -55,4 +55,4 @@ nyc = F
 longisland = F
 rerun_weather = F
 rerun_pollution = F
-rerun_birthdata = F
+rerun_birthdata = T

@@ -117,7 +117,7 @@ r_coefs[5, "effect_size"] = (r5$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(
 r_coefs[5, "es_se"] = (lbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500) * 100* 100
 r_coefs[5, "lower_es"] = (r5$coefficients["pred_pfas"] - 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 100
 r_coefs[5, "upper_es"] = (r5$coefficients["pred_pfas"] + 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500) * 100* 100
-r_coefs[5, "b_outcome"] = "Low-Birthweight"
+r_coefs[5, "b_outcome"] = "Low Birthweight"
 r_coefs[5, "sig"] = "Yes"
 r_coefs[5, "p_value"] = 1 - pnorm(r5$coefficients["pred_pfas"]/lbw_sd)
 r_coefs[5, "p_value_s"] = ifelse(r_coefs[5, "p_value"] < 0.001, "<0.001", round(r_coefs[5, "p_value"], 3))
@@ -138,7 +138,7 @@ r_coefs[6, "effect_size"] = (r6$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(
 r_coefs[6, "es_se"] = (llbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
 r_coefs[6, "lower_es"] = (r6$coefficients["pred_pfas"] - 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
 r_coefs[6, "upper_es"] = (r6$coefficients["pred_pfas"] + 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 2500 & df$bweight >= 1500) * 100* 100
-r_coefs[6, "b_outcome"] = "Low-Birthweight"
+r_coefs[6, "b_outcome"] = "Low Birthweight"
 r_coefs[6, "sig"] = "Yes"
 r_coefs[6, "p_value"] = 1 - pnorm(r6$coefficients["pred_pfas"]/llbw_sd)
 r_coefs[6, "p_value_s"] = ifelse(r_coefs[6, "p_value"] < 0.001, "<0.001", round(r_coefs[6, "p_value"], 3))
@@ -159,7 +159,7 @@ r_coefs[7, "effect_size"] = (r7$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(
 r_coefs[7, "es_se"] = (mlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
 r_coefs[7, "lower_es"] = (r7$coefficients["pred_pfas"] - 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
 r_coefs[7, "upper_es"] = (r7$coefficients["pred_pfas"] + 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1500 & df$bweight >= 1000) * 100* 100
-r_coefs[7, "b_outcome"] = "Low-Birthweight"
+r_coefs[7, "b_outcome"] = "Low Birthweight"
 r_coefs[7, "sig"] = "Yes"
 r_coefs[7, "p_value"] = 1 - pnorm(r7$coefficients["pred_pfas"]/mlbw_sd)
 r_coefs[7, "p_value_s"] = ifelse(r_coefs[7, "p_value"] < 0.001, "<0.001", round(r_coefs[7, "p_value"], 3))
@@ -180,7 +180,7 @@ r_coefs[8, "effect_size"] = (r8$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(
 r_coefs[8, "es_se"] = (vlbw_sd/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)))/mean(df$bweight < 1000) * 100* 100
 r_coefs[8, "lower_es"] = (r8$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 100
 r_coefs[8, "upper_es"] = (r8$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2))/mean(df$bweight < 1000) * 100* 100
-r_coefs[8, "b_outcome"] = "Low-Birthweight"
+r_coefs[8, "b_outcome"] = "Low Birthweight"
 r_coefs[8, "sig"] = "Yes"
 r_coefs[8, "p_value"] = 1 - pnorm(r8$coefficients["pred_pfas"]/vlbw_sd)
 r_coefs[8, "p_value_s"] = ifelse(r_coefs[8, "p_value"] < 0.001, "<0.001", round(r_coefs[8, "p_value"], 3))
@@ -215,15 +215,15 @@ r_coefs$sev_num = as.numeric(as.factor(r_coefs$sev))
 r_coefs_jittered1 = r_coefs[r_coefs$b_outcome == "Preterm", ]
 r_coefs_jittered1$sev_num = r_coefs_jittered1$sev_num - 0.2  # Shift left
 
-r_coefs_jittered2 = r_coefs[r_coefs$b_outcome == "Low-Birthweight", ]
+r_coefs_jittered2 = r_coefs[r_coefs$b_outcome == "Low Birthweight", ]
 r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.2  # Shift right
 
 r_coefs_mort = r_coefs[r_coefs$b_outcome == "Infant Mortality", ]
 
 
-r_coefs_jittered1$b_outcome_legend = factor(r_coefs_jittered1$b_outcome, levels = c("Preterm", "Low-Birthweight"))
-r_coefs_jittered2$b_outcome_legend = factor(r_coefs_jittered2$b_outcome, levels = c("Preterm", "Low-Birthweight"))
-r_coefs_mort$b_outcome_legend = factor(r_coefs_mort$b_outcome, levels = c("Preterm", "Low-Birthweight"))
+r_coefs_jittered1$b_outcome_legend = factor(r_coefs_jittered1$b_outcome, levels = c("Preterm", "Low Birthweight"))
+r_coefs_jittered2$b_outcome_legend = factor(r_coefs_jittered2$b_outcome, levels = c("Preterm", "Low Birthweight"))
+r_coefs_mort$b_outcome_legend = factor(r_coefs_mort$b_outcome, levels = c("Preterm", "Low Birthweight"))
 
 iv_fig =  ggplot() +
   geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
@@ -233,7 +233,7 @@ iv_fig =  ggplot() +
   geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
   geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
   scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
-  scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low-Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
+  scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
   labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +100 ppt PFAS)", color = "") +
   theme_minimal() +
   theme(axis.text = element_text(size = 50), 

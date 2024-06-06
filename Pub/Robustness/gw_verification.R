@@ -1,4 +1,6 @@
 source("PFAS-Code/Pub/config.R")
+drop_states = FALSE
+relaxed_up = FALSE
 #data cleaning
 source("PFAS-Code/Pub/Data/data_head.R")
 

@@ -1,4 +1,6 @@
 source("PFAS-Code/Pub/config.R")
+drop_states = FALSE
+relaxed_up = FALSE
 index = 1
 if (!code_check){
   load(paste0(natality_path, "[UA Box Health] birth_records_matched_still.RData")) 

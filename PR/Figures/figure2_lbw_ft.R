@@ -160,6 +160,6 @@ data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
 
-lbw_ft_f2 = figure2_fun(data, "Any Low-Birthweight (Full-Term)", TRUE, TRUE, "Any Low-Birthweight (Full-Term)", TRUE)
+lbw_ft_f2 = figure2_fun(data, "Any Low Birthweight (Full-Term)", TRUE, TRUE, "Any Low Birthweight (Full-Term)", TRUE)
 
 ggsave(modify_path3("Figures/figure2_lbw_ft.png"), lbw_ft_f2, width = 12000, height = 4500, units = "px", limitsize = F)
