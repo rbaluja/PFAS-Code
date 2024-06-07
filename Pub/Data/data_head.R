@@ -20,7 +20,7 @@ if (code_check == TRUE){
   #get elevation at relevant well and residence
   source("PFAS-Code/Pub/Data/elev_setup.R")
 }else{
-  if (run_cleaning == TRUE | !file.exists(load(paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData")))){
+  if (run_cleaning == TRUE | !file.exists(paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData"))){
     
     #read in (and clean) natality data
     source('PFAS-Code/Pub/Data/natality_data.R') 

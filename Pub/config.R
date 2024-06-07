@@ -16,7 +16,7 @@ options(tigris_use_cache = TRUE)
 
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
-n_cores = 1
+n_cores = 3
 code_verify = TRUE
 
 #preliminaries environment
@@ -35,9 +35,9 @@ drop_far_up = FALSE
 IV = TRUE #Run IV spec?
 
 #national environment
-nat_run_cont_ws = TRUE#recreate national watershed shapes?
-nat_reassn = TRUE #reassign national CBGs to release sites?
-nb_cbg = TRUE
+nat_run_cont_ws = FALSE#recreate national watershed shapes?
+nat_reassn = FALSE #reassign national CBGs to release sites?
+nb_cbg = FALSE
 #cost per birth by birth outcome (2023 dollars)
 lpre_pc = 36728
 mpre_pc = 205041

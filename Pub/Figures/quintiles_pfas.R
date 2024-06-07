@@ -549,3 +549,4 @@ for (ot in c("mort")){
     }
   }
 }
+sink()
