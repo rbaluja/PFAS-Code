@@ -215,26 +215,36 @@ fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_dow
 
 ######
 ###Soil variables at the test well
-
-#soil porosity
 fs_cont_fa= fs_cont %>% 
   st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
   st_transform(32110) %>% 
   st_buffer(10) %>% 
   st_transform(4326)
 
+#soil porosity
 sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
-
 fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
-
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp", cl = n_cores))
 
 #available water capacity
 awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
-
 fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
-
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc", cl = n_cores))
+
+#clay content
+clay = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_clay.tif"))
+fs_clay = exactextractr::exact_extract(clay, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_clay, fs_cont, "clay", cl = n_cores))
+
+#sand content
+sand = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_sand.tif"))
+fs_sand = exactextractr::exact_extract(sand, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sand, fs_cont, "sand", cl = n_cores))
+
+#silt content
+silt = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_silt.tif"))
+fs_silt = exactextractr::exact_extract(silt, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_silt, fs_cont, "silt", cl = n_cores))
 
 
 ###############
@@ -258,24 +268,32 @@ w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down 
 
 
 #get soil characteristics at drinking wells
-#soil porosity
 wells_fa= wells %>%
   st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
   st_transform(32110) %>% 
   st_buffer(10) %>% 
   st_transform(4326)
-
+#soil porosity
 wells_sp = exactextractr::exact_extract(sp, wells_fa)
-
 wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp", cl = n_cores))
 
 #available water capacity
 wells_awc = exactextractr::exact_extract(sp, wells_fa)
-
 wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc", cl = n_cores))
 
-df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc)) 
+#clay content
+wells_clay = exactextractr::exact_extract(clay, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_clay, wells, "clay", cl = n_cores))
 
+#sand content
+wells_sand = exactextractr::exact_extract(sand, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_sand, wells, "sand", cl = n_cores))
+
+#silt content
+wells_silt = exactextractr::exact_extract(silt, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_silt, wells, "silt", cl = n_cores))
+
+df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc, clay, sand, silt)) 
 
 #impute predicted pfas from w_reg
 df$domestic = 0

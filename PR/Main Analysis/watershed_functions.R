@@ -11,6 +11,14 @@ flowacc = function(i, d, w, option){
     w2$sp = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
   }else if (option == "awc"){
     w2$awc = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
+  }else if (option == "clay"){
+    w2$clay = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
+  }else if (option == "sand"){
+    w2$sand = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
+  }else if (option == "silt"){
+    w2$silt = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
+  }else if (option == "bdod"){
+    w2$bdod = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
   }else if (option == "fc"){
     w2$fc = as.numeric((d2$value %*% d2$coverage_fraction)/sum(d2$coverage_fraction)) 
   }
