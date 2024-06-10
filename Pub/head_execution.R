@@ -1,3 +1,4 @@
+setwd("~/Dropbox/PFAS Infants")
 source("PFAS-Code/Pub/preliminaries.R")
 rm(list = ls())
 source("PFAS-Code/Pub/Bootstrap/bootstrap_iv.R")
