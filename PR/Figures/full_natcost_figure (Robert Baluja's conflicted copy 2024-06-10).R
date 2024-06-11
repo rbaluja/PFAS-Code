@@ -9,10 +9,10 @@ load(modify_path("Data_Verify/RData/preterm_sd.RData"))
 load(modify_path("Data_Verify/RData/mort_sd.RData"))
 #variance of preterm costs in 11 states
 var_pre11 = sum(bs$pred_pfas * bs$births)^2 * 
-  ((lpre_pc/10^9)^2 * lpreterm_sd^2 + (mpre_pc/10^9)^2 * mpreterm_sd^2 + (vpre_pc/10^9)^2 * vpreterm_sd^2 + (mort_pc/10^9)^2 * mort_sd^2 + #variance terms
-     2 * lpre_pc/10^9 * mpre_pc/10^9 * cov_pre_lm + 2 * lpre_pc/10^9 * vpre_pc/10^9 * cov_pre_lv + 2 * lpre_pc/10^9 * mort_pc/10^9 * cov_mort_pl + #slightly covariances
-     2 * mpre_pc/10^9 * vpre_pc/10^9 * cov_pre_mv + 2 * mpre_pc/10^9 * mort_pc/10^9 * cov_mort_pm + #moderately covariances
-     2 * vpre_pc/10^9 * mort_pc/10^9 * cov_mort_pv) 
+  ((36728/10^9)^2 * lpreterm_sd^2 + (205041/10^9)^2 * mpreterm_sd^2 + (204083/10^9)^2 * vpreterm_sd^2 + (4230796.86/10^9)^2 * mort_sd^2 + #variance terms
+     2 * 36728/10^9 * 205041/10^9 * cov_pre_lm + 2 * 36728/10^9 * 204083/10^9 * cov_pre_lv + 2 * 36728/10^9 * 4230796.86/10^9 * cov_mort_pl + #slightly covariances
+     2 * 205041/10^9 * 204083/10^9 * cov_pre_mv + 2 * 205041/10^9 * 4230796.86/10^9 * cov_mort_pm + #moderately covariances
+     2 * 204083/10^9 * 4230796.86/10^9 * cov_mort_pv) 
 sd_pre11 = sqrt(var_pre11)
 
 #low birthweight costs in 11 states
@@ -23,8 +23,8 @@ load(modify_path("Data_Verify/RData/cov_lbw.RData"))
 load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 #variance of low birthweight costs in 11 states
 var_lbw11 = sum(bs$pred_pfas * bs$births)^2 *
-  ((vlbw_pc/10^9)^2 * vlbw_sd^2 + (mlbw_pc/10^9)^2 * mlbw_sd^2 + #variance terms
-     2 * vlbw_pc/10^9 * mlbw_pc/10^9 * cov_lbw_mv) #covariance term
+  ((2636968.91356/10^9)^2 * vlbw_sd^2 + (1767021.261968/10^9)^2 * mlbw_sd^2 + #variance terms
+     2 * 2636968.91356/10^9 * 1767021.261968/10^9 * cov_lbw_mv) #covariance term
 sd_lbw11 = sqrt(var_lbw11) 
 
 #total costs (multiply by 2.91)

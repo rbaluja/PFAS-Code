@@ -636,7 +636,7 @@ no_med_ymc = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
@@ -787,7 +787,7 @@ no_med_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
@@ -939,7 +939,7 @@ no_med_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
@@ -1092,7 +1092,7 @@ no_med_ymc = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + 
 
 data = data.frame(
   Category = c("Baseline", 
-               "Sample", "Sample", "Sample", "Sample", "Sample",
+               "Sample", "Sample", "Sample", "Sample", 
                "Controls", "Controls", "Controls"),
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
@@ -1159,7 +1159,7 @@ ptplot = ggplot() +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.9, size = 70, face = "bold"))
 btplot = ggplot() +
-  labs(title = "Low-Birthweight") +
+  labs(title = "Low Birthweight") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.73, size = 70, face = "bold"))
 

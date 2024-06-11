@@ -122,7 +122,7 @@ cost_map = ggplot() +
                       limits =c(0, 1500),
                       breaks = c(0, 500, 1000, 1500),
                       labels = c("0", "$0.5B", "$1B", "$1.5B"),
-                      name = "Annual Low-Birthweight Costs",
+                      name = "Annual Low Birthweight Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title.position = "top",
                                              title.hjust = 0.5,

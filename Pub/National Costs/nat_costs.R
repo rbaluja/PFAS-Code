@@ -1,3 +1,12 @@
+#get state number to abb in births data
+state_cross = tigris::states() %>% 
+  as_tibble() %>%
+  dplyr::select(state = GEOID, abb = STUSPS) %>% 
+  dplyr::filter(state %in% c("26", "27", "33", "36", "08", "23", "50", "06", "12", "38", "55"))
+
+births = births %>% 
+  left_join(state_cross)
+
 #soil stuff
 source("PFAS-Code/Pub/National Costs/soil.R")
 
@@ -24,10 +33,12 @@ bs = births
 
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
 #taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
-bs$pred_pfas = 0.017041 + 6.886192 * bs$down + 0.004021 * bs$sp + 
-  -0.005266 * bs$awc + 0.665858 * asinh(bs$pfas) + -0.568659 * log(bs$dist) + 
-  -0.270853 * bs$updown + -0.002472 * bs$sp * bs$down +  0.001074 * bs$awc * bs$down + 
-  -0.625525 * log(bs$dist) * bs$down
+bs$pred_pfas = 0.769612 + 7.206569 * bs$down + 0.003181 * bs$sp + 
+  -0.003632 * bs$awc + -0.006685 * bs$clay + -0.001860 * bs$sand + 0.002208 * bs$silt + 
+  0.587664 * asinh(bs$pfas) + -0.420210 * log(bs$dist) + 
+  -0.226273 * bs$updown + -0.002080 * bs$sp * bs$down +   0.000853 * bs$awc * bs$down + 
+  -0.005056 * bs$clay * bs$down + -0.002351 * bs$sand * bs$down +  0.007307 * bs$silt * bs$down + 
+  -0.745619 * log(bs$dist) * bs$down
 
 #for those with missing soil data, use modified regression for imputation
 nind = which(is.na(bs$pred_pfas))
@@ -35,6 +46,16 @@ bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down +
   0.671526 * asinh(bs[nind, ]$pfas) + -0.630132* log(bs[nind, ]$dist) + 
   -0.308053 * bs[nind, ]$updown + 
   -0.583208  * log(bs[nind, ]$dist) * bs[nind, ]$down
+
+#read in IV estimates
+if (!file.exists(modify_path("Data_Verify/RData/preterm_iv_coef.RData")) | 
+    !file.exists(modify_path("Data_Verify/RData/lbw_iv_coef.RData")) | 
+    !file.exists(modify_path("Data_Verify/RData/mort_iv_coef.RData"))){
+  stop("Run main analysis through tables.R before calculating national cost.")
+}
+load(modify_path("Data_Verify/RData/preterm_iv_coef.RData"))
+load(modify_path("Data_Verify/RData/lbw_iv_coef.RData"))
+load(modify_path("Data_Verify/RData/mort_iv_coef.RData"))
 
 #read in standard errors
 if (!file.exists(modify_path("Data_Verify/RData/preterm_sd.RData")) | 
@@ -47,7 +68,7 @@ load(modify_path("Data_Verify/RData/lbw_sd.RData"))
 load(modify_path("Data_Verify/RData/mort_sd.RData"))
 #getting impacts in states with initiatives
 #vpre
-bs$add_vpre = bs$pred_pfas * bs$births * 0.0027 #iv coefficient
+bs$add_vpre = bs$pred_pfas * bs$births * vpreterm_iv 
 vpre_births = sum(bs$add_vpre) #664.3684
 vpre_cost = (vpre_births * vpre_pc)/10^9
 bs$add_vpre_se = bs$pred_pfas * bs$births * vpreterm_sd
@@ -55,7 +76,7 @@ vpre_births_se = sum(bs$add_vpre_se)
 vpre_cost_se = (vpre_births_se * vpre_pc)/10^9
 
 #mpre
-bs$add_mpre = bs$pred_pfas * bs$births * 0.00138
+bs$add_mpre = bs$pred_pfas * bs$births * mpreterm_iv
 mpre_births = sum(bs$add_mpre) #339.5661
 mpre_cost = (mpre_births * mpre_pc)/10^9
 bs$add_mpre_se = bs$pred_pfas * bs$births * mpreterm_sd
@@ -63,7 +84,7 @@ mpre_births_se = sum(bs$add_mpre_se)# 98.42495  births se
 mpre_cost_se = (mpre_births_se *  mpre_pc)/10^9
 
 #lpre
-bs$add_lpre = bs$pred_pfas * bs$births * 0.0060
+bs$add_lpre = bs$pred_pfas * bs$births * lpreterm_iv
 lpre_births = sum(bs$add_lpre)
 lpre_cost = (lpre_births * lpre_pc)/10^9
 bs$add_lpre_se = bs$pred_pfas * bs$births *  lpreterm_sd
@@ -73,7 +94,7 @@ lpre_cost_se = (lpre_births_se * lpre_pc)/10^9
 
 #birthweight
 #elbw
-bs$add_vlbw = bs$pred_pfas * bs$births * 0.0035
+bs$add_vlbw = bs$pred_pfas * bs$births * vlbw_iv
 vlbw_births = sum(bs$add_vlbw)
 vlbw_cost = (vlbw_births * vlbw_pc)/10^9
 bs$add_vlbw_se = bs$pred_pfas * bs$births * vlbw_sd
@@ -81,7 +102,7 @@ vlbw_births_se = sum(bs$add_vlbw_se)
 vlbw_cost_se = (vlbw_births_se * vlbw_pc)/10^9
 
 #vlbw
-bs$add_mlbw = bs$pred_pfas * bs$births * 0.00133
+bs$add_mlbw = bs$pred_pfas * bs$births * mlbw_iv
 mlbw_births = sum(bs$add_mlbw) 
 mlbw_cost = (mlbw_births * mlbw_pc)/10^9
 bs$add_mlbw_se = bs$pred_pfas * bs$births * mlbw_sd
@@ -89,14 +110,14 @@ mlbw_births_se = sum(bs$add_mlbw_se)
 mlbw_cost_se = (mlbw_births_se * mlbw_pc)/10^9
 
 #lbw 
-bs$add_lbw = bs$pred_pfas * bs$births * 0.0052
+bs$add_lbw = bs$pred_pfas * bs$births * llbw_iv
 lbw_births = sum(bs$add_lbw)
 bs$add_lbw_se = bs$pred_pfas * bs$births * llbw_sd
 lbw_births_se = sum(bs$add_lbw_se)
 
 
 #infant mortality
-bs$add_mort = bs$pred_pfas * bs$births * 0.0016
+bs$add_mort = bs$pred_pfas * bs$births * mort_iv
 mort_births = sum(bs$add_mort)
 mort_cost = (mort_births * mort_pc)/10^9
 bs$add_mort_se = bs$pred_pfas * bs$births * mort_sd
@@ -157,12 +178,12 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) 
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=2), 
-                                  y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 120),
+                                  y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 100),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
                               size=20)
 p_costs = p_costs + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 60),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 40),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
@@ -223,13 +244,13 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
 lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Moderately" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 120),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 100),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +60),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +40),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=16)
@@ -287,13 +308,13 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) + 
   guides(alpha = "none", fill = "none", pattern = "none")
 mort_cost_fig = mort_cost_fig + geom_text(aes(label=round(Value, digits=2), 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 120),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 100),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=18)
 
 mort_cost_fig = mort_cost_fig + geom_text(aes(label=se, 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +60),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) +40),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=16)
@@ -309,3 +330,4 @@ figure_3 = (mort_cost_fig | p_costs | lbw_cost) + plot_layout(widths = c(1, 3, 3
   theme(legend.position = 'bottom')
 
 ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 12000, height = 9541, units = "px", device = "png", limitsize = FALSE)
+

@@ -20,7 +20,7 @@ if (code_check == TRUE){
   #get elevation at relevant well and residence
   source("PFAS-Code/Pub/Data/elev_setup.R")
 }else{
-  if (run_cleaning == TRUE){
+  if (run_cleaning == TRUE | !file.exists(paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData"))){
     
     #read in (and clean) natality data
     source('PFAS-Code/Pub/Data/natality_data.R') 
@@ -34,15 +34,10 @@ if (code_check == TRUE){
     #get elevation at relevant well and residence
     source("PFAS-Code/Pub/Data/elev_setup.R")
     
-  }else if (match_wells == TRUE ){
-    load(paste0(natality_path, "[UA Box Health] birth_records_wdem_prematch.RData"))
-    #match residences to water wells
-    source("PFAS-Code/Pub/Data/natality_wells.R")
+    save(df, file = paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData"))
     
-    #get elevation at relevant well and residence
-    source("PFAS-Code/Pub/Data/elev_setup.R")
   }else{
-    load(paste0(natality_path, "[UA Box Health] birth_records_matched.RData")) 
+    load(paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData")) 
   } 
 }
 

@@ -30,14 +30,14 @@ if (nat_reassn){
 #run national costs (primary - Figure 3 part 1)
 source("PFAS-Code/Pub/National Costs/nat_costs.R")
 
+#full national costs (figure 3)
+source("PFAS-Code/Pub/Figures/full_natcost_figure.R")
+
 #national costs map (figure 3 part 2)
 source("PFAS-Code/Pub/Figures/figure3_map.R")
 
 #national costs map preterm (figure 3)
 source("PFAS-Code/Pub/Figures/figure3_map_preterm.R")
-
-#full national costs (figure 3)
-source("PFAS-Code/Pub/Figures/full_natcost_figure.R")
 
 #map of national release sites and pop density (Figure S4)
 source("PFAS-Code/Pub/National Costs/nat_map.R")

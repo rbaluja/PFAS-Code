@@ -1160,7 +1160,7 @@ ptplot = ggplot() +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.9, size = 70, face = "bold"))
 btplot = ggplot() +
-  labs(title = "Low-Birthweight") +
+  labs(title = "Low Birthweight") +
   theme_void() +
   theme(plot.title = element_text(hjust = 0.73, size = 70, face = "bold"))
 

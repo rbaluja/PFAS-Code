@@ -129,7 +129,7 @@ if(rerun_birthdata == T){
     gw_ny$lng[is.na(gw_ny$lng)] = -76.12
   }else{
     pop_weighted_location = read_csv(modify_path4('New York/Data/Supplemental/ZIP_Code_Population_Weighted_Centroids.csv')) %>% #this dataset comes from https://hudgis-hud.opendata.arcgis.com/datasets/d032efff520b4bf0aa620a54a477c70e/explore
-      dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PubEF_STATE_1221, lng = LGT, lat = LAT) %>% 
+      dplyr::select(zip = STD_ZIP5, state = USPS_ZIP_PREF_STATE_1221, lng = LGT, lat = LAT) %>% 
       dplyr::filter(state == "NY") %>% 
       dplyr::select(!state)
 
@@ -235,7 +235,7 @@ gw_ny = gw_ny %>%
 #####################################
 ####Bringing in Demographic Data#####
 #####################################
-census_api_key(census_key) #probably shouldn't share this...
+census_api_key(census_key)
 
 #race
 race_variables = c('total' = 'B02001_001', 'white' = 'B02001_002',
@@ -341,24 +341,7 @@ gw_ny = gw_ny %>%
 
 #bringing in pollution data
 if (rerun_pollution == T){
-  ny_shapefile = zctas(year = 2010, state = 'NY')
-  ny_shapefile$geometry = st_transform(ny_shapefile$geometry, crs = '+proj=longlat +datum=WGS84')
-  space_pm25 = raster(modify_path4('New York/Data/Pollution/2010.tif'))
-  space_pm25.value = raster::extract(space_pm25, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
-  d = as.data.frame(space_pm25.value)
-  d = subset(d, select = c(ZCTA5CE10, X2010))
-  colnames(d) = c('zcta', 'mean_pm25_2010')
-  for (i in c('2011', '2012', '2013', '2014', '2015', '2016')){
-    path = modify_path4(paste0('New York/Data/Pollution/' , i, '.tif'))
-    space_pm25_i = raster(path)
-    space_pm25_i.value = raster::extract(space_pm25_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
-    d_i = as.data.frame(space_pm25_i.value)
-    d_i = d_i[, c(2, ncol(d_i))]
-    colnames(d_i) = c('zcta', paste0('pm25_', i)) 
-    d = merge(d, d_i, by = 'zcta')
-  }
-  pollution = d
-  write.csv(pollution, modify_path4('New York/Data/Pollution/ny_pop_weighted_pm25.csv'))
+  source("PFAS-Code/Pub/Robustness/ny_pollution.R")
 }else{
   pollution = read.csv(modify_path4('New York/Data/Pollution/ny_pop_weighted_pm25.csv'))
   pollution = pollution[, -1] #removes X
@@ -372,22 +355,7 @@ gw_ny$mean_pm25 = ifelse(gw_ny$year == "2010-2012", gw_ny$mean_pm25_12, ifelse(g
 
 #bringing in temperature data
 if (rerun_weather == T){
-  weather = raster(modify_path4('New York/Data/Temperature/PubISM_tmean_stable_4kmM3_2010_bil.bil'))
-  weather.value = raster::extract(weather, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
-  d = as.data.frame(weather.value)
-  d = d[, c(2, ncol(d))]
-  colnames(d) = c('zcta', 'temp_2010') 
-  for (i in c('2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018')){
-    path = modify_path4(paste0('New York/Data/Temperature/PubISM_tmean_stable_4kmM3_' , i, '_bil.bil'))
-    weather_i = raster(path)
-    weather_i.value = raster::extract(weather_i, ny_shapefile, method = 'simple', fun = mean, na.rm = T, sp= T)
-    d_i = as.data.frame(weather_i.value)
-    d_i = d_i[, c(2, ncol(d_i))]
-    colnames(d_i) = c('zcta', paste0('temp_', i)) 
-    d = merge(d, d_i, by = 'zcta')
-  }
-  weather = d
-  write.csv(weather,  modify_path4('New York/Data/Temperature/ny_pop_weighted_temp.csv'))
+  source("PFAS-Code/Pub/Robustness/ny_weather.R")
 }else{
   weather = read.csv(modify_path4('New York/Data/Temperature/ny_pop_weighted_temp.csv'))
   weather = weather[, -1]
@@ -484,41 +452,24 @@ gw_ny$treatment = as.factor(gw_ny$treatment)
 
 #regressions
 reg_prim1 = fixest::feols(percent_premature  ~ 
-                    treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
+                            treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
+                            I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
+                            percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg_prim1)
 
 reg_prim2 = fixest::feols(percent_all_low  ~ 
-                    treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
+                            treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
+                            I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
+                            percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 summary(reg_prim2)
-
-
-reg1_c = fixest::feols(percent_premature  ~ 
-                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
-summary(reg1_c)
-
-reg2_c = fixest::feols(percent_all_low  ~ 
-                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
-summary(reg2_c)
 
 reg1_nd = fixest::feols(percent_infant_deaths  ~ 
                           treatment + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
                           I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
                           percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-reg2_nd = fixest::feols(percent_infant_deaths  ~ 
-                                    treatment*I(contaminated_amount/10^3) + close + log(median_income) + median_age + I(percent_white * 100)  + elevation + 
-                                    I(percent_insured_u18 * 100) + I(percent_insured_1834 * 100) + I(percent_insured_3564 * 100)  +
-                                    percent_late_care + percent_manufacturing + percent_employed + percent_late_care + log(median_price) + temp + mean_pm25 + log(housing_units)|year, data = gw_ny, cluster = "zip")
 
-modelsummary::modelsummary(list(reg1_nd, reg2_nd, reg_prim1, reg1_c, reg_prim2, reg2_c), 
+modelsummary::modelsummary(list(reg1_nd, reg_prim1, reg_prim2), 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #one-sided stars 
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("treatment1" = "Downgradient", 

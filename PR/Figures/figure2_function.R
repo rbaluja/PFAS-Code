@@ -1,5 +1,5 @@
 figure2_fun = function(data, category, keep_x, header, ti, left){
-  if (category == "Any" | category == "Any Low-Birthweight (Full-Term)"){
+  if (category == "Any" | category == "Any Low Birthweight (Full-Term)"){
     col = "dodgerblue"
   }else if (category == "Moderately" | category == "Moderately"){
     col = "coral"

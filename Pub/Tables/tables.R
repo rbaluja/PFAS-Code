@@ -15,12 +15,12 @@ table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  updown + down +  I(
                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                           m_height + tri5 + fa_resid + wind_exposure
-                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                 m_height + tri5 + fa_resid + wind_exposure
+                                               |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -31,21 +31,21 @@ table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 + fa_resid +wind_exposure
-                                    |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                m_height + tri5 + fa_resid +wind_exposure
+                                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(table1_preterm, 
-                                    stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
-                                    fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                    coef_map = c("down" = "Downgradient", 
-                                                 "updown" = "Upgradient"),
-                                    gof_map = c("nobs", "r.squared"), 
-                                    output = modify_path2("Tables/table1_preterm.tex")) 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table1_preterm.tex")) 
 
 table1_preterm[["Extremely"]]$coefficients["down"]/mean(df$gestation < 28)
 (table1_preterm[["Extremely"]]$coefficients["down"] - 1.96 * table1_preterm[["Extremely"]]$se["down"])/mean(df$gestation < 28)
@@ -54,45 +54,45 @@ table1_preterm[["Extremely"]]$coefficients["down"]/mean(df$gestation < 28)
 #low birthweight
 table1_lbw = list() 
 table1_lbw[["Low Birthweight all "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                           m_height + tri5 +  fa_resid +  wind_exposure
-                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                       m_height + tri5 +  fa_resid +  wind_exposure
+                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_lbw[["Low Birthweight among full term "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                                   m_height + tri5 + fa_resid + wind_exposure
+                                                                 |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+table1_lbw[["Low Birthweight "]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                                    m_height + tri5 + fa_resid + wind_exposure
-                                                 |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
-
-
-table1_lbw[["Low Birthweight "]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                       m_height + tri5 + fa_resid + wind_exposure
-                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_lbw[["Moderately Low Birthweight"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                 m_height + tri5 + fa_resid + wind_exposure
-                                               |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                             m_height + tri5 + fa_resid + wind_exposure
+                                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 table1_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                           m_height + tri5 + fa_resid+ wind_exposure
-                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                       m_height + tri5 + fa_resid+ wind_exposure
+                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(table1_lbw, 
@@ -117,32 +117,23 @@ load(modify_path("Data_Verify/RData/bootstrap.RData"))
 table2_preterm = list()
 
 table2_preterm[["All"]]= fixest::feols(I(gestation < 37) ~ pred_pfas + asinh(pfas) + 
-                                     n_sites + wind_exposure + 
-                                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                                         n_sites + wind_exposure + 
+                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 
 table2_preterm[["Moderately"]]= fixest::feols(I(gestation < 37 & gestation >= 32) ~ pred_pfas + asinh(pfas) + 
-                                      n_sites + wind_exposure + 
-                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                                                n_sites + wind_exposure + 
+                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 table2_preterm[["Very"]]= fixest::feols(I(gestation < 32 & gestation >= 28) ~ pred_pfas + asinh(pfas) + 
-                                      n_sites + wind_exposure + 
-                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
-
-
-table2_preterm[["Extremely"]]= fixest::feols(I(gestation < 28) ~ pred_pfas + asinh(pfas) + 
                                           n_sites + wind_exposure + 
                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
@@ -150,12 +141,28 @@ table2_preterm[["Extremely"]]= fixest::feols(I(gestation < 28) ~ pred_pfas + asi
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                           m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
+
+table2_preterm[["Extremely"]]= fixest::feols(I(gestation < 28) ~ pred_pfas + asinh(pfas) + 
+                                               n_sites + wind_exposure + 
+                                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                               m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
 modelsummary::modelsummary(table2_preterm, 
-                                        stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
-                                        fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                        coef_map = c("pred_pfas" = "Predicted PFAS"),
-                                        gof_map = c("nobs", "r.squared"), 
-                                        output = modify_path2("Tables/table2_preterm.tex"))
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("pred_pfas" = "Predicted PFAS"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table2_preterm.tex"))
+
+preterm_iv = table2_preterm[["All"]]$coefficients["pred_pfas"]
+lpreterm_iv = table2_preterm[["Moderately"]]$coefficients["pred_pfas"]
+mpreterm_iv = table2_preterm[["Very"]]$coefficients["pred_pfas"]
+vpreterm_iv = table2_preterm[["Extremely"]]$coefficients["pred_pfas"]
+
+save(preterm_iv, lpreterm_iv, mpreterm_iv, vpreterm_iv, file = modify_path("Data_Verify/RData/preterm_iv_coef.RData"))
 
 #calculate bootstrapped standard errors
 preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
@@ -198,31 +205,22 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
 #lbw
 table2_lbw = list()
 table2_lbw[["Low Birthweight"]]= fixest::feols(I(bweight < 2500 ) ~ pred_pfas + asinh(pfas) +
-                                             n_sites + wind_exposure + 
-                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                                                 n_sites + wind_exposure + 
+                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                 m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 table2_lbw[["lLow Birthweight"]]= fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ pred_pfas + asinh(pfas) +
-                                              n_sites + wind_exposure + 
-                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                              m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                                                  n_sites + wind_exposure + 
+                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                  m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 table2_lbw[["mLow Birthweight"]]= fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ pred_pfas + asinh(pfas) +
-                                              n_sites + wind_exposure + 
-                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                              m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
-
-
-table2_lbw[["Very Low Birthweight"]]= fixest::feols(I(bweight < 1000) ~ pred_pfas + asinh(pfas) +
                                                   n_sites + wind_exposure + 
                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
@@ -231,12 +229,28 @@ table2_lbw[["Very Low Birthweight"]]= fixest::feols(I(bweight < 1000) ~ pred_pfa
                                                   m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
 
 
+table2_lbw[["Very Low Birthweight"]]= fixest::feols(I(bweight < 1000) ~ pred_pfas + asinh(pfas) +
+                                                      n_sites + wind_exposure + 
+                                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+
 modelsummary::modelsummary(table2_lbw, 
-                                        stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
-                                        fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                        coef_map = c("pred_pfas" = "Predicted PFAS"),
-                                        gof_map = c("nobs", "r.squared"), 
-                                        output = modify_path2("Tables/table2_lbw.tex")) 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("pred_pfas" = "Predicted PFAS"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table2_lbw.tex")) 
+
+lbw_iv = table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]
+llbw_iv = table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]
+mlbw_iv = table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]
+vlbw_iv = table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]
+
+save(lbw_iv, llbw_iv, mlbw_iv, vlbw_iv, file = modify_path("Data_Verify/RData/lbw_iv_coef.RData"))
 
 #calculate bootstrapped standard errors
 lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
@@ -272,6 +286,96 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
 1 - pnorm(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/llbw_sd)
 1 - pnorm(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/mlbw_sd)
 1 - pnorm(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/vlbw_sd)
+
+
+#####################
+### Mortality effects
+mort_table = list()
+
+mort_table[["Binary"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                         m_height + tri5 +fa_resid + wind_exposure
+                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["PFAS Interaction"]] = fixest::feols(death ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                   m_height + tri5 + fa_resid + wind_exposure
+                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["Distance Interaction"]] = fixest::feols(death ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
+                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                       m_height + tri5 + fa_resid + wind_exposure
+                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["Contr. Health"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                m_height + tri5 +fa_resid + wind_exposure + gestation + bweight
+                                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["IV"]] = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
+                                     n_sites + wind_exposure + 
+                                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
+mort_table[["Binary"]]$coefficients["down"]/mean(df$death)
+(mort_table[["Binary"]]$coefficients["down"] - 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
+(mort_table[["Binary"]]$coefficients["down"] + 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
+
+modelsummary::modelsummary(mort_table, 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient", 
+                                        "down:I(dist/1000)" = "Downgradient \times Dist.", 
+                                        "updown:I(dist/1000)" = "Upgradient \times Dist.",
+                                        "down:I(pfas/10^3)" ="Downgradient \times PFAS",
+                                        "updown:I(pfas/10^3)"="Upgradient \times PFAS",
+                                        "pred_pfas" = "Predicted PFAS", 
+                                        "gestation" = "Gestational Age", 
+                                        "bweight" = "Birthweight"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s4.tex")) 
+
+#mortality standard error
+mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
+save(mort_sd, file = modify_path("Data_Verify/RData/mort_sd.RData"))
+#p value for IV
+1 - pnorm(mort_table[["IV"]]$coefficients["pred_pfas"]/mort_sd)
+
+#mortality IV estimate
+mort_iv = mort_table[["IV"]]$coefficients["pred_pfas"]
+save(mort_iv, file = modify_path("Data_Verify/RData/mort_iv_coef.RData"))
+
+#mortality marginal effect
+mort_table[["IV"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+if (bs_cov){
+  cov_mort_pl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "lpreterm", table2_preterm[["Moderately"]])
+  cov_mort_pm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mpreterm", table2_preterm[["Very"]])
+  cov_mort_pv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vpreterm", table2_preterm[["Extremely"]])
+  
+  cov_mort_bl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "llbw", table2_lbw[["lLow Birthweight"]])
+  cov_mort_bm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
+  cov_mort_bv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
+  
+  save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path("Data_Verify/RData/cov_mort.RData"))
+}
 
 
 
@@ -415,12 +519,12 @@ df2 = df2 %>%
 
 df2 = df2 %>% 
   dplyr::select(`Infant Mortality` = death,
-                `Very Preterm` = vpre, 
-                `Moderately Preterm` = mpre, 
-                `Slightly Preterm` = lpre, 
-                `Very Low Birthweight` = vlbw, 
-                `Moderately Low Birthweight` = mlbw, 
-                `Low Birthweight` = llbw,
+                `Extremely Preterm` = vpre, 
+                `Very Preterm` = mpre, 
+                `Moderately Preterm` = lpre, 
+                `Extremely Low Birthweight` = vlbw, 
+                `Very Low Birthweight` = mlbw, 
+                `Moderately Low Birthweight` = llbw,
                 `Number of Sites w/in 5km` = n_sites, 
                 `Well Distance` = dist, 
                 `Residence Distance` = csite_dist, 
@@ -443,91 +547,6 @@ datasummary_balance(~group,
 
 
 
-#####################
-### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
-mort_table = list()
-
-mort_table[["Binary"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height + tri5 +fa_resid + wind_exposure
-                                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-mort_table[["PFAS Interaction"]] = fixest::feols(death ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
-                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                    m_height + tri5 + fa_resid + wind_exposure
-                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-mort_table[["Distance Interaction"]] = fixest::feols(death ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
-                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                        m_height + tri5 + fa_resid + wind_exposure
-                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-mort_table[["Contr. Health"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                         m_height + tri5 +fa_resid + wind_exposure + gestation + bweight
-                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-mort_table[["IV"]] = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
-                                      n_sites + wind_exposure + 
-                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
-mort_table[["Binary"]]$coefficients["down"]/mean(df$death)
-(mort_table[["Binary"]]$coefficients["down"] - 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
-(mort_table[["Binary"]]$coefficients["down"] + 1.96 * mort_table[["Binary"]]$se["down"])/mean(df$death)
-
-modelsummary::modelsummary(mort_table, 
-                                      stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
-                                      fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                      coef_map = c("down" = "Downgradient", 
-                                                   "updown" = "Upgradient", 
-                                                   "down:I(dist/1000)" = "Downgradient \times Dist.", 
-                                                   "updown:I(dist/1000)" = "Upgradient \times Dist.",
-                                                   "down:I(pfas/10^3)" ="Downgradient \times PFAS",
-                                                   "updown:I(pfas/10^3)"="Upgradient \times PFAS",
-                                                   "pred_pfas" = "Predicted PFAS", 
-                                                   "gestation" = "Gestational Age", 
-                                                   "bweight" = "Birthweight"),
-                                      gof_map = c("nobs", "r.squared"), 
-                                      output = modify_path2("Tables/table_s4.tex")) 
-
-#stillborn standard error
-mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
-save(mort_sd, file = modify_path("Data_Verify/RData/mort_sd.RData"))
-#p value for IV
-1 - pnorm(mort_table[["IV"]]$coefficients["pred_pfas"]/mort_sd)
-
-#mortality marginal effect
-mort_table[["IV"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
-(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
-(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
-
-if (bs_cov){
-  cov_mort_pl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "lpreterm", table2_preterm[["Moderately"]])
-  cov_mort_pm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mpreterm", table2_preterm[["Very"]])
-  cov_mort_pv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vpreterm", table2_preterm[["Extremely"]])
-  
-  cov_mort_bl = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "llbw", table2_lbw[["lLow Birthweight"]])
-  cov_mort_bm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
-  cov_mort_bv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
-  
-  save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path("Data_Verify/RData/cov_mort.RData"))
-}
-
 
 
 ##########################
@@ -542,28 +561,28 @@ tables6_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) *I
                                            m_height + tri5 + fa_resid + wind_exposure
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 tables6_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
-                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                       m_height + tri5 + fa_resid + wind_exposure
-                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                  m_height + tri5 + fa_resid + wind_exposure
+                                                |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables6_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
+                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                            m_height + tri5 + fa_resid + wind_exposure
+                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+tables6_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                 m_height + tri5 + fa_resid + wind_exposure
+                                                 m_height + tri5 + fa_resid+ wind_exposure
                                                |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-tables6_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
-                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                           m_height + tri5 + fa_resid+ wind_exposure
-                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(tables6_preterm, 
@@ -582,56 +601,56 @@ modelsummary::modelsummary(tables6_preterm,
 #low birthweight
 tables6_lbw = list() 
 tables6_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/1000)  +I(pfas/10^3)  + n_sites + 
-                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                   m_height + tri5 + fa_resid + wind_exposure
-                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                       m_height + tri5 + fa_resid + wind_exposure
+                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables6_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
-                                                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                               m_height + tri5 + fa_resid + wind_exposure
-                                                             |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid + wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables6_lbw[["Low"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
-                                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                               m_height + tri5 + fa_resid + wind_exposure
-                                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                       m_height + tri5 + fa_resid + wind_exposure
+                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables6_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
-                                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                         m_height + tri5 + fa_resid + wind_exposure
-                                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                        m_height + tri5 + fa_resid + wind_exposure
+                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables6_lbw[["Extremely"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(dist/1000)  + I(pfas/10^3)  + n_sites + 
-                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                   m_height + tri5 + fa_resid+ wind_exposure
-                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid+ wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 
 modelsummary::modelsummary(tables6_lbw, 
-                                              stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
-                                              fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down" = "Downgradient", 
                                         "updown" = "Upgradient",
                                         "down:I(dist/1000)" = "Downgradient $\times$ Dist", 
                                         "updown:I(dist/1000)" = "Upgradient $\times$ Dist"),
-                                              gof_map = c("nobs", "r.squared"), 
-                                              output = modify_path2("Tables/table_s7_lbw.tex"))
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s7_lbw.tex"))
 
 ##########################
 #####Table S-6 (interaction with PFAS)
@@ -645,14 +664,6 @@ tables7_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) *I
                                            m_height + tri5 + fa_resid + wind_exposure
                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 tables7_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 
-                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                            m_height + tri5 + fa_resid + wind_exposure
-                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-tables7_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 
                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -660,24 +671,32 @@ tables7_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~ 
                                                   m_height + tri5 + fa_resid + wind_exposure
                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-tables7_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+tables7_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 
                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                            m_height + tri5 + fa_resid+ wind_exposure
+                                            m_height + tri5 + fa_resid + wind_exposure
                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+tables7_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                 m_height + tri5 + fa_resid+ wind_exposure
+                                               |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(tables7_preterm, 
-                                              stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
-                                              fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down" = "Downgradient", 
-                                                          "updown" = "Upgradient",
-                                                          "down:I(pfas/10^3)" = "Downgradient PFAS", 
-                                                          "updown:I(pfas/10^3)" = "Upgradient PFAS"),
-                                              gof_map = c("nobs", "r.squared"), 
-                                              output = modify_path2("Tables/table_s6_preterm.tex"))
+                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "down:I(pfas/10^3)" = "Downgradient PFAS", 
+                                        "updown:I(pfas/10^3)" = "Upgradient PFAS"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s6_preterm.tex"))
 
 
 
@@ -685,56 +704,56 @@ modelsummary::modelsummary(tables7_preterm,
 #low birthweight
 tables7_lbw = list() 
 tables7_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(pfas/10^3)  + dist  + n_sites + 
-                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                        m_height + tri5 + fa_resid + wind_exposure
-                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                       m_height + tri5 + fa_resid + wind_exposure
+                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables7_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~   (updown + down) *I(pfas/10^3)  + dist  + n_sites + 
-                                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                                    m_height + tri5 + fa_resid + wind_exposure
-                                                                  |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid + wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables7_lbw[["Low"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~   (updown + down) *I(pfas/10^3)  + dist  + n_sites + 
-                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                    m_height + tri5 + fa_resid + wind_exposure
-                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                       m_height + tri5 + fa_resid + wind_exposure
+                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables7_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~   (updown + down) *I(pfas/10^3)  + dist  + n_sites + 
-                                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                              m_height + tri5 + fa_resid + wind_exposure
-                                                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                        m_height + tri5 + fa_resid + wind_exposure
+                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables7_lbw[["Extremely"]] = fixest::feols(I(bweight < 1000) ~   (updown + down) *I(pfas/10^3)  + dist  + n_sites + 
-                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                        m_height + tri5 + fa_resid+ wind_exposure
-                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                             m_height + tri5 + fa_resid+ wind_exposure
+                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 
 modelsummary::modelsummary(tables7_lbw, 
-                                          stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
-                                          fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down" = "Downgradient", 
                                         "updown" = "Upgradient",
                                         "down:I(pfas/10^3)" = "Downgradient PFAS", 
                                         "updown:I(pfas/10^3)" = "Upgradient PFAS"),
-                                          gof_map = c("nobs", "r.squared"), 
-                                          output = modify_path2("Tables/table_s6_lbw.tex"))
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s6_lbw.tex"))
 
 
 ########################
@@ -744,117 +763,117 @@ modelsummary::modelsummary(tables7_lbw,
 #Preterm
 tables8_preterm = list() 
 tables8_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                   m_height + tri5 + fa_resid + wind_exposure + bweight
-                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                           m_height + tri5 + fa_resid + wind_exposure + bweight
+                                         |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 tables8_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                               m_height + tri5 + fa_resid + wind_exposure+ bweight
-                                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                  m_height + tri5 + fa_resid + wind_exposure+ bweight
+                                                |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables8_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                         m_height + tri5 + fa_resid + wind_exposure+ bweight
-                                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                            m_height + tri5 + fa_resid + wind_exposure+ bweight
+                                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 tables8_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                   m_height + tri5 + fa_resid+ wind_exposure+ bweight
-                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                 m_height + tri5 + fa_resid+ wind_exposure+ bweight
+                                               |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 
 
 modelsummary::modelsummary(tables8_preterm, 
-                                              stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), 
-                                              fmt = modelsummary::fmt_significant(2, scientific = F), 
-                                              coef_map = c("down" = "Downgradient", 
-                                                           "updown" = "Upgradient",
-                                                           "bweight" = "Birthweight", 
-                                                           "gestation" = "Gestational Age"),
-                                              gof_map = c("nobs", "r.squared"), 
-                                              output = modify_path2("Tables/table_s8_preterm.tex"))
-
-#low birthweight
-tables8_lbw = list() 
-tables8_lbw[["Low Birthweight all "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                       m_height + tri5 + fa_resid + wind_exposure + gestation
-                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-tables8_lbw[["Low Birthweight among full term "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                                   m_height + tri5 + fa_resid + wind_exposure+ gestation
-                                                                 |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
-
-
-tables8_lbw[["Low Birthweight "]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                   m_height + tri5 + fa_resid + wind_exposure+ gestation
-                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-tables8_lbw[["Moderately Low Birthweight"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                             m_height + tri5 + fa_resid + wind_exposure+ gestation
-                                                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-tables8_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
-                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                       m_height + tri5 + fa_resid+ wind_exposure+ gestation
-                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-
-
-modelsummary::modelsummary(tables8_lbw, 
-                                          stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
-                                          fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), 
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down" = "Downgradient", 
                                         "updown" = "Upgradient",
                                         "bweight" = "Birthweight", 
                                         "gestation" = "Gestational Age"),
-                                          gof_map = c("nobs", "r.squared"), 
-                                          output = modify_path2("Tables/table_s8_lbw.tex"))
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s8_preterm.tex"))
+
+#low birthweight
+tables8_lbw = list() 
+tables8_lbw[["Low Birthweight all "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                        m_height + tri5 + fa_resid + wind_exposure + gestation
+                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+tables8_lbw[["Low Birthweight among full term "]] = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                                    m_height + tri5 + fa_resid + wind_exposure+ gestation
+                                                                  |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+tables8_lbw[["Low Birthweight "]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                    pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                    m_height + tri5 + fa_resid + wind_exposure+ gestation
+                                                  |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+tables8_lbw[["Moderately Low Birthweight"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                              m_height + tri5 + fa_resid + wind_exposure+ gestation
+                                                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+tables8_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                        m_height + tri5 + fa_resid+ wind_exposure+ gestation
+                                                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+
+modelsummary::modelsummary(tables8_lbw, 
+                           stars = c("*" = 0.2, "**" = 0.10, "***" = 0.02), 
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient",
+                                        "bweight" = "Birthweight", 
+                                        "gestation" = "Gestational Age"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/table_s8_lbw.tex"))
 
 
 
 #######################
 #### Table S-12 (first stage)
-w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                         updown + wind_exposure + domestic + temp + pm25 + med_inc +
                         p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
 
 table_s11 = modelsummary::modelsummary(list(w_reg),
-                           stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
-                           fmt = modelsummary::fmt_significant(2, scientific = F), 
-gof_map = c("nobs", "r.squared"), 
-                           output = modify_path2("Tables/table_s12.tex"))
+                                       stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                       gof_map = c("nobs", "r.squared"), 
+                                       output = modify_path2("Tables/table_s12.tex"))
 
 
 

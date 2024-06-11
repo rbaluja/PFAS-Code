@@ -111,7 +111,7 @@ table1_lbw[["Very Low Birthweight"]]$coefficients["down"]/mean(df$bweight < 1000
 if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
   stop("Bootstrap standard errors")
 }
-load(modify_path("Data_Verify/RData/bootstrap.RData"))
+load(modify_path("Data_Verify/RData/bootstrap_isric.RData"))
 
 #preterm
 table2_preterm = list()
@@ -162,7 +162,7 @@ preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
 lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Slightly"]])
 mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Moderately"]])
 vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Very"]])
-save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd.RData"))
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd_isric.RData"))
 1 - pnorm(table2_preterm[["All"]]$coefficients["pred_pfas"]/preterm_sd)
 1 - pnorm(table2_preterm[["Slightly"]]$coefficients["pred_pfas"]/lpreterm_sd)
 1 - pnorm(table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/mpreterm_sd)
@@ -243,7 +243,7 @@ lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
 llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
 mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
 vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
-save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path("Data_Verify/RData/lbw_sd.RData"))
+save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path("Data_Verify/RData/lbw_sd_isric.RData"))
 
 #marginal effects
 table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
@@ -444,7 +444,7 @@ datasummary_balance(~group,
 
 
 #####################
-### Table S-4 (effects on probability of being stillborn) #need to run bootstrap iv to recalculate the iv standard errors
+### Table S-4 (effects on infant mortality risk) #need to run bootstrap iv to recalculate the iv standard errors
 mort_table = list()
 
 mort_table[["Binary"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 

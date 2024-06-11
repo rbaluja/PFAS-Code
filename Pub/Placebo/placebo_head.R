@@ -1,6 +1,8 @@
 source("PFAS-Code/Pub/config.R")
 set.seed(1)
 wbt_verbose(FALSE)
+drop_states = FALSE
+relaxed_up = FALSE
 
 #data cleaning
 source("PFAS-Code/Pub/Data/data_head.R")
@@ -91,25 +93,34 @@ if (rerun_placebos == TRUE){
   load(modify_path("Data_Verify/RData/placebos_mort.RData") )
 }
 
-#This is the input to table S-6. It counts the number of runs with sig positive coef estimates
+#This is the input to table S-5. It counts the number of runs with sig positive coef estimates
+sink(modify_path2("Tables/falsification.tex"))
 plac$pre_sig = as.numeric(plac$preterm/plac$preterm_se > 1.281552)
-sum(plac$pre_sig)#201 false positives
 plac$vpre_sig = as.numeric(plac$vpreterm/plac$vpreterm_se > 2.326348)
-sum(plac$vpre_sig)#40 false positives at 1%
-
-plac$lbw_sig = as.numeric(plac$lbw/plac$lbw_se > 2.326348) 
-sum(plac$lbw_sig)#91 false positives
+plac$lbw_sig = as.numeric(plac$lbw/plac$lbw_se > 2.326348)
 plac$llbw_sig = as.numeric(plac$llbw/plac$llbw_se > 1.644854)
-sum(plac$llbw_sig)#185 false positives
-plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)#45 false positives
-sum(plac$vlbw_sig)
+plac$vlbw_sig = as.numeric(plac$vlbw/plac$vlbw_se > 2.326348)
 plac$mort_sig = as.numeric(plac$mort/plac$mort_se > 2.326348)
-sum(plac$mort_sig) #32 false positives
 
+print("Preterm")
+sum(plac$pre_sig)/1000
+print("Very Preterm")
+sum(plac$vpre_sig)/1000
+print("Low Birthweight")
+sum(plac$lbw_sig)/1000
+print("Moderately Low Birthweight")
+sum(plac$llbw_sig)/1000
+print("Extremely Low Birthweight")
+sum(plac$vlbw_sig)/1000
+print("Infant Mortality")
+sum(plac$mort_sig)/1000
+print("All Sig. Health Outcomes")
 sum(as.numeric(plac$preterm/plac$preterm_se > 1.281552 & 
                  plac$vpreterm/plac$vpreterm_se > 2.326348 & 
                  plac$lbw/plac$lbw_se > 2.326348 & 
                  plac$llbw/plac$llbw_se > 1.644854 & 
                  plac$vlbw/plac$vlbw_se > 2.326348 & 
-                 plac$mort/plac$mort_se > 2.326348)) # 1 of the 1000 had the same significance (or greater) on all of our significant effects
+                 plac$mort/plac$mort_se > 2.326348))/1000
+
+sink()
 

@@ -8,7 +8,7 @@ source("PFAS-Code/Pub/Main Analysis/watershed_functions.R")
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             rgdal, units, tidycensus, ggpattern, forcats)
+             rgdal, units, tidycensus, ggpattern, forcats, rayshader)
 options("modelsummary_format_numeric_latex" = "plain")
 config_modelsummary(factory_latex = "kableExtra")
 options(tigris_use_cache = TRUE)
@@ -16,7 +16,7 @@ options(tigris_use_cache = TRUE)
 
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
-n_cores = 1
+n_cores = 3
 code_verify = TRUE
 
 #preliminaries environment
@@ -30,7 +30,6 @@ meters = 5000 #buffer for base spec
 wind_dist= dist_allow = 10000 #wind distance cutoff
 ppt = 1000 #cutoff for primary contamination site
 run_cleaning = FALSE #clean natality data?
-match_wells = FALSE #Re match natality data to wells?
 drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
@@ -55,4 +54,4 @@ nyc = F
 longisland = F
 rerun_weather = F
 rerun_pollution = F
-rerun_birthdata = F
+rerun_birthdata = T

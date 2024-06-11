@@ -55,7 +55,7 @@ boot_err = function(i, df, fs_cont){
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
   
-  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                           updown + wind_exposure + domestic + temp + pm25 + med_inc +
                           p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont_bs) 
   
@@ -177,7 +177,7 @@ boot_err = function(i, df, fs_cont){
   return(boot_coefs)
 }
 boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = n_cores))
-save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap.RData")) 
+save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_isric.RData")) 
 
 
 #quantiles bootstrap
@@ -197,7 +197,7 @@ boot_err_quant = function(i, df, fs_cont){
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
   
-  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                           updown + wind_exposure + domestic + temp + pm25 + med_inc +
                           p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont_bs) 
   
@@ -342,4 +342,4 @@ boot_err_quant = function(i, df, fs_cont){
   return(boot_coefs)
 }
 boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_quant, df, fs_cont, cl = n_cores))
-save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant.RData")) 
+save(boot_coefs, file = modify_path("Data_Verify/RData/bootstrap_quant_isric.RData")) 

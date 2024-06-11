@@ -1,4 +1,7 @@
 source("PFAS-Code/Pub/config.R")
+drop_states = FALSE
+relaxed_up = FALSE
+
 source("PFAS-Code/Pub/Data/data_head.R")
 
 source("PFAS-Code/Pub/Main Analysis/binary.R")
@@ -19,7 +22,7 @@ boot_err = function(i, df, fs_cont){
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
   
-  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                           updown + wind_exposure + domestic + temp + pm25 + med_inc +
                           p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont_bs) 
   
@@ -42,12 +45,12 @@ boot_err = function(i, df, fs_cont){
                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
   lpreterm = fixest::feols(I(gestation < 37 & gestation >= 32) ~ pred_pfas + asinh(pfas) + 
-                                       n_sites + wind_exposure + 
-                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                       m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                             n_sites + wind_exposure + 
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
   mpreterm = fixest::feols(I(gestation < 32 & gestation >= 28) ~ pred_pfas + asinh(pfas) + 
                              n_sites + wind_exposure + 
@@ -74,20 +77,20 @@ boot_err = function(i, df, fs_cont){
                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
   llbw = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ pred_pfas + asinh(pfas) + 
-                        n_sites + wind_exposure + 
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                         n_sites + wind_exposure + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
   mlbw = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ pred_pfas + asinh(pfas) + 
-                        n_sites + wind_exposure + 
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+                         n_sites + wind_exposure + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
   
   vlbw = fixest::feols(I(bweight < 1000) ~ pred_pfas + asinh(pfas) + 
                          n_sites + wind_exposure + 
@@ -161,7 +164,7 @@ boot_err_quant = function(i, df, fs_cont){
   
   fs_cont_bs = fs_cont[sample(nrow(fs_cont), size = n_boot_cont, replace = TRUE), ]
   
-  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+  w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                           updown + wind_exposure + domestic + temp + pm25 + med_inc +
                           p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont_bs) 
   
@@ -191,12 +194,12 @@ boot_err_quant = function(i, df, fs_cont){
                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county" )
   
   lpreterm = fixest::feols(I(gestation < 37 & gestation >= 32) ~ as.factor(quant_pfas) + asinh(pfas) + 
-                            n_sites + wind_exposure + 
-                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                            m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county" )
+                             n_sites + wind_exposure + 
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county" )
   
   mpreterm = fixest::feols(I(gestation < 32 & gestation >= 28) ~ as.factor(quant_pfas) + asinh(pfas) + 
                              n_sites + wind_exposure + 
@@ -223,12 +226,12 @@ boot_err_quant = function(i, df, fs_cont){
                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
   
   llbw = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  as.factor(quant_pfas) + asinh(pfas) + 
-                        n_sites + wind_exposure + 
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
+                         n_sites + wind_exposure + 
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df_nn, cluster = "county")
   
   
   mlbw = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  as.factor(quant_pfas) + asinh(pfas) + 

@@ -236,6 +236,21 @@ fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
 
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc", cl = n_cores))
 
+#clay content
+clay = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_clay.tif"))
+fs_clay = exactextractr::exact_extract(clay, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_clay, fs_cont, "clay", cl = n_cores))
+
+#sand content
+sand = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_sand.tif"))
+fs_sand = exactextractr::exact_extract(sand, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sand, fs_cont, "sand", cl = n_cores))
+
+#silt content
+silt = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_silt.tif"))
+fs_silt = exactextractr::exact_extract(silt, fs_cont_fa)
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_silt, fs_cont, "silt", cl = n_cores))
+
 
 ###############
 ###run regressions
@@ -250,7 +265,7 @@ w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = T
                         updown + wind_exposure + domestic + temp + pm25 + med_inc +
                         p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
 
-w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                         updown, data = fs_cont) 
 
 w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
@@ -274,7 +289,20 @@ wells_awc = exactextractr::exact_extract(sp, wells_fa)
 
 wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc", cl = n_cores))
 
-df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc)) 
+#clay content
+wells_clay = exactextractr::exact_extract(clay, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_clay, wells, "clay", cl = n_cores))
+
+#sand content
+wells_sand = exactextractr::exact_extract(sand, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_sand, wells, "sand", cl = n_cores))
+
+#silt content
+wells_silt = exactextractr::exact_extract(silt, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_silt, wells, "silt", cl = n_cores))
+
+df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc, clay, sand, silt)) 
+
 
 
 #impute predicted pfas from w_reg
