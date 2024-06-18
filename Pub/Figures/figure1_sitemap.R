@@ -96,5 +96,5 @@ d = cowplot::ggdraw() +
 
 site_map = cowplot::plot_grid(d, l, ncol = 1, rel_heights = c(1, 0.1))
 
-ggsave(modify_path3("Figures/Figure1/site_map.png"), site_map)
+ggsave(modify_path3("Figures/Figure1/site_map.svg"), site_map)
 

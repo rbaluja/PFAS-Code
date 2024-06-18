@@ -213,10 +213,10 @@ r_coefs$sev = factor(r_coefs$sev, levels = c("Infant Mortality", "Any", "Moderat
 #with jitter
 r_coefs$sev_num = as.numeric(as.factor(r_coefs$sev))
 r_coefs_jittered1 = r_coefs[r_coefs$b_outcome == "Preterm", ]
-r_coefs_jittered1$sev_num = r_coefs_jittered1$sev_num - 0.2  # Shift left
+r_coefs_jittered1$sev_num = r_coefs_jittered1$sev_num - 0.23  # Shift left
 
 r_coefs_jittered2 = r_coefs[r_coefs$b_outcome == "Low Birthweight", ]
-r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.2  # Shift right
+r_coefs_jittered2$sev_num = r_coefs_jittered2$sev_num + 0.23  # Shift right
 
 r_coefs_mort = r_coefs[r_coefs$b_outcome == "Infant Mortality", ]
 
@@ -227,14 +227,14 @@ r_coefs_mort$b_outcome_legend = factor(r_coefs_mort$b_outcome, levels = c("Prete
 
 iv_fig =  ggplot() +
   geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
-  geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
+  geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
   geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
-  geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.075, size = 2) +
+  geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
   geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
-  geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.075, size = 2) + 
+  geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.1, size = 3) + 
   scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
   scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
-  labs(x = "", y = "Effect on Reproductive Outcomes (%↑ from +100 ppt PFAS)", color = "") +
+  labs(x = "", y = "Effect on Reproductive Outcomes\n(%↑ from +100 ppt PFAS)", color = "") +
   theme_minimal() +
   theme(axis.text = element_text(size = 50), 
         axis.title = element_text(size = 52), 
@@ -256,41 +256,41 @@ iv_fig = iv_fig +
                                           label = ifelse(p_value_s == "<0.001", 
                                                          paste0("p ", p_value_s),
                                                          paste0("p = ", p_value_s)), 
-                                          vjust = -1), size = 10) +
+                                          vjust = -1.5), size = 12) +
   geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, 
                                           label = ifelse(p_value_s == "<0.001", 
                                                          paste0("p ", p_value_s),
                                                          paste0("p = ", p_value_s)), 
-                                          vjust = -1), size = 10)+ 
+                                          vjust = -1.5), size = 12)+ 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
                                      label = ifelse(p_value_s == "<0.001", 
                                                     paste0("p ", p_value_s),
                                                     paste0("p = ", p_value_s)), 
-                                     vjust = -1), size = 10)
+                                     vjust = -1.5), size = 12)
 
 #add effect size label
 iv_fig = iv_fig + 
   geom_text(data = r_coefs_jittered1, aes(x = sev_num, y = upper_es, 
                                           label = format(round(effect_size, 2), nsmall = 2), 
-                                          vjust = -4), size = 12) +
+                                          vjust = -4), size = 16) +
   geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, 
                                           label = format(round(effect_size, 2), nsmall = 2), 
-                                          vjust = -4), size = 12)+ 
+                                          vjust = -4), size = 16)+ 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
                                      label = format(round(effect_size, 2), nsmall = 2), 
-                                     vjust = -4), size = 12)
+                                     vjust = -4), size = 16)
 
 #add se label
 iv_fig + 
   geom_text(data = r_coefs_jittered1, aes(x = sev_num, y = upper_es, 
                                           label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
-                                          vjust = -3), size = 10) +
+                                          vjust = -3), size = 14) +
   geom_text(data = r_coefs_jittered2, aes(x = sev_num, y = upper_es, 
                                           label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
-                                          vjust = -3), size = 10) + 
+                                          vjust = -3), size = 14) + 
   geom_text(data = r_coefs_mort, aes(x = sev_num, y = upper_es, 
                                      label = paste0("(", format(round(es_se, 2), nsmall = 2), ")"), 
-                                     vjust = -3), size = 10)
+                                     vjust = -3), size = 14)
 
 
 ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")

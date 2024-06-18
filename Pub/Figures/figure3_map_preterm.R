@@ -75,37 +75,37 @@ states$y_lab = 0
 
 #Above CA
 states[states$STUSPS == "CA", ]$x_lab = 0.8 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmin + 0.2 * st_bbox(states[states$STUSPS == "CA", ]$geometry)$xmax
-states[states$STUSPS == "CA", ]$y_lab = st_bbox(states[states$STUSPS == "CA", ]$geometry)$ymax + 50000
+states[states$STUSPS == "CA", ]$y_lab = st_bbox(states[states$STUSPS == "CA", ]$geometry)$ymax + 60000
 #Above CO
-states[states$STUSPS == "CO", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmax
-states[states$STUSPS == "CO", ]$y_lab = st_bbox(states[states$STUSPS == "CO", ]$geometry)$ymax + 50000
+states[states$STUSPS == "CO", ]$x_lab = 0.65 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmin + 0.35 * st_bbox(states[states$STUSPS == "CO", ]$geometry)$xmax
+states[states$STUSPS == "CO", ]$y_lab = st_bbox(states[states$STUSPS == "CO", ]$geometry)$ymax + 60000
 #Above ND
-states[states$STUSPS == "ND", ]$x_lab = 0.75 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmin + 0.25 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmax
-states[states$STUSPS == "ND", ]$y_lab = st_bbox(states[states$STUSPS == "ND", ]$geometry)$ymax +50000
+states[states$STUSPS == "ND", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "ND", ]$geometry)$xmax
+states[states$STUSPS == "ND", ]$y_lab = st_bbox(states[states$STUSPS == "ND", ]$geometry)$ymax +60000
 #Above MN
-states[states$STUSPS == "MN", ]$x_lab = 0.35 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmin + 0.65 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmax
-states[states$STUSPS == "MN", ]$y_lab = st_bbox(states[states$STUSPS == "MN", ]$geometry)$ymax - 50000
+states[states$STUSPS == "MN", ]$x_lab = 0.6 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmin + 0.4 * st_bbox(states[states$STUSPS == "MN", ]$geometry)$xmax
+states[states$STUSPS == "MN", ]$y_lab = st_bbox(states[states$STUSPS == "MN", ]$geometry)$ymin - 60000
 #Inside WI
-states[states$STUSPS == "WI", ]$x_lab = 0.45 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmin + 0.55 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmax
-states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymin - 80000
+states[states$STUSPS == "WI", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "WI", ]$geometry)$xmax
+states[states$STUSPS == "WI", ]$y_lab = st_bbox(states[states$STUSPS == "WI", ]$geometry)$ymin - 60000
 #Inside MI
-states[states$STUSPS == "MI", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmax
-states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymax + 30000
+states[states$STUSPS == "MI", ]$x_lab = 0.35 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmin + 0.65 * st_bbox(states[states$STUSPS == "MI", ]$geometry)$xmax
+states[states$STUSPS == "MI", ]$y_lab = st_bbox(states[states$STUSPS == "MI", ]$geometry)$ymin - 60000
 #Inside NY
-states[states$STUSPS == "NY", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmax
+states[states$STUSPS == "NY", ]$x_lab = 0.75 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmin + 0.25 * st_bbox(states[states$STUSPS == "NY", ]$geometry)$xmax
 states[states$STUSPS == "NY", ]$y_lab = st_bbox(states[states$STUSPS == "NY", ]$geometry)$ymin + 150000
 #Above VT
-states[states$STUSPS == "VT", ]$x_lab = 0.95 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0.05 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
-states[states$STUSPS == "VT", ]$y_lab = st_bbox(states[states$STUSPS == "VT", ]$geometry)$ymax + 50000
+states[states$STUSPS == "VT", ]$x_lab = 1.005 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmin + 0 * st_bbox(states[states$STUSPS == "VT", ]$geometry)$xmax
+states[states$STUSPS == "VT", ]$y_lab = st_bbox(states[states$STUSPS == "VT", ]$geometry)$ymax + 60000
 #Below NH
-states[states$STUSPS == "NH", ]$x_lab = 0.4 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.6 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
-states[states$STUSPS == "NH", ]$y_lab = st_bbox(states[states$STUSPS == "NH", ]$geometry)$ymin - 50000
+states[states$STUSPS == "NH", ]$x_lab = 0.1 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmin + 0.9 * st_bbox(states[states$STUSPS == "NH", ]$geometry)$xmax
+states[states$STUSPS == "NH", ]$y_lab = st_bbox(states[states$STUSPS == "NH", ]$geometry)$ymin - 60000
 #Inside ME
 states[states$STUSPS == "ME", ]$x_lab = 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmin + 0.5 * st_bbox(states[states$STUSPS == "ME", ]$geometry)$xmax
-states[states$STUSPS == "ME", ]$y_lab = st_bbox(states[states$STUSPS == "ME", ]$geometry)$ymax + 75000
+states[states$STUSPS == "ME", ]$y_lab = st_bbox(states[states$STUSPS == "ME", ]$geometry)$ymax + 65000
 #Above FL
 states[states$STUSPS == "FL", ]$x_lab = 0.7 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmin + 0.3 * st_bbox(states[states$STUSPS == "FL", ]$geometry)$xmax
-states[states$STUSPS == "FL", ]$y_lab = st_bbox(states[states$STUSPS == "FL", ]$geometry)$ymax+ 50000
+states[states$STUSPS == "FL", ]$y_lab = st_bbox(states[states$STUSPS == "FL", ]$geometry)$ymax+ 60000
 
 
 s_lab = states %>% as_tibble() %>% 
@@ -144,5 +144,5 @@ cost_map = ggplot() +
         legend.box.margin = margin(2, 2, 2, 2, "cm"),
         legend.key.height = unit(2, "cm"),
         legend.key.width = unit(2, "cm")) +
-  geom_sf_text(data = s_lab, aes(label = l), size = 14)
+  geom_sf_text(data = s_lab, aes(label = l), size = 18)
 ggsave(modify_path3("Figures/Figure3/costs_map_premort.png"), cost_map,  width = 9166, height = 5875, units = "px", device = "png", limitsize = FALSE)

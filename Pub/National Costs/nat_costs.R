@@ -168,9 +168,9 @@ p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
         axis.title.y = element_blank(), 
-        legend.text = element_text(size = 60), 
-        axis.text.x = element_text(size = 60),
-        plot.title = element_text(hjust = 0.5, size = 70), 
+        legend.text = element_text(size = 80), 
+        axis.text.x = element_text(size = 80),
+        plot.title = element_text(hjust = 0.5, size = 85), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         axis.text.y = element_blank()) +
@@ -233,13 +233,13 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
         legend.title = element_blank(),
         axis.title = element_blank(),
         axis.text.y = element_blank(),
-        legend.text = element_text(size = 60),
-        axis.text.x = element_text(size = 60),
-        plot.title = element_text(hjust = 0.5, size = 70), 
+        legend.text = element_text(size = 80),
+        axis.text.x = element_text(size = 80),
+        plot.title = element_text(hjust = 0.5, size = 85), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25),
-        axis.text.y.right = element_text(size = 60), 
-        axis.title.y.right = element_text(size = 60),
+        axis.text.y.right = element_text(size = 75), 
+        axis.title.y.right = element_text(size = 85),
         legend.spacing.x = unit(1.5, 'cm')) + 
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
@@ -247,13 +247,13 @@ lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Moderately" | Axis !=
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 100),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=18)
+                                size=20)
 
 lbw_cost = lbw_cost + geom_text(aes(label=se, 
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) +40),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=16)
+                                size=18)
 
 
 #Infant Mortality
@@ -297,11 +297,11 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   theme(legend.position = "bottom", 
         legend.title = element_blank(), 
         axis.title.x = element_blank(), 
-        axis.title.y = element_text(size = 60), 
-        axis.text.y = element_text(size = 60), 
-        legend.text = element_text(size = 60), 
+        axis.title.y = element_text(size = 85), 
+        axis.text.y = element_text(size = 75), 
+        legend.text = element_text(size = 80), 
         axis.text.x = element_blank(),
-        plot.title = element_text(hjust = 0.5, size = 70), 
+        plot.title = element_text(hjust = 0.5, size = 85), 
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         axis.text.y.right = element_blank()) + 
@@ -311,13 +311,13 @@ mort_cost_fig = mort_cost_fig + geom_text(aes(label=round(Value, digits=2),
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 100),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=18)
+                                size=20)
 
 mort_cost_fig = mort_cost_fig + geom_text(aes(label=se, 
                                     y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) +40),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
-                                size=16)
+                                size=18)
 
 
 

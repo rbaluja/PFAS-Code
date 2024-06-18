@@ -79,9 +79,9 @@ cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
     legend.position = "bottom",
     legend.key.size = unit(4, "lines"),
     legend.title = element_blank(),
-    axis.title = element_text(size = 60),
-    legend.text = element_text(size = 60),
-    axis.text = element_text(size = 50),
+    axis.title = element_text(size = 80),
+    legend.text = element_text(size = 80),
+    axis.text = element_text(size = 70),
     plot.title = element_text(hjust = 0.5, size = 80), 
     panel.grid.major = element_line(color = "grey60", size = 0.5),
     panel.grid.minor = element_line(color = "grey60", size = 0.25),
@@ -93,10 +93,10 @@ cost_hist +
   geom_text(aes(label = costs, y = costs + 0.6), 
             position = position_dodge(width = 0.9), 
             vjust = -0.25,
-            size = 16) +
+            size = 22) +
   geom_text(aes(label = se, y = costs + 0.2), 
             position = position_dodge(width = 0.9), 
             vjust = -0.25,
-            size = 14)
+            size = 20)
 
 ggsave(modify_path3("Figures/Figure3/full_cost.png"), width = 10358, height = 6133, units = "px", limitsize = FALSE)
