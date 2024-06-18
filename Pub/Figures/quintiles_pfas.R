@@ -272,7 +272,7 @@ labels = as.character(breaks)
 
 pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=pre_low , ymax=pre_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=pre_low , ymax=pre_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = pre_high, label = pre_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -294,7 +294,7 @@ pr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=pre_coef)) +
 
 lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=lpre_low , max=lpre_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=lpre_low , max=lpre_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lpre_high, label = lpre_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -316,7 +316,7 @@ lpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lpre_coef)) +
 
 mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=mpre_low , max=mpre_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=mpre_low , max=mpre_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mpre_high, label = mpre_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -338,7 +338,7 @@ mpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mpre_coef)) +
 
 vpr_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vpre_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=vpre_low , ymax=vpre_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=vpre_low , ymax=vpre_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vpre_high, label = vpre_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -364,7 +364,7 @@ pfas_hist = ggplot(df_nn, aes(x=pred_pfas_level)) +
 
 lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=lbw_low, ymax=lbw_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=lbw_low, ymax=lbw_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = lbw_high, label = lbw_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -385,7 +385,7 @@ lbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=lbw_coef)) +
 
 llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=llbw_low, ymax=llbw_high), width=0.3, alpha = 0.5) +
+  geom_errorbar(aes(ymin=llbw_low, ymax=llbw_high), width=0.2, alpha = 0.5) +
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = llbw_high, label = llbw_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -406,7 +406,7 @@ llbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=llbw_coef)) +
 
 mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=mlbw_low, ymax=mlbw_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=mlbw_low, ymax=mlbw_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mlbw_high, label = mlbw_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -427,7 +427,7 @@ mlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mlbw_coef)) +
 
 vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=vlbw_low, ymax=vlbw_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=vlbw_low, ymax=vlbw_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = vlbw_high, label = vlbw_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
@@ -438,7 +438,7 @@ vlbw_pfas_fig = ggplot(reg_data, aes(x=quantile, y=vlbw_coef)) +
 
 mort_pfas_fig = ggplot(reg_data, aes(x=quantile, y=mort_coef)) +
   geom_point(size=2) + 
-  geom_errorbar(aes(ymin=mort_low, ymax=mort_high), width=0.3, alpha = 0.5) + 
+  geom_errorbar(aes(ymin=mort_low, ymax=mort_high), width=0.2, alpha = 0.5) + 
   geom_text(data = filter(reg_data, !is.na(pre_p)), aes(x = quantile, y = mort_high, label = mort_p), nudge_y = 0.01, size = 10) +
   geom_hline(yintercept = 0, color = "black", alpha = 0.6) +  
   theme_minimal() + 
