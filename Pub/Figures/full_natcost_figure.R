@@ -100,3 +100,5 @@ cost_hist +
             size = 20)
 
 ggsave(modify_path3("Figures/Figure3/full_cost.png"), width = 10358, height = 6133, units = "px", limitsize = FALSE)
+
+fwrite(cost_d, modify_path3("Figures/Data/fig3d_data.csv"))

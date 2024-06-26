@@ -111,12 +111,14 @@ data$up = data$Upgradient
 data$d_lower = data$down - 1.96 * data$StdError
 data$d_upper = data$down + 1.96 * data$StdError
 data$pval_label = sprintf("%.5f", data$pval)
+data$health_outcome = "infant mortality"
 
 mort_f2 = figure2_still_fun(data, "Infant Mortality", TRUE, TRUE, "Infant Mortality", FALSE)
 mort_f2 = mort_f2 + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
 
 
 ggsave(modify_path3("Figures/figure2_mort.png"), mort_f2, width = 10000, height = 3500, units = "px", limitsize = F)
+fwrite(data, modify_path3("Figures/Data/figure2_mortality.csv"))
 
 
 #upgradient

@@ -144,4 +144,13 @@ cost_map = ggplot() +
         legend.key.height = unit(2, "cm"),
         legend.key.width = unit(2, "cm")) +
   geom_sf_text(data = s_lab, aes(label = l), size = 18)
+
 ggsave(modify_path3("Figures/Figure3/costs_map.png"), cost_map,  width = 9166, height = 5875, units = "px", device = "png", limitsize = FALSE)
+
+fwrite(cs %>% 
+         as_tibble() %>% 
+         dplyr::select(state = NAME, 
+                      add_ext_lbw = add_vlbw, 
+                      add_very_lbw = add_mlbw, 
+                      cost), 
+       modify_path3("Figures/Data/fig3c_data.csv"))

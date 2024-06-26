@@ -126,7 +126,7 @@ mort_cost_se = (mort_births_se * mort_pc)/10^9
 
 
 #social cost figure
-data = data.frame(
+data_pre = data.frame(
   Weeks = factor(rep(c("Moderately", "Very", "Extremely"), 2), 
                  levels = c("Moderately", "Very", "Extremely")),
   Value = c(round(lpre_births), round(mpre_births), round(vpre_births), round(lpre_cost, digits = 2), round(mpre_cost, digits = 2), round(vpre_cost, digits = 2)), 
@@ -140,13 +140,13 @@ data = data.frame(
 # Scaling factor for right axis values
 scale_factor = 2000/4
 
-data$Axis = factor(data$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
-data$Weeks = factor(data$Weeks, 
+data_pre$Axis = factor(data_pre$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
+data_pre$Weeks = factor(data_pre$Weeks, 
                     levels = c("Moderately", "Very", "Extremely"),
                     labels = c("Moderately", "Very", "Extremely"))
 
 
-p_costs = ggplot(data, aes(x=Weeks, y=Value, fill=Axis)) +
+p_costs = ggplot(data_pre, aes(x=Weeks, y=Value, fill=Axis)) +
   geom_bar_pattern( 
     stat="identity", 
     position=position_dodge(), 
@@ -331,3 +331,5 @@ figure_3 = (mort_cost_fig | p_costs | lbw_cost) + plot_layout(widths = c(1, 3, 3
 
 ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 12000, height = 9541, units = "px", device = "png", limitsize = FALSE)
 
+nat_costs_data = rbind(data_pre, data_bw, data_mort)
+fwrite(nat_costs_data, modify_path3("Figures/Data/fig3b_data.csv"))

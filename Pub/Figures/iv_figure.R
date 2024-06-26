@@ -295,3 +295,5 @@ iv_fig +
 
 ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")
 
+
+fwrite(r_coefs, modify_path3("Figures/Data/fig3a_data.csv"))
