@@ -16,7 +16,7 @@ options(tigris_use_cache = TRUE)
 
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
-n_cores = 3
+n_cores = 1
 code_verify = TRUE
 
 #preliminaries environment
@@ -33,6 +33,7 @@ run_cleaning = FALSE #clean natality data?
 drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
+oster_factor = 1.3 #base for Oster calcs
 
 #national environment
 nat_run_cont_ws = FALSE#recreate national watershed shapes?
