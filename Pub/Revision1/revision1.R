@@ -49,22 +49,22 @@ r1_preterm = list()
 r1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~ m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                           m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                          m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F)
+                                          m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                                  m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                 m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F)
+                                                 m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                            m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                           m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F)
+                                           m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                                 m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                                m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F)
+                                                m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(r1_preterm, 
@@ -95,7 +95,7 @@ r1_preterm = list()
 r1_preterm[["Downgradient"]] = fixest::feols(down ~ m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                       m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F)
+                                      m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(r1_preterm, 
@@ -173,7 +173,7 @@ modelsummary::modelsummary(r1_preterm_all,
 mort1 = fixest::feols(death ~  m_age + college + no_hs + m_married  + cig + 
                                 white + wic + private_insurance + m_months_res + young + old +
                                 n_prenatal + mr_04 + mr_18 + mr_08 + mr_21 + mr_23 + mr_10 +
-                                med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F)
+                                med_hprice + med_inc|county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 modelsummary::modelsummary(list(mort1), 
                            stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), #gives one sided test stars, when it has right sign
@@ -239,31 +239,31 @@ r1_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~ m_age + m_married  + private
                                       m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                       m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-, data = df2, warn = F, notes = F)
+, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_lbw[["Full Term"]] = fixest::feols(I(bweight < 2500) ~ m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                   m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                   m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-, data = df2[which(df2$gestation >= 37), ], warn = F, notes = F)
+, data = df2[which(df2$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_lbw[["Moderately"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                              m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                              m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-, data = df2, warn = F, notes = F)
+, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                        m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                        m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-, data = df2, warn = F, notes = F)
+, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 r1_lbw[["Extremely"]] = fixest::feols(I(bweight < 1000) ~  m_age + m_married  + private_insurance  + nbr_cgrtt  + 
                                             m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                             m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-, data = df2, warn = F, notes = F)
+, data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(r1_lbw, 
@@ -1183,14 +1183,13 @@ table1_preterm[["Extremely"]] = glm(epreterm ~  updown + down +  I(pfas/10^3) + 
                                        m_height + tri5 +fa_resid + wind_exposure + 
                                        factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
 
-c1 = coeftest(table1_preterm[["All"]], vcov. = vcovCL(table1_preterm[["All"]], cluster = ~ df$site + df$ym, type = "HC0"))
 
 modelsummary::modelsummary(table1_preterm, 
                            stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
                            fmt = modelsummary::fmt_significant(2, scientific = F), 
                            coef_map = c("down" = "Downgradient", 
                                         "updown" = "Upgradient"),
-                           gof_map = c("nobs", "r.squared"), 
+                           gof_map = c("nobs", "r2.tjur"), 
                            output = modify_path2("Tables/Revisions/preterm_logit.tex"), 
                            vcov = list(vcovCL(table1_preterm[["All"]], cluster = ~ df$site + df$ym, type = "HC0"), 
                                        vcovCL(table1_preterm[["Moderately"]], cluster = ~ df$site + df$ym, type = "HC0"),
