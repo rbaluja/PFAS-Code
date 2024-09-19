@@ -246,6 +246,26 @@ for (thresh in seq(from = 0, to = 2000, by = 100)){
   
   index = index + 1
 }
-
-save(n_births, file = "Data Revisions/RData/n_births_thresh.RData")
+fwrite(n_births, "Data Revisions/n_births_thresh.csv")
 save(reg_data, file = "Data Revisions/RData/reg_data_thresh.RData")
+
+
+#save these to a latex table
+#transpose n_births, so that the last column is now the first row
+n_births1 = n_births %>% 
+  dplyr::filter(threshold %in% seq(from = 100, to = 1000, by = 100))
+
+n_births1 = t(n_births1)
+#shift all rows down 1, put the last row in the first row
+n_births1 = rbind(n_births1[nrow(n_births1), ], n_births1[-nrow(n_births1), ])
+rownames(n_births1) = c("Threshold", "N Down of 1", "N Up of 1", "Est Sample", "N Down $>$ 1", "N Up $>$ 1")
+
+n_births1_df = as.data.frame(n_births1)
+
+# Convert the data frame to an xtable object
+n_births1_xtable = xtable::xtable(n_births1_df)
+
+# Save the LaTeX table to a file
+fileConn = file(modify_path2("Tables/Revisions/n_births_thresh_s.tex"))
+print(n_births1_xtable, file = fileConn)
+close(fileConn)

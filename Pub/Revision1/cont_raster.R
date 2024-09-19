@@ -1,3 +1,7 @@
+source("PFAS-Code/Pub/config.R")
+source("PFAS-Code/Pub/Data/pfas_lab_sites.R")
+source("PFAS-Code/Pub/Data/wind.R")
+
 dem = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"))
 z_raster = terra::init(dem, fun=0)
 
@@ -111,6 +115,12 @@ down_well_dist = function(w){
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
+#read in and set cont site watersheds 
+load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
+#read in sites_ll to get right site number
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
+cont_ws = cont_ws %>% 
+  left_join(rs_ll)
 up_wells = st_intersection(ll %>% 
                              st_as_sf(coords = c("x", "y"), crs = 4326) %>% 
                              st_transform(3437), 

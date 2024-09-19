@@ -28,7 +28,7 @@ cont_sites_bufff = cont_sites %>%
 nh_map_data = map_data("state", region = "new hampshire")
 
 #get raster of predicted levels
-source("PFAS-Code/PR/Figures/Grid Contamination/cont_raster.R")
+source("PFAS-Code/Pub/Revision1/cont_raster.R")
 
 # Create the NH map plot
 nh_map_plot = ggplot() +
@@ -54,11 +54,11 @@ figure1_sites =
   scale_fill_gradientn(colors = c("transparent", "yellow", "red"),
                        values = scales::rescale(c(0, 0.01, 1)),
                        guide = guide_colorbar(barwidth = 50, barheight = 1,
-                                               title = "Predicted PFAS (ppt)",
-                                               title.position = "top",
-                                               title.hjust = 0.5,
-                                               label.hjust = .5,
-                                               label.position = "bottom"),
+                                              title = "Predicted PFAS (ppt)",
+                                              title.position = "top",
+                                              title.hjust = 0.5,
+                                              label.hjust = .5,
+                                              label.position = "bottom"),
                        breaks = c(0.0, 50, 100, 150),
                        labels = c("0", "50", "100", expression("\u2265 150"))) +
   theme_void() + 

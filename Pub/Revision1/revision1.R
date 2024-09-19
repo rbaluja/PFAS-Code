@@ -382,9 +382,9 @@ datasummary_balance(~group,
 
 
 #Oster with a maximal R2 of 2*empirical R2
-oster_factor = 2
+oster_factor = 5
 source("PFAS-Code/Pub/Robustness/oster_selection.R")
-sink(modify_path2("Tables/Revisions/oster2.tex"))
+sink(modify_path2("Tables/Revisions/oster5.tex"))
 print("Mortality")
 print(as.numeric(d_mort))
 print("Preterm")
@@ -1276,3 +1276,162 @@ modelsummary::modelsummary(list(mort4),
                            gof_map = c("nobs", "r.squared"), 
                            output = modify_path2("Tables/Revisions/mort_logit.tex"),
                            vcov = list(vcovCL(mort4, cluster = ~ df$site + df$ym, type = "HC0"))) 
+
+
+
+
+
+
+
+
+
+#table with predicted pfas stats for the downgradient, upgradient, and side homes
+# pred_pfas_stats = function(data) {
+#   stats = data %>%
+#     summarise(
+#       Mean = mean(pred_pfas, na.rm = TRUE),
+#       StdDev = sd(pred_pfas, na.rm = TRUE),
+#       Quantile_25 = quantile(pred_pfas, 0.25, na.rm = TRUE),
+#       Quantile_50 = quantile(pred_pfas, 0.50, na.rm = TRUE),
+#       Quantile_75 = quantile(pred_pfas, 0.75, na.rm = TRUE),
+#       Quantile_90 = quantile(pred_pfas, 0.90, na.rm = TRUE)
+#     )
+#   return(stats)
+# }
+# 
+# # Calculate stats for each group
+df2 = df[which(!is.na(df$dist) & df$dist <= meters), ]
+df2 = df2 %>%
+  dplyr::filter(!is.na(gestation) &
+                  !is.na(m_age) &
+                  !is.na(m_married) &
+                  !is.na(private_insurance) &
+                  !is.na(nbr_cgrtt) &
+                  !is.na(m_educ) &
+                  !is.na(f_educ) &
+                  !is.na(pm25) &
+                  !is.na(temp) &
+                  !is.na(p_manuf) &
+                  !is.na(n_hunits) &
+                  !is.na(med_hprice) &
+                  !is.na(well_elev) &
+                  !is.na(resid_elev) &
+                  !is.na(mr_04) &
+                  !is.na(mr_18) &
+                  !is.na(mr_21) &
+                  !is.na(mr_26) &
+                  !is.na(mr_27) &
+                  !is.na(mthr_wgt_dlv) &
+                  !is.na(mthr_pre_preg_wgt) &
+                  !is.na(m_height) &
+                  !is.na(tri5) &
+                  !is.na(county) &
+                  !is.na(year) &
+                  !is.na(month) &
+                  !is.na(birth_race_dsc_1) &
+                  !is.na(wic))
+df2$group = ifelse(df2$down == 1, "down",
+                  ifelse(df2$up == 1, "up", "side"))
+# 
+# down_stats = pred_pfas_stats(df2 %>% filter(group == "down"))
+# up_stats = pred_pfas_stats(df2 %>% filter(group == "up"))
+# side_stats = pred_pfas_stats(df2 %>% filter(group == "side"))
+# 
+# # Combine results into one table
+# result = data.frame(
+#   Statistic = c("Mean", "StdDev", "25th Quantile", "50th Quantile", "75th Quantile", "90th Quantile"),
+#   Downgradient = unlist(down_stats),
+#   Upgradient = unlist(up_stats),
+#   Side = unlist(side_stats)
+# )
+# # Create LaTeX table
+# latex_table = xtable::xtable(result)
+# # Export to LaTeX
+# print(latex_table, type = "latex", file = modify_path2("Tables/Revisions/pred_pfas_stats.tex"))
+
+site_reg = fixest::feols(pred_pfas ~ as.factor(group) + as.factor(site), df2)
+
+modelsummary::modelsummary(list(site_reg), 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("(Intercept)" = "Downgradient", 
+                                        "as.factor(group)up" = "Upgradient", 
+                                        "as.factor(group)side" = "Side"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/pred_pfas_site.tex")) 
+
+
+
+
+
+#number of missing observations for each covariate
+df2 = df[which(!is.na(df$dist) & df$dist <= meters), ]
+
+mobs = data.frame(
+  m_age = length(which(is.na(df2$m_age))),
+  m_married = length(which(is.na(df2$m_married))),
+  private_insurance = length(which(is.na(df2$private_insurance))),
+  nbr_cgrtt = length(which(is.na(df2$nbr_cgrtt))),
+  m_educ = length(which(is.na(df2$m_educ))),
+  f_educ = length(which(is.na(df2$f_educ))),
+  pm25 = length(which(is.na(df2$pm25))),
+  temp = length(which(is.na(df2$temp))),
+  p_manuf = length(which(is.na(df2$p_manuf))),
+  n_hunits = length(which(is.na(df2$n_hunits))),
+  med_hprice = length(which(is.na(df2$med_hprice))),
+  well_elev = length(which(is.na(df2$well_elev))),
+  resid_elev = length(which(is.na(df2$resid_elev))),
+  wic = length(which(is.na(df2$wic))),
+  mr_04 = length(which(is.na(df2$mr_04))),
+  mr_18 = length(which(is.na(df2$mr_18))),
+  mr_21 = length(which(is.na(df2$mr_21))),
+  mr_26 = length(which(is.na(df2$mr_26))),
+  mr_27 = length(which(is.na(df2$mr_27))),
+  mr_08 = length(which(is.na(df2$mr_08))),
+  mthr_wgt_dlv = length(which(is.na(df2$mthr_wgt_dlv))),
+  mthr_pre_preg_wgt = length(which(is.na(df2$mthr_pre_preg_wgt))),
+  m_height = length(which(is.na(df2$m_height))),
+  tri5 = length(which(is.na(df2$tri5))),
+  fa_resid = length(which(is.na(df2$fa_resid))),
+  wind_exposure = length(which(is.na(df2$wind_exposure)))
+)
+
+transposed_mobs = t(mobs)
+result = data.frame(
+  Variable = rownames(transposed_mobs),
+  `Number Missing` = transposed_mobs[, 1]
+)
+result$Variable = c(
+  "Mother's Age",
+  "Mother Married",
+  "Private Insurance",
+  "Number of Cigarettes",
+  "Mother's Education",
+  "Father's Education",
+  "PM2.5",
+  "Temperature",
+  "Percent in Manufacturing",
+  "Number of Housing Units",
+  "Median Housing Price",
+  "Well Elevation",
+  "Residential Elevation",
+  "WIC",
+  "Pre-Pregnancy Diabetes",
+  "Gestational Diabetes",
+  "Previous C-Section",
+  "Fertility Enhancing Drugs",
+  "Invitro Fertilization",
+  "Hypertension",
+  "Mother's Weight at Delivery",
+  "Mother's Pre-Pregnancy Weight",
+  "Mother's Height",
+  "Number of Nearby Toxic Release Sites",
+  "Accumulated Surface Flow from PFAS Sites",
+  "Wind Exposure"
+)
+
+# Create the LaTeX table using xtable
+latex_table = xtable::xtable(result)
+
+# Export to LaTeX file
+print(latex_table, type = "latex", file = modify_path2("Tables/Revisions/nmiss_cov.tex"), include.rownames = FALSE)
