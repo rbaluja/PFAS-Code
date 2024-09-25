@@ -1,7 +1,7 @@
 #### Outline of Code
 head_ex_r1.R
 
--Bootstrap/bootstrap_iv.R
+- Bootstrap/bootstrap_iv.R
 	- This runs the bootstrap algorithm for the continuous birth outcomes
 - revision1_head.R
 	- This runs the primary analysis to get all tables and figures which don't need changes to the framework used in the paper
