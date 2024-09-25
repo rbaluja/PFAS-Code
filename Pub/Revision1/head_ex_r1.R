@@ -1,4 +1,6 @@
 setwd("~/Dropbox/PFAS Infants")
+#run bootstrap for continuous health outcomes
+source("PFAS-Code/Pub/Revision1/Bootstrap/bootstrap_iv.R")
 #get tables and figures which don't change the environment
 source("PFAS-Code/Pub/Revision1/revision1_head.R")
 #make balance table across surface water, groundwater, and domestic wells
