@@ -269,3 +269,6 @@ n_births1_xtable = xtable::xtable(n_births1_df)
 fileConn = file(modify_path2("Tables/Revisions/n_births_thresh_s.tex"))
 print(n_births1_xtable, file = fileConn)
 close(fileConn)
+
+#create threshold figure
+source("PFAS-Code/Pub/Revision1/change_thresh_fig.R")

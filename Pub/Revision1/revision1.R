@@ -1001,7 +1001,6 @@ modelsummary::modelsummary(list(mort4),
 
 
 #continuous health outcomes
-#drop largest site
 table1_cont = list() 
 table1_cont[["Gestation"]] = fixest::feols(gestation ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
