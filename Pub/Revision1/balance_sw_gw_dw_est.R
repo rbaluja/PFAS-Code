@@ -1,3 +1,4 @@
+source("PFAS-Code/Pub/config.R")
 #well location and service area data (NHDES)
 source("PFAS-Code/Pub/Data/NHDES_PWS.R")
 
@@ -90,7 +91,7 @@ df$no_hs = ifelse(df$max_educ < 3, 1, 0)
 df$med_hprice = df$med_hprice/10^4
 df$med_inc = df$med_inc/10^3
 df$group = ifelse(df$gw == 1, "GW", ifelse(df$sw == 1, "SW", "DW"))
-df2 = df %>% 
+df_f = df %>% 
   dplyr::filter(!is.na(gestation) & 
                   !is.na(bweight) &
                   !is.na(m_age) & 
@@ -124,25 +125,35 @@ df2 = df %>%
 path = paste0(natality_path, "[UA Box Health] VR2210_Deliverable/dr_6264_deliverable.xlsx")
 df_d = read_excel(path, sheet = 3)
 
-df2 = df2 %>% 
+df_f = df_f %>% 
   left_join(df_d %>% 
               dplyr::rename(age_death = DECD_AGE_YR, 
                             manner_death = CERTFR_MANNER_DTH_CD, 
                             id = BRTH_CERT_FILE_NBR))
 
-df2$death = as.numeric(!is.na(df2$age_death))
+df_f$death = as.numeric(!is.na(df_f$age_death))
 
-df2$preterm = as.numeric(df2$gestation < 37)
-df2$mpreterm = as.numeric(df2$gestation >= 32 & df2$gestation < 37)
-df2$vpreterm = as.numeric(df2$gestation < 32 & df2$gestation >= 28)
-df2$epreterm = as.numeric(df2$gestation < 28)
+#read in estimation sample
+df_est = get(load(paste0(natality_path, "[UA Box Health] birth_records_estimation_sample.RData"))) %>% 
+  as_tibble() %>% 
+  dplyr::select(id)
 
-df2$lbw = as.numeric(df2$bweight < 2500)
-df2$mlbw = as.numeric(df2$bweight >= 1500 & df2$bweight < 2500)
-df2$vlbw = as.numeric(df2$bweight < 1500 & df2$bweight >= 1000)
-df2$elbw = as.numeric(df2$bweight < 1000)
+df_est$est = 1
+df_f = df_f %>% 
+  left_join(df_est, by = 'id')
+df_f[is.na(df_f$est), ]$est = 0
 
-df2 = df2 %>% 
+df_f$preterm = as.numeric(df_f$gestation < 37)
+df_f$mpreterm = as.numeric(df_f$gestation >= 32 & df_f$gestation < 37)
+df_f$vpreterm = as.numeric(df_f$gestation < 32 & df_f$gestation >= 28)
+df_f$epreterm = as.numeric(df_f$gestation < 28)
+
+df_f$lbw = as.numeric(df_f$bweight < 2500)
+df_f$mlbw = as.numeric(df_f$bweight >= 1500 & df_f$bweight < 2500)
+df_f$vlbw = as.numeric(df_f$bweight < 1500 & df_f$bweight >= 1000)
+df_f$elbw = as.numeric(df_f$bweight < 1000)
+
+df_f2 = df_f %>% 
   dplyr::select(`Maternal Age` = m_age, 
                 `College` = college,
                 `Less than High School` = no_hs,
@@ -174,13 +185,61 @@ df2 = df2 %>%
                 `Infant Mortality` = death
                 
   )
-df2 = as.data.frame(df2)
+df_f2 = as.data.frame(df_f2)
 
 
 datasummary_balance(~group, 
-                    data = df2, 
+                    data = df_f2, 
                     na.rm = T, 
                     fmt = modelsummary::fmt_significant(2, scientific = F, 
                                                         zero.print = T, drop0trailing = F, 
                                                         nsmall = 2), 
                     output = modify_path2("Tables/Revisions/balance_gw_sw_dw.tex")) 
+
+
+
+df_fe = df_f %>% 
+  dplyr::select(`Maternal Age` = m_age, 
+                `College` = college,
+                `Less than High School` = no_hs,
+                `Maternal Marital Status` = m_married, 
+                `Maternal Tobacco Use` = cig, 
+                White = white,
+                `Median Housing Price` = med_hprice,
+                `Median Income` = med_inc,
+                est,
+                `WIC` = wic, 
+                `Private Insurance` = private_insurance, 
+                `Months in Residence` = m_months_res, 
+                `Younger than 20` = young, 
+                `Older than 40` = old,
+                `Prenatal Care Visits` = n_prenatal,
+                `Pre-Pregancy Diabetes` = mr_04, 
+                `Gestational Diabetes` = mr_18, 
+                Hypertension = mr_08, 
+                `Gestational Hypertension` = mr_23, 
+                Eclampsia = mr_10, 
+                `Preterm` = preterm, 
+                `Moderately Preterm` = mpreterm,
+                `Very Preterm` = vpreterm,
+                `Extremely Preterm` = epreterm,
+                `Low Birthweight` = lbw,
+                `Moderately Low Birthweight` = mlbw,
+                `Very Low Birthweight` = vlbw,
+                `Extremely Low Birthweight` = elbw,
+                `Infant Mortality` = death
+                
+  )
+df_fe = as.data.frame(df_fe)
+
+
+datasummary_balance(~est, 
+                    data = df_fe, 
+                    na.rm = T, 
+                    fmt = modelsummary::fmt_significant(2, scientific = F, 
+                                                        zero.print = T, drop0trailing = F, 
+                                                        nsmall = 2), 
+                    output = modify_path2("Tables/Revisions/balance_est_full.tex")) 
+length(which(df_fe$est == 1))
+nrow(df_fe)
+

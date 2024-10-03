@@ -43,6 +43,8 @@ df2 = df2 %>%
                   !is.na(month) & 
                   !is.na(birth_race_dsc_1) & 
                   !is.na(wic))
+#save estimation sample to UA Box Health
+save(df2, file = paste0(natality_path, "[UA Box Health] birth_records_estimation_sample.RData"))
 #Preterm
 r1_preterm = list() 
 r1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~ m_age + m_married  + private_insurance  + nbr_cgrtt  + 
@@ -664,6 +666,31 @@ save(ges_sd, ges_pre_sd, file = modify_path("Data_Verify/Revision 1/RData/ges_sd
 1 - pnorm(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"]/ges_sd)
 1 - pnorm(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"]/ges_pre_sd)
 
+table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] - 1.96 * ges_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] + 1.96 * ges_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] - 1.96 * ges_pre_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] + 1.96 * ges_pre_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+
+# table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+# (table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] - 1.96 * ges_sd) * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+# (table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] + 1.96 * ges_sd) * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+# 
+# table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+# (table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] - 1.96 * ges_pre_sd) * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+# (table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] + 1.96 * ges_pre_sd) * 1/(sqrt(1 + quantile(sinh(df$pred_pfas), na.rm = T, 0.25)^2)) * 100
+
+table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] - 1.96 * ges_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] + 1.96 * ges_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] - 1.96 * ges_pre_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"] + 1.96 * ges_pre_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
 
 
 table1_cont_bw = list() 
@@ -713,9 +740,26 @@ modelsummary::modelsummary(table1_cont_bw,
 
 bw_sd = linear_bootstrap(boot_coefs, "bweight_all", table1_cont_bw[["Birthweight IV"]])
 bw_lbw_sd = linear_bootstrap(boot_coefs, "bweight_lbw", table1_cont_bw[["Birthweight IV: LBW"]])
-save(ges_sd, ges_pre_sd, file = modify_path("Data_Verify/Revision 1/RData/bweight_sd.RData"))
+save(bw_sd, bw_lbw_sd, file = modify_path("Data_Verify/Revision 1/RData/bweight_sd.RData"))
 1 - pnorm(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"]/bw_sd)
 1 - pnorm(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"]/bw_lbw_sd)
+
+
+table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] - 1.96 * bw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] + 1.96 * bw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] - 1.96 * bw_lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] + 1.96 * bw_lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] - 1.96 * bw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] + 1.96 * bw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] - 1.96 * bw_lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] + 1.96 * bw_lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
 
 
 

@@ -12,5 +12,8 @@ source("PFAS-Code/Pub/Data/data_head.R")
 #main analysis
 source("PFAS-Code/Pub/Main Analysis/main_analy_head.R")
 
+#create tables
+source("PFAS-Code/Pub/Revision1/tables.R")
+
 #make long-term resident figure
 source("PFAS-Code/Pub/Revision1/ltr_figure.R")
