@@ -890,32 +890,28 @@ table1_preterm[["All"]] = glm(preterm ~  updown + down +  I(pfas/10^3) + dist  +
                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                m_height + tri5 +fa_resid + wind_exposure + 
-                                factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                m_height + tri5 +fa_resid + wind_exposure + factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_preterm[["Moderately"]] = glm(mpreterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                       m_height + tri5 +fa_resid + wind_exposure + 
-                                       factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                       m_height + tri5 +fa_resid + wind_exposure + factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_preterm[["Very"]] = glm(vpreterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                 m_height + tri5 +fa_resid + wind_exposure + 
-                                 factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                 m_height + tri5 +fa_resid + wind_exposure + factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_preterm[["Extremely"]] = glm(epreterm ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                                      m_height + tri5 +fa_resid + wind_exposure + 
-                                      factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                      m_height + tri5 +fa_resid + wind_exposure + factor(birth_race_dsc_1), data = df, family = "binomial")
 
 
 modelsummary::modelsummary(table1_preterm, 
@@ -928,7 +924,10 @@ modelsummary::modelsummary(table1_preterm,
                            vcov = list(vcovCL(table1_preterm[["All"]], cluster = ~ df$site + df$ym, type = "HC0"), 
                                        vcovCL(table1_preterm[["Moderately"]], cluster = ~ df$site + df$ym, type = "HC0"),
                                        vcovCL(table1_preterm[["Very"]], cluster = ~ df$site + df$ym, type = "HC0"),
-                                       vcovCL(table1_preterm[["Extremely"]], cluster = ~ df$site + df$ym, type = "HC0"))) 
+                                       vcovCL(table1_preterm[["Extremely"]], cluster = ~ df$site + df$ym, type = "HC0")), 
+                           exponentiate = TRUE, 
+                           statistic = "conf.int", 
+                           conf_level = 0.95) 
 
 #low birthweight
 table1_lbw = list() 
@@ -944,7 +943,7 @@ table1_lbw[["Low Birthweight all "]] = glm(lbw ~  updown + down +  I(pfas/10^3) 
                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                              m_height + tri5 +fa_resid + wind_exposure + 
-                                             factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                             factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_lbw[["Low Birthweight among full term "]] = glm(lbw ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -952,7 +951,7 @@ table1_lbw[["Low Birthweight among full term "]] = glm(lbw ~  updown + down +  I
                                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                                          m_height + tri5 +fa_resid + wind_exposure + 
-                                                         factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df[which(df$gestation >= 37), ], family = "binomial")
+                                                         factor(birth_race_dsc_1), data = df[which(df$gestation >= 37), ], family = "binomial")
 
 
 table1_lbw[["Low Birthweight "]] = glm(mlbw ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
@@ -961,7 +960,7 @@ table1_lbw[["Low Birthweight "]] = glm(mlbw ~  updown + down +  I(pfas/10^3) + d
                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                          m_height + tri5 +fa_resid + wind_exposure + 
-                                         factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                         factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_lbw[["Moderately Low Birthweight"]] = glm(vlbw ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                                    m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -969,7 +968,7 @@ table1_lbw[["Moderately Low Birthweight"]] = glm(vlbw ~  updown + down +  I(pfas
                                                    mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                                    mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                                    m_height + tri5 +fa_resid + wind_exposure + 
-                                                   factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                                   factor(birth_race_dsc_1), data = df, family = "binomial")
 
 table1_lbw[["Very Low Birthweight"]] = glm(elbw ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -977,7 +976,7 @@ table1_lbw[["Very Low Birthweight"]] = glm(elbw ~  updown + down +  I(pfas/10^3)
                                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                                              m_height + tri5 +fa_resid + wind_exposure + 
-                                             factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+                                             factor(birth_race_dsc_1), data = df, family = "binomial")
 
 
 modelsummary::modelsummary(table1_lbw, 
@@ -991,7 +990,10 @@ modelsummary::modelsummary(table1_lbw,
                                        vcovCL(table1_lbw[["Low Birthweight among full term "]], cluster = ~ df[which(df$gestation >= 37), ]$site + df[which(df$gestation >= 37), ]$ym, type = "HC0"),
                                        vcovCL(table1_lbw[["Low Birthweight "]], cluster = ~ df$site + df$ym, type = "HC0"),
                                        vcovCL(table1_lbw[["Moderately Low Birthweight"]], cluster = ~ df$site + df$ym, type = "HC0"), 
-                                       vcovCL(table1_lbw[["Very Low Birthweight"]], cluster = ~ df$site + df$ym, type = "HC0"))) 
+                                       vcovCL(table1_lbw[["Very Low Birthweight"]], cluster = ~ df$site + df$ym, type = "HC0")), 
+                           exponentiate = TRUE, 
+                           statistic = "conf.int", 
+                           conf_level = 0.95) 
 
 mort4 = glm(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
@@ -999,7 +1001,7 @@ mort4 = glm(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites +
               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
               mthr_wgt_dlv +mthr_pre_preg_wgt + 
               m_height + tri5 +fa_resid + wind_exposure + 
-              factor(county) + factor(ym) + factor(birth_race_dsc_1), data = df, family = "binomial")
+             factor(birth_race_dsc_1), data = df, family = "binomial")
 
 
 modelsummary::modelsummary(list(mort4), 
@@ -1009,7 +1011,10 @@ modelsummary::modelsummary(list(mort4),
                                         "updown" = "Upgradient"),
                            gof_map = c("nobs", "r.squared"), 
                            output = modify_path2("Tables/Revisions/mort_logit.tex"),
-                           vcov = list(vcovCL(mort4, cluster = ~ df$site + df$ym, type = "HC0"))) 
+                           vcov = list(vcovCL(mort4, cluster = ~ df$site + df$ym, type = "HC0")), 
+                           exponentiate = TRUE, 
+                           statistic = "conf.int", 
+                           conf_level = 0.95) 
 
 
 
@@ -1046,3 +1051,19 @@ df2 = df2 %>%
                   !is.na(wic))
 df2$group = ifelse(df2$down == 1, "down",
                    ifelse(df2$up == 1, "up", "side"))
+
+
+
+#mortality impact from median in US to median contaminated in NH
+mort_iv = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
+                n_sites + wind_exposure + 
+                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
+load(modify_path("Data_Verify/RData/mort_sd.RData"))
+
+mort_iv$coefficients["pred_pfas"]/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
