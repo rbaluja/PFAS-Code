@@ -11,9 +11,12 @@ modify_path = function(path) {
     return(gsub("Data_Verify", "Data_Verify_Konan", path))
   }else if (code_verify){
     return(gsub("Data_Verify", "Data_Verify_Pub", path))
-  }else {
-    return(path)
+  }else if (revision_verify){
+    return(gsub("Data_Verify", "Data_Verify_Revision", path))
   }
+  else{
+    return(path)
+    }
 }
 
 modify_path2 = function(path) {
@@ -21,7 +24,10 @@ modify_path2 = function(path) {
     return(gsub("Tables", "Tables_Konan", path))
   }else if (code_verify){
     return(gsub("Tables", "Tables_VPub", path))
-  } else {
+  }else if (revision_verify){
+    return(gsub("Tables", "Tables_Revision", path))
+  }
+  else {
     return(path)
   }
 }
@@ -31,6 +37,8 @@ modify_path3 = function(path) {
     return(gsub("Figures", "Figures_Konan", path))
   }else if (code_verify){
     return(gsub("Figures", "Figures_VPub", path))
+  }else if (revision_verify){
+    return(gsub("Figures Revision", "Figures Revision/check", path))
   } else {
     return(path)
   }

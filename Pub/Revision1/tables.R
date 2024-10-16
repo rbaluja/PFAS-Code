@@ -153,7 +153,7 @@ mort2 = fixest::feols(death ~  m_age + m_married  + private_insurance  + nbr_cgr
                         m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
                         m_height+ med_hprice + med_inc|county + year^month + birth_race_dsc_1
-                      , data = df2, warn = F, notes = F)
+                      , data = df2, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 modelsummary::modelsummary(list(mort2), 

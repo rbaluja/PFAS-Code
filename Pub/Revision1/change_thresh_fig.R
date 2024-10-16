@@ -276,7 +276,7 @@ mort_fig = ggplot(reg_data, aes(x = threshold)) +
 
 
 figure_s3 = (p_combined | lbw_combined) / (lp_combined | llbw_combined) / (mp_combined | vlbw_combined) / (vp_combined | elbw_combined)
-ggsave("Figures Revision/threshold_fig.png", figure_s3, width = 10000, height = 7000, units = "px", dpi = 300)
-ggsave("Figures Revision/threshold_fig_mort.png", mort_fig, width = 7500, height = 1750, units = "px")
+ggsave(modify_path3("Figures Revision/threshold_fig.png"), figure_s3, width = 10000, height = 7000, units = "px", dpi = 300)
+ggsave(modify_path3("Figures Revision/threshold_fig_mort.png"), mort_fig, width = 7500, height = 1750, units = "px")
 
 

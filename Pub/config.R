@@ -8,7 +8,8 @@ source("PFAS-Code/Pub/Main Analysis/watershed_functions.R")
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             rgdal, units, tidycensus, ggpattern, forcats, rayshader, sandwich)
+             rgdal, units, tidycensus, ggpattern, forcats, rayshader, sandwich, 
+             mgcv, mgcViz)
 options("modelsummary_format_numeric_latex" = "plain")
 config_modelsummary(factory_latex = "kableExtra")
 options(tigris_use_cache = TRUE)
@@ -17,7 +18,8 @@ options(tigris_use_cache = TRUE)
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
 n_cores = 1
-code_verify = TRUE
+code_verify = FALSE
+revision_verify = TRUE
 
 #preliminaries environment
 redo_GIS = FALSE

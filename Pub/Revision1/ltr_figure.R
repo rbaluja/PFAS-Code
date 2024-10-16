@@ -232,9 +232,9 @@ plots[[6]] = plots[[6]] + ylab("Very (1000-1499g)")+ xlab("")
 plots[[7]] = plots[[7]] + ylab("Extremely (< 28 Weeks)")
 plots[[8]] = plots[[8]] + ylab("Extremely (< 1000g)")
 cfig = ggpubr::ggarrange(plotlist = plots, nrow = 4, ncol = 2, common.legend = T, legend = "bottom")
-ggsave(cfig, file = "Figures Revision/ltr_figure.png", width = 10000, height = 7000, units = "px", dpi = 300)
+ggsave(cfig, file = modify_path3("Figures Revision/ltr_figure.png"), width = 10000, height = 7000, units = "px", dpi = 300)
 
 
 mort_fig = ltr_fun("mort", reg_data)
 mort_fig = mort_fig + ylab("Infant Mortality") + guides(color = "none")
-ggsave(mort_fig, file = "Figures Revision/ltr_mort_figure.png", width = 7500, height = 1750, units = "px", dpi = 300)
+ggsave(mort_fig, file = modify_path3("Figures Revision/ltr_mort_figure.png"), width = 7500, height = 1750, units = "px", dpi = 300)
