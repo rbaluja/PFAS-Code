@@ -33,7 +33,7 @@ colnames(reg_data) = c('threshold',
                        'mort_down','mort_dse', "mort_updown", "mort_udse", 'mort_down_p')
 
 index = 1
-for (thresh in seq(from = 0, to = 2000, by = 100)){
+for (thresh in seq(from = 100, to = 1000, by = 100)){
   ppt = thresh
   #build watersheds for contamination sources with ppt above theshold
   source("PFAS-Code/Pub/Revision1/cont_watershed.R")

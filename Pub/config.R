@@ -18,7 +18,7 @@ options(tigris_use_cache = TRUE)
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
 n_cores = 1
-code_verify = FALSE
+code_verify = TRUE
 revision_verify = TRUE
 
 #preliminaries environment

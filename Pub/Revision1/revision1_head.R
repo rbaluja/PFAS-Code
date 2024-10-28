@@ -12,11 +12,11 @@ source("PFAS-Code/Pub/Data/data_head.R")
 #main analysis
 source("PFAS-Code/Pub/Main Analysis/main_analy_head.R")
 
-#confounder check tables
-source("PFAS-Code/Pub/Main Analysis/confounders_check.R")
-
 #create tables
 source("PFAS-Code/Pub/Revision1/tables.R")
+
+#confounder check tables
+source("PFAS-Code/Pub/Revision1/confounders_check.R")
 
 #get iv comparison tables
 source("PFAS-Code/Pub/Revision1/iv_binary_comparison_tab.R")

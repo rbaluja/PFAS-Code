@@ -1065,5 +1065,5 @@ mort_iv = fixest::feols(death ~ pred_pfas + asinh(pfas) +
 load(modify_path("Data_Verify/RData/mort_sd.RData"))
 
 mort_iv$coefficients["pred_pfas"]/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
-(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
-(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_iv$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_iv$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
