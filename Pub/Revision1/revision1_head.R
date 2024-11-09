@@ -13,16 +13,16 @@ source("PFAS-Code/Pub/Data/data_head.R")
 source("PFAS-Code/Pub/Main Analysis/main_analy_head.R")
 
 #create tables
-source("PFAS-Code/Pub/Revision1/tables.R")
+source("PFAS-Code/Pub/Revision1/Tables/tables.R")
 
 #confounder check tables
-source("PFAS-Code/Pub/Revision1/confounders_check.R")
+source("PFAS-Code/Pub/Revision1/Tables/confounders_check.R")
 
 #get iv comparison tables
-source("PFAS-Code/Pub/Revision1/iv_binary_comparison_tab.R")
+source("PFAS-Code/Pub/Revision1/Tables/iv_binary_comparison_tab.R")
 
 #make long-term resident figure
-source("PFAS-Code/Pub/Revision1/ltr_figure.R")
+source("PFAS-Code/Pub/Revision1/Figures/ltr_figure.R")
 
 #make spline figure
-source("PFAS-Code/Pub/Revision1/dose_response_spline.R")
+source("PFAS-Code/Pub/Revision1/Figures/dose_response_spline.R")

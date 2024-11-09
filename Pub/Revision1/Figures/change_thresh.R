@@ -271,4 +271,4 @@ print(n_births1_xtable, file = fileConn)
 close(fileConn)
 
 #create threshold figure
-source("PFAS-Code/Pub/Revision1/change_thresh_fig.R")
+source("PFAS-Code/Pub/Revision1/Figures/change_thresh_fig.R")

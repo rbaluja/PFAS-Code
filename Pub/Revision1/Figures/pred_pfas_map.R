@@ -28,7 +28,7 @@ cont_sites_bufff = cont_sites %>%
 nh_map_data = map_data("state", region = "new hampshire")
 
 #get raster of predicted levels
-source("PFAS-Code/Pub/Revision1/cont_raster.R")
+source("PFAS-Code/Pub/Revision1/GIS/cont_raster.R")
 
 # Create the NH map plot
 nh_map_plot = ggplot() +

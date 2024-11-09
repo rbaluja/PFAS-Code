@@ -1067,3 +1067,53 @@ load(modify_path("Data_Verify/RData/mort_sd.RData"))
 mort_iv$coefficients["pred_pfas"]/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
 (mort_iv$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
 (mort_iv$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+
+
+#check correlation between https://doi.org/10.1126/science.ado6638 and our measure
+xgb_out = terra::rast("Data Revisions/National/xgboost_rob/Outputs/prob_public.asc")
+#based on the extent, it looks like the projection is EPSG:5070
+terra::crs(xgb_out) = "EPSG:5070"
+#change wells to lat long
+w_ll = wells %>% 
+  as_tibble() %>% 
+  dplyr::select(!geometry) %>% 
+  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
+  st_transform(st_crs(xgb_out))
+
+#get the predicted exposure prob from the xgboost model for each point in w_ll
+w_ll$xgb_prob = terra::extract(xgb_out, w_ll)$prob_public
+
+nh_verd = list()
+nh_verd[["down1"]] = lm(down ~ xgb_prob, data = w_ll)
+nh_verd[["down2"]] = lm(down ~ I(xgb_prob > 0.315), data = w_ll)
+nh_verd[["down3"]] = lm(down ~ I(xgb_prob > 0.5), data = w_ll)
+nh_verd[["down4"]] = lm(down ~ I(xgb_prob > 0.75), data = w_ll)
+
+modelsummary::modelsummary(nh_verd,
+                           stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("xgb_prob" = "Prob. of PFAS at Well", 
+                                        "I(xgb_prob > 0.315)TRUE" = "I(Prob of PFAS > 0.315)", 
+                                        "I(xgb_prob > 0.5)TRUE" = "I(Prob of PFAS > 0.5)", 
+                                        "I(xgb_prob > 0.75)TRUE" = "I(Prob of PFAS > 0.75)"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/nh_verd_rout.tex")) 
+
+nh_veru = list()
+nh_veru[["up1"]] = lm(up ~ xgb_prob, data = w_ll)
+nh_veru[["up2"]] = lm(up ~ I(xgb_prob > 0.315), data = w_ll)
+nh_veru[["up3"]] = lm(up ~ I(xgb_prob > 0.5), data = w_ll)
+nh_veru[["up4"]] = lm(up ~ I(xgb_prob > 0.75), data = w_ll)
+
+modelsummary::modelsummary(nh_veru,
+                           stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("xgb_prob" = "Prob. of PFAS at Well", 
+                                        "I(xgb_prob > 0.315)TRUE" = "I(Prob of PFAS > 0.315)", 
+                                        "I(xgb_prob > 0.5)TRUE" = "I(Prob of PFAS > 0.5)", 
+                                        "I(xgb_prob > 0.75)TRUE" = "I(Prob of PFAS > 0.75)"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/nh_veru_rout.tex")) 
+
+
