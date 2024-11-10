@@ -79,7 +79,16 @@ df$gw = ifelse(!is.na(df$well_lat) & df$sys_id != "Domestic Well", 1, 0)
 df$sw = ifelse(is.na(df$well_lat) & df$sys_id != "Domestic Well", 1, 0)
 df$dw = ifelse(df$sys_id == "Domestic Well", 1, 0)
 
+#bring in rural vs urban
+urban_s = tigris::urban_areas() %>% 
+  st_transform(32110) %>% 
+  dplyr::mutate(urban = 1)
 
+df = 
+  df %>% 
+  st_transform(st_crs(urban_s)) %>% 
+  st_join(urban_s %>% dplyr::select(urban))
+df[which(is.na(df$urban)), ]$urban = 0
 
 
 df$college = ifelse(df$max_educ >= 6, 1, 0)
@@ -162,6 +171,7 @@ df_f2 = df_f %>%
                 White = white,
                 `Median Housing Price` = med_hprice,
                 `Median Income` = med_inc,
+                Urban = urban,
                 group,
                 `WIC` = wic, 
                 `Private Insurance` = private_insurance, 
@@ -207,6 +217,7 @@ df_fe = df_f %>%
                 White = white,
                 `Median Housing Price` = med_hprice,
                 `Median Income` = med_inc,
+                Urban = urban,
                 est,
                 `WIC` = wic, 
                 `Private Insurance` = private_insurance, 
