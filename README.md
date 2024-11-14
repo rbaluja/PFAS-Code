@@ -7,6 +7,9 @@
 - GEOS
 - Whitebox Tools
 
+### Machine Spec
+This was run on an iMac with a 3.8 GHz 8-Core Intel Core i7 processor and 128GB of RAM. I used R Version 4.4.0 (2024-04-24)
+
 ### Code Summary
 
 #### Prior to Running Execution file: 
