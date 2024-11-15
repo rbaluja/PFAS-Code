@@ -1,5 +1,5 @@
 #robustness figure
-source("PFAS-Code/Pub/Revision1/Figures/figure2_fn.R")
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2_function.R")
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -9,118 +9,18 @@ one_sp = function(tval, pval){
   }
 }
 #preterm
-load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness_logit.RData"))
-load(modify_path("Data_Verify/Robustness/relaxed_up_robust_logit.RData"))
+load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
+load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
 
-preterm_fn = function(w){
-  
-  full = glm(I(gestation < w) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-               mthr_wgt_dlv +mthr_pre_preg_wgt + 
-               m_height + tri5 + fa_resid
-             + factor(birth_race_dsc_1), data = df, family = "binomial")
-  
-  drop_close = glm(I(gestation < w) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                     m_height + tri5 + fa_resid
-                   |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
-  
-  pre_2016 = glm(I(gestation < w) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                   m_height + tri5 + fa_resid
-                 |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
-  
-  
-  no_pers = glm(I(gestation < w) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                  private_insurance  + nbr_cgrtt +
-                  pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
-                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                  m_height + tri5
-                + factor(birth_race_dsc_1), data = df, family = "binomial")
-  
-  
-  no_med = glm(I(gestation < w) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                 m_age + m_married  + m_educ + f_educ +
-                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                 + tri5
-               + factor(birth_race_dsc_1), data = df, family = "binomial")
-  
-  
-  data_pre = data.frame(
-    Category = c("Baseline", 
-                 "Sample", "Sample", "Sample", "Sample",
-                 "Controls", "Controls"),
-    Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
-              "Drop Border Sites",
-              "Relax Upgradient Def'n", "No Demographics", "No Medical Controls"),
-    Estimate = c(exp(full$coefficients["down"]), 
-                 exp(drop_close$coefficients["down"]), exp(pre_2016$coefficients["down"]), 
-                     exp(p_all_ds$coefficients["down"]),  exp(pr_rup$coefficients["down"]),
-                         exp(no_pers$coefficients["down"]), 
-                             exp(no_med$coefficients["down"])),
-    StdError = c(exp(full$se["down"]), 
-                 exp(drop_close$se["down"]), exp(pre_2016$se["down"]),
-                 exp(p_all_ds$se["down"]), 
-                 exp(pr_rup$se["down"]),
-                 exp(no_pers$se["down"]), 
-                 exp(no_med$se["down"]),
-    pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
-             
-             one_sp(p_all_ds$coeftable["down", "t value"], p_all_ds$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(pr_rup$coeftable["down", "t value"], pr_rup$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
-             one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
-    )
-  )
-  
-  
-  data_pre$Check = factor(data_pre$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
-  
-  
-  data_pre$down = data_pre$Estimate
-  data_pre$up = data_pre$Upgradient
-  data_pre$d_lower = data_pre$down - 1.96 * data_pre$StdError
-  data_pre$d_upper = data_pre$down + 1.96 * data_pre$StdError
-  data_pre$pval_label = sprintf("%.5f", data_pre$pval)
-  data_pre$health_outcome = "I(gestation < weeks)"
-  
-  pre_any = figure2_fun(data_pre, "Any", FALSE, TRUE, "Any", TRUE)
-  
-  
-
-  
-  
-}
-
-
-
-#late preterm
-full = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-
-site  = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -128,7 +28,7 @@ site  = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -136,7 +36,7 @@ no_fe = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -144,7 +44,7 @@ drop_close = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -153,20 +53,128 @@ pre_2016 = glm(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+
+data_pre = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample",
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               p_all_ds$coefficients["down"],  pr_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"],
+               p_all_ds$se["down"], 
+               pr_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+          
+           one_sp(p_all_ds$coeftable["down", "t value"], p_all_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pr_rup$coeftable["down", "t value"], pr_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+data_pre$Check = factor(data_pre$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
+
+
+data_pre$down = data_pre$Estimate
+data_pre$up = data_pre$Upgradient
+data_pre$d_lower = data_pre$down - 1.96 * data_pre$StdError
+data_pre$d_upper = data_pre$down + 1.96 * data_pre$StdError
+data_pre$pval_label = sprintf("%.5f", data_pre$pval)
+data_pre$health_outcome = "preterm"
+
+pre_any = figure2_fun(data_pre, "Any", FALSE, TRUE, "Any", TRUE)
+
+
+#late preterm
+full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                       m_height + tri5 + fa_resid
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+site  = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                        m_height + tri5 + fa_resid
+                      |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+no_fe = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                        m_height + tri5 + fa_resid
+                      |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+drop_close = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height + tri5 + fa_resid
+                           |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+pre_2016 = fixest::feols(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                           m_height + tri5 + fa_resid
+                         |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+no_pers = fixest::feols(I(gestation < 37 & gestation >= 32) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                          private_insurance  + nbr_cgrtt +
+                          pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
+                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                          m_height + tri5
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+
+no_med = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                         m_age + m_married  + m_educ + f_educ +
+                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                         + tri5
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 data_mpre = data.frame(
   Category = c("Baseline", 
@@ -175,17 +183,17 @@ data_mpre = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               lp_ds$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,  lpr_rup$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, pre_2016$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               lp_ds$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               lpr_rup$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100,
-               no_pers$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               no_med$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, site$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               lp_ds$coefficients["down"],  lpr_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               lp_ds$se["down"], 
+               lpr_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -199,10 +207,10 @@ data_mpre = data.frame(
 
 
 data_mpre$Check = factor(data_mpre$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 data_mpre$down = data_mpre$Estimate
 data_mpre$up = data_mpre$Upgradient
@@ -215,23 +223,23 @@ pre_late = figure2_fun(data_mpre, "Moderately", FALSE, FALSE, "Moderately", TRUE
 
 
 #very preterm
-full = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -239,7 +247,7 @@ year_countym = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfa
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -247,7 +255,7 @@ site  = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -255,7 +263,7 @@ no_fe = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -263,7 +271,7 @@ drop_close = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -272,37 +280,37 @@ pre_2016 = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                          + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -311,7 +319,7 @@ no_pers_ymc = glm(I(gestation < 32 & gestation >= 28) ~ down + updown +  I(pfas/
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -324,17 +332,17 @@ data_vpre = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               mp_ds$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,  mpr_rup$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, pre_2016$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               mp_ds$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               mpr_rup$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100,
-               no_pers$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               no_med$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, site$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               mp_ds$coefficients["down"],  mpr_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               mp_ds$se["down"], 
+               mpr_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -349,10 +357,10 @@ data_vpre = data.frame(
 
 
 data_vpre$Check = factor(data_vpre$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 
@@ -368,23 +376,23 @@ pre_mod = figure2_fun(data_vpre, "Very", FALSE, FALSE, "Very", TRUE)
 
 
 #extremely preterm
-full = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -392,7 +400,7 @@ year_countym = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -400,7 +408,7 @@ site  = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -408,7 +416,7 @@ no_fe = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -416,7 +424,7 @@ drop_close = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -425,37 +433,37 @@ pre_2016 = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sit
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                          + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -464,7 +472,7 @@ no_pers_ymc = glm(I(gestation < 28) ~ down + updown +  I(pfas/10^3) + dist  + n_
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -479,17 +487,17 @@ data_epre = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               drop_close$coefficients["down"]/mean(df$gestation < 28) * 100, pre_2016$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               vp_ds$coefficients["down"]/mean(df$gestation < 28) * 100,  vpr_rup$coefficients["down"]/mean(df$gestation < 28) * 100,
-               no_pers$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               no_med$coefficients["down"]/mean(df$gestation < 28) * 100, site$coefficients["down"]/mean(df$gestation < 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 28) * 100, 
-               drop_close$se["down"]/mean(df$gestation < 28) * 100, pre_2016$se["down"]/mean(df$gestation < 28) * 100, 
-               vp_ds$se["down"]/mean(df$gestation < 28) * 100, 
-               vpr_rup$se["down"]/mean(df$gestation < 28) * 100,
-               no_pers$se["down"]/mean(df$gestation < 28) * 100, 
-               no_med$se["down"]/mean(df$gestation < 28) * 100, site$se["down"]/mean(df$gestation < 28) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               vp_ds$coefficients["down"],  vpr_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               vp_ds$se["down"], 
+               vpr_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -504,10 +512,10 @@ data_epre = data.frame(
 
 
 data_epre$Check = factor(data_epre$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 data_epre$down = data_epre$Estimate
@@ -526,23 +534,23 @@ pre_fig = pre_any/pre_late/pre_mod/pre_very
 
 ####Birthweight
 #low birthweight
-full = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -550,7 +558,7 @@ year_countym = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -558,7 +566,7 @@ site  = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -566,7 +574,7 @@ no_fe = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -574,7 +582,7 @@ drop_close = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -583,37 +591,37 @@ pre_2016 = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sit
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                          + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -622,7 +630,7 @@ no_pers_ymc = glm(I(bweight < 2500) ~ down + updown +  I(pfas/10^3) + dist  + n_
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -637,17 +645,17 @@ data_lbw = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 2500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               lbw_all_ds$coefficients["down"]/mean(df$bweight < 2500) * 100,  lbw_rup$coefficients["down"]/mean(df$bweight < 2500) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 2500) * 100, site$coefficients["down"]/mean(df$bweight < 2500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 2500) * 100, pre_2016$se["down"]/mean(df$bweight < 2500) * 100, 
-               lbw_all_ds$se["down"]/mean(df$bweight < 2500) * 100, 
-               lbw_rup$se["down"]/mean(df$bweight < 2500) * 100,
-               no_pers$se["down"]/mean(df$bweight < 2500) * 100, 
-               no_med$se["down"]/mean(df$bweight < 2500) * 100, site$se["down"]/mean(df$bweight < 2500) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               lbw_all_ds$coefficients["down"],  lbw_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               lbw_all_ds$se["down"], 
+               lbw_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -661,10 +669,10 @@ data_lbw = data.frame(
 
 
 data_lbw$Check = factor(data_lbw$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                          "No Demographics", "Relax Upgradient Def'n", 
-                                          "Drop Border Sites", 
-                                          "Drop After 2015",
-                                          "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 data_lbw$down = data_lbw$Estimate
@@ -678,23 +686,23 @@ lbw_all = figure2_fun(data_lbw, "Any", FALSE, TRUE, "Any", FALSE)
 
 
 #late low birthweight
-full = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -702,7 +710,7 @@ year_countym = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfa
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -710,7 +718,7 @@ site  = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -718,7 +726,7 @@ no_fe = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -726,7 +734,7 @@ drop_close = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -735,37 +743,37 @@ pre_2016 = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                          + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -774,7 +782,7 @@ no_pers_ymc = glm(I(bweight < 2500 & bweight >= 1500) ~ down + updown +  I(pfas/
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -789,17 +797,17 @@ data_mlbw = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               llbw_ds$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,  llbw_rup$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, pre_2016$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               llbw_ds$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               llbw_rup$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100,
-               no_pers$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               no_med$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, site$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               llbw_ds$coefficients["down"],  llbw_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               llbw_ds$se["down"], 
+               llbw_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -814,10 +822,10 @@ data_mlbw = data.frame(
 
 
 data_mlbw$Check = factor(data_mlbw$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 data_mlbw$down = data_mlbw$Estimate
@@ -832,23 +840,23 @@ lbw_slight = figure2_fun(data_mlbw, "Moderately", FALSE, FALSE, "Moderately", FA
 
 
 #moderatelty low birthweight
-full = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -856,7 +864,7 @@ year_countym = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfa
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -864,7 +872,7 @@ site  = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -872,7 +880,7 @@ no_fe = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3)
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -880,7 +888,7 @@ drop_close = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -889,37 +897,37 @@ pre_2016 = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                          + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -928,7 +936,7 @@ no_pers_ymc = glm(I(bweight < 1500 & bweight >= 1000) ~ down + updown +  I(pfas/
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -942,17 +950,17 @@ data_vlbw = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               mlbw_ds$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,  mlbw_rup$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, pre_2016$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               mlbw_ds$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               mlbw_rup$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100,
-               no_pers$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               no_med$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, site$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               mlbw_ds$coefficients["down"],  mlbw_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               mlbw_ds$se["down"], 
+               mlbw_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -968,10 +976,10 @@ data_vlbw = data.frame(
 
 
 data_vlbw$Check = factor(data_vlbw$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 data_vlbw$down = data_vlbw$Estimate
@@ -985,23 +993,23 @@ lbw_mod = figure2_fun(data_vlbw, "Very", FALSE, FALSE, "Very", FALSE)
 
 
 #very low birthweight
-full = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+full = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     + factor(birth_race_dsc_1), data = df, family = "binomial")
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_county = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_county = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
                               m_height + tri5 + fa_resid
-                            + factor(birth_race_dsc_1), data = df, family = "binomial")
+                            |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-year_countym = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+year_countym = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1009,7 +1017,7 @@ year_countym = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + 
                                m_height + tri5 + fa_resid
                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
-site  = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+site  = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1017,7 +1025,7 @@ site  = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_fe = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1025,7 +1033,7 @@ no_fe = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites
                         m_height + tri5 + fa_resid
                       |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-drop_close = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+drop_close = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1033,7 +1041,7 @@ drop_close = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_
                              m_height + tri5 + fa_resid
                            |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
-pre_2016 = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+pre_2016 = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1042,37 +1050,37 @@ pre_2016 = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sit
                          |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_pers = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                           private_insurance  + nbr_cgrtt +
                           pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
                           m_height + tri5
-                        + factor(birth_race_dsc_1), data = df, family = "binomial")
+                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                          m_age + m_married  + m_educ + f_educ +
                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                          + tri5
-                       + factor(birth_race_dsc_1), data = df, family = "binomial")
+                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_yc = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_yc = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              private_insurance  + nbr_cgrtt +
                              pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                              mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                              mthr_wgt_dlv +mthr_pre_preg_wgt + 
                              m_height + tri5
-                           + factor(birth_race_dsc_1), data = df, family = "binomial")
+                           |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
-no_med_yc = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_yc = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                             m_age + m_married  + m_educ + f_educ +
                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                             + tri5
-                + factor(birth_race_dsc_1), data = df, family = "binomial")
+                          |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_pers_ymc = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_pers_ymc = fixest::feols(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                               private_insurance  + nbr_cgrtt +
                               pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -1081,7 +1089,7 @@ no_pers_ymc = glm(I(bweight < 1000) ~ down + updown +  I(pfas/10^3) + dist  + n_
                             |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("county", "year^month"))
 
 
-no_med_ymc = glm(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+no_med_ymc = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                              m_age + m_married  + m_educ + f_educ +
                              pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                              + tri5
@@ -1096,17 +1104,17 @@ data_elbw = data.frame(
   Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
             "Drop Border Sites",
             "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               drop_close$coefficients["down"]/mean(df$bweight < 1000) * 100, pre_2016$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               vlbw_ds$coefficients["down"]/mean(df$bweight < 1000) * 100,  vlbw_rup$coefficients["down"]/mean(df$bweight < 1000) * 100,
-               no_pers$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               no_med$coefficients["down"]/mean(df$bweight < 1000) * 100, site$coefficients["down"]/mean(df$bweight < 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1000) * 100, 
-               drop_close$se["down"]/mean(df$bweight < 1000) * 100, pre_2016$se["down"]/mean(df$bweight < 1000) * 100, 
-               vlbw_ds$se["down"]/mean(df$bweight < 1000) * 100, 
-               vlbw_rup$se["down"]/mean(df$bweight < 1000) * 100,
-               no_pers$se["down"]/mean(df$bweight < 1000) * 100, 
-               no_med$se["down"]/mean(df$bweight < 1000) * 100, site$se["down"]/mean(df$bweight < 1000) * 100),
+  Estimate = c(full$coefficients["down"], 
+               drop_close$coefficients["down"], pre_2016$coefficients["down"], 
+               vlbw_ds$coefficients["down"],  vlbw_rup$coefficients["down"],
+               no_pers$coefficients["down"], 
+               no_med$coefficients["down"], site$coefficients["down"]),
+  StdError = c(full$se["down"], 
+               drop_close$se["down"], pre_2016$se["down"], 
+               vlbw_ds$se["down"], 
+               vlbw_rup$se["down"],
+               no_pers$se["down"], 
+               no_med$se["down"], site$se["down"]),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
            one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
@@ -1122,10 +1130,10 @@ data_elbw = data.frame(
 
 
 data_elbw$Check = factor(data_elbw$Check, c("Site Fixed Effects", "No Medical Controls", 
-                                            "No Demographics", "Relax Upgradient Def'n", 
-                                            "Drop Border Sites", 
-                                            "Drop After 2015",
-                                            "Drop within 1km", "Baseline"))
+                                  "No Demographics", "Relax Upgradient Def'n", 
+                                  "Drop Border Sites", 
+                                  "Drop After 2015",
+                                  "Drop within 1km", "Baseline"))
 
 
 data_elbw$down = data_elbw$Estimate
@@ -1168,9 +1176,9 @@ main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
 
 fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 
-ggsave(modify_path3("Figures/figure2.png"), fig2, width = 17000, height = 10000, units = "px", limitsize = F)
+ggsave("Figures Revision/figure2_levels.png", fig2, width = 17000, height = 10000, units = "px", limitsize = F)
 
 
 fig2_data = rbind(data_pre, data_mpre, data_vpre, data_epre, 
                   data_lbw, data_mlbw, data_vlbw, data_elbw)
-fwrite(fig2_data, modify_path3("Figures/Data/figure2_data.csv"))
+fwrite(fig2_data, "Figures Revision/Data/figure2_levels_data.csv")

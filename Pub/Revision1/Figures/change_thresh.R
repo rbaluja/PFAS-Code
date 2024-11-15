@@ -10,7 +10,8 @@ n_births = data.frame(
   n_up1 = rep(NA, length(seq(from = 0, to = 2000, by = 100))),
   n_sample = rep(NA, length(seq(from = 0, to = 2000, by = 100))),
   n_down_g1 = rep(NA, length(seq(from = 0, to = 2000, by = 100))),
-  n_up_g1 = rep(NA, length(seq(from = 0, to = 2000, by = 100)))
+  n_up_g1 = rep(NA, length(seq(from = 0, to = 2000, by = 100))), 
+  n_sites = rep(NA, length(seq(from = 0, to = 2000, by = 100)))
 )
 one_sp = function(tval, pval){
   if (tval < 0){
@@ -80,6 +81,7 @@ for (thresh in seq(from = 100, to = 1000, by = 100)){
   n_births[index, "n_sample"] = nrow(df)
   n_births[index, "n_down_g1"] = length(which(df$down == 1 & df$nsites_down > 1))
   n_births[index, "n_up_g1"] = length(which(df$up == 1 & df$nsites_up > 1))
+  n_births[index, "n+sites"] = length(unique(cont_sites$site))
   
   #save regression coefs and standard errors
   preterm_any = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 

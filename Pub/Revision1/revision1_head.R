@@ -26,3 +26,10 @@ source("PFAS-Code/Pub/Revision1/Figures/ltr_figure.R")
 
 #make spline figure
 source("PFAS-Code/Pub/Revision1/Figures/dose_response_spline.R")
+
+#make figure 2 in levels
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2.R")
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2_mort.R")
+
+#make iv of covariates on down and updown table
+source("PFAS-Code/Pub/Revision1/Tables/iv_covars_down_up.R")

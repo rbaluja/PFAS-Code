@@ -17,12 +17,11 @@ rm(list = ls())
 #create binary cost figure from https://doi.org/10.1126/science.ado6638
 source("PFAS-Code/Pub/Revision1/National/xgboost_rob.R")
 rm(list = ls())
-#logit version of Figure 2
-source("PFAS-Code/Pub/Revision1/Robustness/drop_near_state/drop_near_state_head.R")
+#run 100ppt threshold np and create relevant table
+source("PFAS-Code/Pub/Revision1/Tables/np_100ppt_threshold.R")
 rm(list = ls())
-source("PFAS-Code/Pub/Revision1/Robustness/relaxed_up/relaxed_up_head.R")
-rm(list = ls())
-source("PFAS-Code/Pub/Revision1/Figures/figure2_fn.R")
+#run placebo for correlations between downgradient and the covariates
+source("PFAS-Code/Pub/Revision1/Placebo/placebo_head.R")
 
 
 

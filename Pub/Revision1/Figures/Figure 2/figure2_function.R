@@ -24,7 +24,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-350, 450)) + xlab("Odds Ratio (95% CI)")
+      guides(color = "none") + xlim(c(-0.05, 0.10)) + xlab("Change, in levels")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
@@ -36,7 +36,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
             axis.ticks= element_blank(),
             axis.text= element_blank(),
             axis.title= element_blank()) + 
-      guides(color = "none") + xlim(c(-350, 450))
+      guides(color = "none") + xlim(c(-0.05, 0.10))
   }
   
   # if (ti != FALSE){
@@ -50,7 +50,7 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
     # Ensure that a decimal point is included, even if there are only zeros after it
     dplyr::mutate(across(
       .cols = c(Estimate, d_lower, d_upper),
-      .fns = ~ sprintf("%0.2f", round(.x, 2))
+      .fns = ~ sprintf("%0.3f", round(.x, 3))
     ),
     # add an "-" between HR estimate confidence intervals
     estimate_lab = paste0(Estimate, " (", d_lower, "-", d_upper, ")")) %>%
@@ -65,41 +65,41 @@ figure2_fun = function(data, category, keep_x, header, ti, left){
         side = "right"
       ),
       TRUE ~ str_pad( # otherwise just round to 2 decimal places and pad string so that .2 reads as 0.20
-        as.character(round(pval, 2)),
+        as.character(round(pval, 3)),
         width = 4,
         pad = "0",
         side = "right"
       )
     )) 
-  
+    
   if (header){
     res_plot = res_plot %>%
-      bind_rows(
-        data.frame(
-          Check = "Model",
-          estimate_lab = "Estimate (95% CI)",
-          d_lower = "",
-          d_upper = "",
-          pval = "p-value"
-        )
-      ) 
-    res_plot$Check = factor(res_plot$Check, c("No Medical Controls", 
-                                              "No Demographics", "Relax Upgradient Def'n", 
-                                              "Drop Border Sites", 
-                                              "Drop After 2015",
-                                              "Drop within 1km", "Baseline" , "Model"
+    bind_rows(
+      data.frame(
+        Check = "Model",
+        estimate_lab = "Estimate (95% CI)",
+        d_lower = "",
+        d_upper = "",
+        pval = "p-value"
+      )
+    ) 
+    res_plot$Check = factor(res_plot$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                             "Drop After 2015",
+                                            "Drop within 1km", "Baseline" , "Model"
     ))
     res_plot$model = res_plot$Check
   }else{
     res_plot$Check = factor(res_plot$Check, c("Site Fixed Effects", "No Medical Controls", 
                                               "No Demographics", "Relax Upgradient Def'n", 
                                               "Drop Border Sites", 
-                                              "Drop After 2015",
+                                               "Drop After 2015",
                                               "Drop within 1km", "Baseline"
     ))
     res_plot$model = res_plot$Check
   }
-  
+    
   
   
   if (!header){
