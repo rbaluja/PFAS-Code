@@ -60,7 +60,7 @@ df = df %>%
 
 #save regression coefs and standard errors
 table1_preterm = list()
-table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000))  + dist  + n_sites + 
+table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) * I(pfas >= 1000)  + dist  + n_sites + 
                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -69,7 +69,7 @@ table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  (updown + down) * (
                             |county + year^month + birth_race_dsc_1, data = df, 
                             warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -78,7 +78,7 @@ table1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 3
                          |county + year^month + birth_race_dsc_1, data = df, 
                          warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -87,7 +87,7 @@ table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  
                          |county + year^month + birth_race_dsc_1, data = df, 
                          warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                            m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                            pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                            mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -114,7 +114,7 @@ modelsummary::modelsummary(table1_preterm,
 
 
 table1_lbw = list()
-table1_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -123,7 +123,7 @@ table1_lbw[["All"]] = fixest::feols(I(bweight < 2500) ~  (updown + down) * (I(pf
                         |county + year^month + birth_race_dsc_1, data = df, 
                         warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_lbw[["All full term"]] = fixest::feols(I(bweight < 2500) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_lbw[["All full term"]] = fixest::feols(I(bweight < 2500) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -132,7 +132,7 @@ table1_lbw[["All full term"]] = fixest::feols(I(bweight < 2500) ~  (updown + dow
                                     |county + year^month + birth_race_dsc_1, data = df[which(df$gestation >= 37), ], 
                                     warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_lbw[["Moderately"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_lbw[["Moderately"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -141,7 +141,7 @@ table1_lbw[["Moderately"]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~
                     |county + year^month + birth_race_dsc_1, data = df, 
                     warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -150,7 +150,7 @@ table1_lbw[["Very"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  (upd
                      |county + year^month + birth_race_dsc_1, data = df, 
                      warn = F, notes = F, cluster = c("site", "year^month"))
 
-table1_lbw[["Extremely"]] = fixest::feols(I(bweight < 1000) ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+table1_lbw[["Extremely"]] = fixest::feols(I(bweight < 1000) ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
@@ -175,7 +175,7 @@ modelsummary::modelsummary(table1_lbw,
                            gof_map = c("nobs", "r.squared"), 
                            output = modify_path2("Tables/Revisions/lbw_100ppt_np.tex"))  
 
-mort = fixest::feols(death ~  (updown + down) * (I(pfas >= 250 & pfas < 500) + I(pfas >= 500 & pfas < 750) + I(pfas >= 750 & pfas < 1000) + I(pfas >= 1000)) + dist  + n_sites + 
+mort = fixest::feols(death ~  (updown + down) * I(pfas >= 1000) + dist  + n_sites + 
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 

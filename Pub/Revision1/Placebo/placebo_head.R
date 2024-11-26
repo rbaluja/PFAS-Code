@@ -3,6 +3,7 @@ set.seed(1)
 wbt_verbose(FALSE)
 drop_states = FALSE
 relaxed_up = FALSE
+rerun_placebos = TRUE
 
 #data cleaning
 source("PFAS-Code/Pub/Data/data_head.R")
@@ -55,7 +56,7 @@ if (rerun_placebos == TRUE){
   save(placebos_6, file = "Data_Verify_Revision/RData/placebos_6.RData")
   
   placebos_7 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
-  save(placebos_7, file = "Data_Verify/RData/placebos_7.RData")
+  save(placebos_7, file = "Data_Verify_Revision/RData/placebos_7.RData")
   
   placebos_8 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
   save(placebos_8, file = "Data_Verify_Revision/RData/placebos_8.RData")
@@ -90,23 +91,22 @@ if (rerun_placebos == TRUE){
   }
   
   #check for missing iterations, and redo them.
-  n_na = length(which(is.na(plac$preterm)))
+  n_na = length(which(is.na(plac$m_age)))
   while (n_na > 0){
     plac = plac %>%
-      tidyr::drop_na(preterm)
+      tidyr::drop_na(m_age)
   
     plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
     plac = plyr::rbind.fill(plac, plac_na)
-    n_na = length(which(is.na(plac$preterm))) 
+    n_na = length(which(is.na(plac$m_age))) 
   }
   
-  save(plac, file = "Data_Verify_Revision/RData/placebos_mort.RData" )
+  save(plac, file = "Data_Verify_Revision/RData/placebos_down_cor.RData" )
 }else{
-  load("Data_Verify_Revision/RData/placebos_mort.RData" )
+  load("Data_Verify_Revision/RData/placebos_down_cor.RData" )
 }
 
 #This is the input to table S-5. It counts the number of runs with sig positive coef estimates
-sink(modify_path2("Tables/Revision 1/placebo_down_cor.tex"))
 plac$m_age_sig_pos = as.numeric(plac$m_age/plac$m_age_se > 1.959964)
 plac$m_age_sig_neg = as.numeric(plac$m_age/plac$m_age_se < -1.959964)
 
@@ -173,92 +173,54 @@ plac$temp_sig_neg = as.numeric(plac$temp/plac$temp_se < -1.959964)
 plac$pm25_sig_pos = as.numeric(plac$pm25/plac$pm25_se > 1.959964)
 plac$pm25_sig_neg = as.numeric(plac$pm25/plac$pm25_se < -1.959964)
 
-print("Mother's Age Positive")
-sum(plac$m_age_sig_pos)/1000
-print("Mother's Age Negative")
-sum(plac$m_age_sig_neg)/1000
-print("Mother Married Positive")
-sum(plac$m_married_sig_pos)/1000
-print("Mother Married Negative")
-sum(plac$m_married_sig_neg)/1000
-print("Private Insurance Positive")
-sum(plac$private_insurance_sig_pos)/1000
-print("Private Insurance Negative")
-sum(plac$private_insurance_sig_neg)/1000
-print("Number of Cigarettes Positive")
-sum(plac$nbr_cgrtt_sig_pos)/1000
-print("Number of Cigarettes Negative")
-sum(plac$nbr_cgrtt_sig_neg)/1000
-print("Mother's Education Positive")
-sum(plac$m_educ_sig_pos)/1000
-print("Mother's Education Negative")
-sum(plac$m_educ_sig_neg)/1000
-print("Father's Education Positive")
-sum(plac$f_educ_sig_pos)/1000
-print("Father's Education Negative")
-sum(plac$f_educ_sig_neg)/1000
-print("Pre-Pregancy Diabetes Positive")
-sum(plac$mr_04_sig_pos)/1000
-print("Pre-Pregancy Diabetes Negative")
-sum(plac$mr_04_sig_neg)/1000
-print("Gestational Diabetes Positive")
-sum(plac$mr_18_sig_pos)/1000
-print("Gestational Diabetes Negative")
-sum(plac$mr_18_sig_neg)/1000
-print("Hypertension Positive")
-sum(plac$mr_08_sig_pos)/1000
-print("Hypertension Negative")
-sum(plac$mr_08_sig_neg)/1000
-print("Previous C-Section Positive")
-sum(plac$mr_21_sig_pos)/1000
-print("Previous C-Section Negative")
-sum(plac$mr_21_sig_neg)/1000
-print("Fertility Enhancing Drugs Positive")
-sum(plac$mr_26_sig_pos)/1000
-print("Fertility Enhancing Drugs Negative")
-sum(plac$mr_26_sig_neg)/1000
-print("Invitro Fertilization Positive")
-sum(plac$mr_27_sig_pos)/1000
-print("Invitro Fertilization Negative")
-sum(plac$mr_27_sig_neg)/1000
-print("Mother's Weight at Delivery Positive")
-sum(plac$mthr_wgt_dlv_sig_pos)/1000
-print("Mother's Weight at Delivery Negative")
-sum(plac$mthr_wgt_dlv_sig_neg)/1000
-print("Mother's Pre-Pregnancy Weight Positive")
-sum(plac$mthr_pre_preg_wgt_sig_pos)/1000
-print("Mother's Pre-Pregnancy Weight Negative")
-sum(plac$mthr_pre_preg_wgt_sig_neg)/1000
-print("Mother's Height Positive")
-sum(plac$m_height_sig_pos)/1000
-print("Mother's Height Negative")
-sum(plac$m_height_sig_neg)/1000
-print("Median House Price Positive")
-sum(plac$med_hprice_sig_pos)/1000
-print("Median House Price Negative")
-sum(plac$med_hprice_sig_neg)/1000
-print("Median Income Positive")
-sum(plac$med_inc_sig_pos)/1000
-print("Median Income Negative")
-sum(plac$med_inc_sig_neg)/1000
-print("Rural Positive")
-sum(plac$rural_sig_pos)/1000
-print("Rural Negative")
-sum(plac$rural_sig_neg)/1000
-print("Well Elevation Positive")
-sum(plac$well_elev_sig_pos)/1000
-print("Well Elevation Negative")
-sum(plac$well_elev_sig_neg)/1000
-print("Residential Elevation Positive")
-sum(plac$resid_elev_sig_pos)/1000
-print("Residential Elevation Negative")
-sum(plac$resid_elev_sig_neg)/1000
-print("Temperature Positive")
-sum(plac$temp_sig_pos)/1000
-print("Temperature Negative")
-sum(plac$temp_sig_neg)/1000
-print("PM2.5 Positive")
-sum(plac$pm25_sig_pos)/1000
-print("PM2.5 Negative")
-sum(plac$pm25_sig_neg)/1000
-sink()
+
+#write placebo results to table
+dt = matrix(sprintf("%.1f", c(
+  sum(plac$m_age_sig_pos)/1000 * 100, sum(plac$m_age_sig_neg)/1000 * 100,
+  sum(plac$m_married_sig_pos)/1000 * 100, sum(plac$m_married_sig_neg)/1000 * 100,
+  sum(plac$private_insurance_sig_pos)/1000 * 100, sum(plac$private_insurance_sig_neg)/1000 * 100,
+  sum(plac$nbr_cgrtt_sig_pos)/1000 * 100, sum(plac$nbr_cgrtt_sig_neg)/1000 * 100,
+  sum(plac$m_educ_sig_pos)/1000 * 100, sum(plac$m_educ_sig_neg)/1000 * 100,
+  sum(plac$f_educ_sig_pos)/1000 * 100, sum(plac$f_educ_sig_neg)/1000 * 100,
+  sum(plac$mr_04_sig_pos)/1000 * 100, sum(plac$mr_04_sig_neg)/1000 * 100,
+  sum(plac$mr_18_sig_pos)/1000 * 100, sum(plac$mr_18_sig_neg)/1000 * 100,
+  sum(plac$mr_08_sig_pos)/1000 * 100, sum(plac$mr_08_sig_neg)/1000 * 100,
+  sum(plac$mr_21_sig_pos)/1000 * 100, sum(plac$mr_21_sig_neg)/1000 * 100,
+  sum(plac$mr_26_sig_pos)/1000 * 100, sum(plac$mr_26_sig_neg)/1000 * 100,
+  sum(plac$mr_27_sig_pos)/1000 * 100, sum(plac$mr_27_sig_neg)/1000 * 100,
+  sum(plac$mthr_wgt_dlv_sig_pos)/1000 * 100, sum(plac$mthr_wgt_dlv_sig_neg)/1000 * 100,
+  sum(plac$mthr_pre_preg_wgt_sig_pos)/1000 * 100, sum(plac$mthr_pre_preg_wgt_sig_neg)/1000 * 100,
+  sum(plac$m_height_sig_pos)/1000 * 100, sum(plac$m_height_sig_neg)/1000 * 100,
+  sum(plac$med_hprice_sig_pos)/1000 * 100, sum(plac$med_hprice_sig_neg)/1000 * 100,
+  sum(plac$med_inc_sig_pos)/1000 * 100, sum(plac$med_inc_sig_neg)/1000 * 100,
+  sum(plac$rural_sig_pos)/1000 * 100, sum(plac$rural_sig_neg)/1000 * 100,
+  sum(plac$well_elev_sig_pos)/1000 * 100, sum(plac$well_elev_sig_neg)/1000 * 100,
+  sum(plac$resid_elev_sig_pos)/1000 * 100, sum(plac$resid_elev_sig_neg)/1000 * 100,
+  sum(plac$temp_sig_pos)/1000 * 100, sum(plac$temp_sig_neg)/1000 * 100,
+  sum(plac$pm25_sig_pos)/1000 * 100, sum(plac$pm25_sig_neg)/1000 * 100
+)), nrow = 22, byrow = TRUE)
+
+dt = matrix(paste0(dt, "%"), nrow = 22, byrow = TRUE)
+
+dt = data.frame(
+  row = c(
+    "Mother's Age", "Mother Married", "Private Insurance", "Number of Cigarettes",
+    "Mother's Education", "Father's Education", "Pre-Pregancy Diabetes", "Gestational Diabetes",
+    "Hypertension", "Previous C-Section", "Fertility Enhancing Drugs", "Invitro Fertilization",
+    "Mother's Weight at Delivery", "Mother's Pre-Pregnancy Weight", "Mother's Height",
+    "Median House Price", "Median Income", "Rural", "Well Elevation", "Residential Elevation",
+    "Temperature", "PM2.5"
+  ),
+  dt
+)
+
+colnames(dt) = c("", "Pos. Corr.", "Neg. Corr.")
+
+table = xtable::xtable(dt, caption = "Placebo Test Results", label = "tab:placebo_down_cor")
+print(table, 
+      type = "latex", 
+      include.rownames = FALSE,
+      caption.placement = "top",
+      hline.after = c(-1, 0, nrow(dt)), 
+      format.args = list(big.mark = ",", scientific = FALSE),
+      file = modify_path2("Tables/Revisions/placebo_down_cor.tex"))

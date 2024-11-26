@@ -383,7 +383,7 @@ placebo_res = function(df){
                        data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
   boot_coefs[1, "m_age"] = dreg$coefficients["m_age"]
-  boot_coefs[1, "m_age"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_age", "m_age"])
+  boot_coefs[1, "m_age_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_age", "m_age"])
   
   boot_coefs[1, "m_married"] = dreg$coefficients["m_married"]
   boot_coefs[1, "m_married_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_married", "m_married"])
