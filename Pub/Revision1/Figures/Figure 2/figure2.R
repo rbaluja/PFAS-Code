@@ -117,6 +117,54 @@ data_pre$health_outcome = "preterm"
 
 pre_any = figure2_fun(data_pre, "Any", FALSE, TRUE, "Any", TRUE)
 
+#counts
+data_pre_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample",
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               p_all_ds$coefficients["down"] * total_births,  pr_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births,
+               p_all_ds$se["down"] * total_births, 
+               pr_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           
+           one_sp(p_all_ds$coeftable["down", "t value"], p_all_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pr_rup$coeftable["down", "t value"], pr_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+data_pre_c$Check = factor(data_pre_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                          "No Demographics", "Relax Upgradient Def'n", 
+                                          "Drop Border Sites", 
+                                          "Drop After 2015",
+                                          "Drop within 1km", "Baseline"))
+
+
+data_pre_c$down = data_pre_c$Estimate
+data_pre_c$up = data_pre_c$Upgradient
+data_pre_c$d_lower = data_pre_c$down - 1.96 * data_pre_c$StdError
+data_pre_c$d_upper = data_pre_c$down + 1.96 * data_pre_c$StdError
+data_pre_c$pval_label = sprintf("%.5f", data_pre_c$pval)
+data_pre_c$health_outcome = "preterm"
+
+pre_any_c = figure2_fun_count(data_pre_c, "Any", FALSE, TRUE, "Any", TRUE)
+
 
 #late preterm
 full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -220,6 +268,53 @@ data_mpre$pval_label = sprintf("%.5f", data_mpre$pval)
 data_mpre$health_outcome = "mod. preterm"
 
 pre_late = figure2_fun(data_mpre, "Moderately", FALSE, FALSE, "Moderately", TRUE)
+
+
+#counts
+data_mpre_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample",
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               lp_ds$coefficients["down"] * total_births,  lpr_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               lp_ds$se["down"] * total_births, 
+               lpr_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(lp_ds$coeftable["down", "t value"], lp_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(lpr_rup$coeftable["down", "t value"], lpr_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+data_mpre_c$Check = factor(data_mpre_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+data_mpre_c$down = data_mpre_c$Estimate
+data_mpre_c$up = data_mpre_c$Upgradient
+data_mpre_c$d_lower = data_mpre_c$down - 1.96 * data_mpre_c$StdError
+data_mpre_c$d_upper = data_mpre_c$down + 1.96 * data_mpre_c$StdError
+data_mpre_c$pval_label = sprintf("%.5f", data_mpre_c$pval)
+data_mpre_c$health_outcome = "mod. preterm"
+
+pre_late_c = figure2_fun_count(data_mpre_c, "Moderately", FALSE, FALSE, "Moderately", TRUE)
 
 
 #very preterm
@@ -372,6 +467,56 @@ data_vpre$pval_label = sprintf("%.5f", data_vpre$pval)
 data_vpre$health_outcome = "very preterm"
 
 pre_mod = figure2_fun(data_vpre, "Very", FALSE, FALSE, "Very", TRUE)
+
+
+#count
+data_vpre_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               mp_ds$coefficients["down"] * total_births,  mpr_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               mp_ds$se["down"] * total_births, 
+               mpr_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mp_ds$coeftable["down", "t value"], mp_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mpr_rup$coeftable["down", "t value"], mpr_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+
+data_vpre_c$Check = factor(data_vpre_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+
+
+data_vpre_c$down = data_vpre_c$Estimate
+data_vpre_c$up = data_vpre_c$Upgradient
+data_vpre_c$d_lower = data_vpre_c$down - 1.96 * data_vpre_c$StdError
+data_vpre_c$d_upper = data_vpre_c$down + 1.96 * data_vpre_c$StdError
+data_vpre_c$pval_label = sprintf("%.5f", data_vpre_c$pval)
+data_vpre_c$health_outcome = "very preterm"
+
+pre_mod_c = figure2_fun_count(data_vpre_c, "Very", FALSE, FALSE, "Very", TRUE)
 
 
 
@@ -528,7 +673,57 @@ data_epre$health_outcome = "extremely preterm"
 
 pre_very = figure2_fun(data_epre, "Extremely", TRUE, FALSE, "Extremely", TRUE)
 
+#counts
+data_epre_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               vp_ds$coefficients["down"] * total_births,  vpr_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               vp_ds$se["down"] * total_births, 
+               vpr_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(vp_ds$coeftable["down", "t value"], vp_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(vpr_rup$coeftable["down", "t value"], vpr_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+
+data_epre_c$Check = factor(data_epre_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+
+data_epre_c$down = data_epre_c$Estimate
+data_epre_c$up = data_epre_c$Upgradient
+data_epre_c$d_lower = data_epre_c$down - 1.96 * data_epre_c$StdError
+data_epre_c$d_upper = data_epre_c$down + 1.96 * data_epre_c$StdError
+data_epre_c$pval_label = sprintf("%.5f", data_epre_c$pval)
+data_epre_c$health_outcome = "extremely preterm"
+
+
+pre_very_c = figure2_fun_count(data_epre_c, "Extremely", TRUE, FALSE, "Extremely", TRUE)
+
 pre_fig = pre_any/pre_late/pre_mod/pre_very
+pre_fig_c = pre_any_c/pre_late_c/pre_mod_c/pre_very_c
 
 
 
@@ -684,6 +879,53 @@ data_lbw$health_outcome = "low birthweight"
 
 lbw_all = figure2_fun(data_lbw, "Any", FALSE, TRUE, "Any", FALSE)
 
+#counts
+data_lbw_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               lbw_all_ds$coefficients["down"] * total_births,  lbw_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               lbw_all_ds$se["down"] * total_births, 
+               lbw_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(lbw_all_ds$coeftable["down", "t value"], lbw_all_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(lbw_rup$coeftable["down", "t value"], lbw_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+data_lbw_c$Check = factor(data_lbw_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                          "No Demographics", "Relax Upgradient Def'n", 
+                                          "Drop Border Sites", 
+                                          "Drop After 2015",
+                                          "Drop within 1km", "Baseline"))
+
+
+data_lbw_c$down = data_lbw_c$Estimate
+data_lbw_c$up = data_lbw_c$Upgradient
+data_lbw_c$d_lower = data_lbw_c$down - 1.96 * data_lbw_c$StdError
+data_lbw_c$d_upper = data_lbw_c$down + 1.96 * data_lbw_c$StdError
+data_lbw_c$pval_label = sprintf("%.5f", data_lbw_c$pval)
+data_lbw_c$health_outcome = "low birthweight"
+
+lbw_all_c = figure2_fun_count(data_lbw_c, "Any", FALSE, TRUE, "Any", FALSE)
+
 
 #late low birthweight
 full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -836,6 +1078,54 @@ data_mlbw$pval_label = sprintf("%.5f", data_mlbw$pval)
 data_mlbw$health_outcome = "mod. low birthweight"
 
 lbw_slight = figure2_fun(data_mlbw, "Moderately", FALSE, FALSE, "Moderately", FALSE)
+
+#count
+data_mlbw_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               llbw_ds$coefficients["down"] * total_births,  llbw_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               llbw_ds$se["down"] * total_births, 
+               llbw_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(llbw_ds$coeftable["down", "t value"], llbw_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(llbw_rup$coeftable["down", "t value"], llbw_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+
+data_mlbw_c$Check = factor(data_mlbw_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+
+data_mlbw_c$down = data_mlbw_c$Estimate
+data_mlbw_c$up = data_mlbw_c$Upgradient
+data_mlbw_c$d_lower = data_mlbw_c$down - 1.96 * data_mlbw_c$StdError
+data_mlbw_c$d_upper = data_mlbw_c$down + 1.96 * data_mlbw_c$StdError
+data_mlbw_c$pval_label = sprintf("%.5f", data_mlbw_c$pval)
+data_mlbw_c$health_outcome = "mod. low birthweight"
+
+lbw_slight_c = figure2_fun_count(data_mlbw_c, "Moderately", FALSE, FALSE, "Moderately", FALSE)
 
 
 
@@ -991,6 +1281,55 @@ data_vlbw$health_outcome = "very low birthweight"
 
 lbw_mod = figure2_fun(data_vlbw, "Very", FALSE, FALSE, "Very", FALSE)
 
+#counts
+data_vlbw_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               mlbw_ds$coefficients["down"] * total_births,  mlbw_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               mlbw_ds$se["down"] * total_births, 
+               mlbw_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mlbw_ds$coeftable["down", "t value"], mlbw_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(mlbw_rup$coeftable["down", "t value"], mlbw_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+
+
+data_vlbw_c$Check = factor(data_vlbw_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+
+data_vlbw_c$down = data_vlbw_c$Estimate
+data_vlbw_c$up = data_vlbw_c$Upgradient
+data_vlbw_c$d_lower = data_vlbw_c$down - 1.96 * data_vlbw_c$StdError
+data_vlbw_c$d_upper = data_vlbw_c$down + 1.96 * data_vlbw_c$StdError
+data_vlbw_c$pval_label = sprintf("%.5f", data_vlbw_c$pval)
+data_vlbw_c$health_outcome = "very low birthweight"
+
+lbw_mod_c = figure2_fun_count(data_vlbw_c, "Very", FALSE, FALSE, "Very", FALSE)
+
 
 #very low birthweight
 full = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -1145,8 +1484,58 @@ data_elbw$health_outcome = "extremely low birthweight"
 
 lbw_very = figure2_fun(data_elbw, "Extremely", TRUE, FALSE, "Extremely", FALSE)
 
+#counts
+data_elbw_c = data.frame(
+  Category = c("Baseline", 
+               "Sample", "Sample", "Sample", "Sample", 
+               "Controls", "Controls", "Controls"),
+  Check = c("Baseline", "Drop within 1km", "Drop After 2015", 
+            "Drop Border Sites",
+            "Relax Upgradient Def'n", "No Demographics", "No Medical Controls", "Site Fixed Effects"),
+  Estimate = c(full$coefficients["down"] * total_births, 
+               drop_close$coefficients["down"] * total_births, pre_2016$coefficients["down"] * total_births, 
+               vlbw_ds$coefficients["down"] * total_births,  vlbw_rup$coefficients["down"] * total_births,
+               no_pers$coefficients["down"] * total_births, 
+               no_med$coefficients["down"] * total_births, site$coefficients["down"] * total_births),
+  StdError = c(full$se["down"] * total_births, 
+               drop_close$se["down"] * total_births, pre_2016$se["down"] * total_births, 
+               vlbw_ds$se["down"] * total_births, 
+               vlbw_rup$se["down"] * total_births,
+               no_pers$se["down"] * total_births, 
+               no_med$se["down"] * total_births, site$se["down"] * total_births),
+  pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(drop_close$coeftable["down", "t value"], drop_close$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(pre_2016$coeftable["down", "t value"], pre_2016$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(vlbw_ds$coeftable["down", "t value"], vlbw_ds$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(vlbw_rup$coeftable["down", "t value"], vlbw_rup$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_pers$coeftable["down", "t value"], no_pers$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(no_med$coeftable["down", "t value"], no_med$coeftable["down", "Pr(>|t|)"]), 
+           one_sp(site$coeftable["down", "t value"], site$coeftable["down", "Pr(>|t|)"])
+  )
+)
+
+
+
+
+data_elbw_c$Check = factor(data_elbw_c$Check, c("Site Fixed Effects", "No Medical Controls", 
+                                            "No Demographics", "Relax Upgradient Def'n", 
+                                            "Drop Border Sites", 
+                                            "Drop After 2015",
+                                            "Drop within 1km", "Baseline"))
+
+
+data_elbw_c$down = data_elbw_c$Estimate
+data_elbw_c$up = data_elbw_c$Upgradient
+data_elbw_c$d_lower = data_elbw_c$down - 1.96 * data_elbw_c$StdError
+data_elbw_c$d_upper = data_elbw_c$down + 1.96 * data_elbw_c$StdError
+data_elbw_c$pval_label = sprintf("%.5f", data_elbw_c$pval)
+data_elbw_c$health_outcome = "extremely low birthweight"
+
+lbw_very_c = figure2_fun_count(data_elbw_c, "Extremely", TRUE, FALSE, "Extremely", FALSE)
+
 
 lbw = lbw_all/lbw_slight/lbw_mod/lbw_very
+lbw_c = lbw_all_c/lbw_slight_c/lbw_mod_c/lbw_very_c
 
 legend_data <- data.frame(
   category = factor(c("Any", "Moderately", "Very", "Extremely"), levels = c("Any", "Moderately", "Very", "Extremely")),
@@ -1182,3 +1571,28 @@ ggsave("Figures Revision/figure2_levels.png", fig2, width = 17000, height = 1000
 fig2_data = rbind(data_pre, data_mpre, data_vpre, data_epre, 
                   data_lbw, data_mlbw, data_vlbw, data_elbw)
 fwrite(fig2_data, "Figures Revision/Data/figure2_levels_data.csv")
+
+
+#counts
+
+
+ptplot = ggplot() +
+  labs(title = "Preterm") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.9, size = 70, face = "bold"))
+btplot = ggplot() +
+  labs(title = "Low Birthweight") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.73, size = 70, face = "bold"))
+
+title = (ptplot | btplot)
+main_fig = (pre_fig_c | lbw_c) + plot_layout(widths = c(1.5, 1))
+
+fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
+
+ggsave("Figures Revision/figure2_counts.png", fig2, width = 17000, height = 10000, units = "px", limitsize = F)
+
+
+fig2_data = rbind(data_pre_c, data_mpre_c, data_vpre_c, data_epre_c, 
+                  data_lbw_c, data_mlbw_c, data_vlbw_c, data_elbw_c)
+fwrite(fig2_data, "Figures Revision/Data/figure2_counts_data.csv")

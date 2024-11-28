@@ -2,6 +2,12 @@ setwd("~/Dropbox/PFAS Infants")
 #run bootstrap for continuous health outcomes
 source("PFAS-Code/Pub/Revision1/Bootstrap/bootstrap_iv.R")
 rm(list = ls())
+#run robustness where we drop births near the state border, logit
+source("PFAS-Code/Pub/Revision1/Robustness/drop_near_state/drop_near_state_head.R")
+rm(list = ls())
+#run robustness where we relax the upgradient definition, logit
+source("PFAS-Code/Pub/Revision1/Robustness/relaxed_up/relaxed_up_head.R")
+rm(list = ls())
 #get tables and figures which don't change the environment
 source("PFAS-Code/Pub/Revision1/revision1_head.R")
 rm(list = ls())

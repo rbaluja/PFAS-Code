@@ -36,6 +36,7 @@ drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
 oster_factor = 1.3 #base for Oster calcs
+total_births = 122950 #total number of NH births from 2010-2019
 
 #national environment
 nat_run_cont_ws = FALSE#recreate national watershed shapes?

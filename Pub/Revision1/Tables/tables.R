@@ -43,6 +43,11 @@ df2 = df2 %>%
                   !is.na(month) & 
                   !is.na(birth_race_dsc_1) & 
                   !is.na(wic))
+
+#get number of unique water systems serving individuals in the estimation sample, for ref 1 comment 6
+length(unique(df2$sys_id))
+#number of fixed effects in the estimation sample, for ref 2 comment 2
+length(unique(df2$county)) + length(unique(paste0(df2$year, "-", df2$month)))
 #save estimation sample to UA Box Health
 save(df2, file = paste0(natality_path, "[UA Box Health] birth_records_estimation_sample.RData"))
 #Preterm
@@ -278,8 +283,8 @@ modelsummary::modelsummary(table1_res,
                            output = modify_path2("Tables/Revisions/m_months_res.tex")) 
 
 
-#Next table: drop parental education as a control
-#drop parental education
+#Next table: drop paternal education as a control
+#drop paternal education
 table1_preterm = list() 
 table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -514,7 +519,28 @@ print("Extremely Low Birthweight")
 print(as.numeric(d_vlbw))
 sink() 
 
-
+oster_factor = 1.3
+source("PFAS-Code/Pub/Revision1/Tables/oster_bound_coef.R")
+sink(modify_path2("Tables/Revisions/oster_bound.tex"))
+print("Mortality")
+print(paste0("(", v2_mort, ", ", v1_mort, ")"))
+print("Preterm")
+print(paste0("(", v2_pre, ", ", v1_pre, ")"))
+print("Moderately Preterm")
+print(paste0("(", v2_lpre, ", ", v1_lpre, ")"))
+print("Very Preterm")
+print(paste0("(", v2_mpre, ", ", v1_mpre, ")"))
+print("Extremely Preterm")
+print(paste0("(", v2_vpre, ", ", v1_vpre, ")"))
+print("Low Birthweight")
+print(paste0("(", v2_lbw, ", ", v1_lbw, ")"))
+print("Moderately Low Birthweight")
+print(paste0("(", v2_llbw, ", ", v1_llbw, ")"))
+print("Very Low Birthweight")
+print(paste0("(", v2_mlbw, ", ", v1_mlbw, ")"))
+print("Extremely Low Birthweight")
+print(paste0("(", v2_vlbw, ", ", v1_vlbw, ")"))
+sink()
 
 
 #Table: drop largest site
@@ -1340,6 +1366,16 @@ df2 = df2 %>%
 df2$group = ifelse(df2$down == 1, "down",
                    ifelse(df2$up == 1, "up", "side"))
 
+models = list()
+models[["(1)"]] = fixest::feols(sinh(pred_pfas) ~ down + updown|site, data = df2)
+
+modelsummary::modelsummary(models,
+                           stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("down" = "Downgradient", 
+                                        "updown" = "Upgradient"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/pred_pfas_group_rout.tex")) 
 
 
 #mortality impact from median in US to median contaminated in NH

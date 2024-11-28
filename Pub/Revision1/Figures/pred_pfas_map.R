@@ -44,8 +44,8 @@ cont_rdf$pfas = sinh(cont_rdf$pfas)
 
 cont_rdf2 = cont_rdf
 cont_rdf2$high = 0
-cont_rdf2[cont_rdf2$pfas > 0.15 * 1000,  ]$high = 1
-cont_rdf2[cont_rdf2$pfas > 0.15* 1000,  ]$pfas = 0.15* 1000
+cont_rdf2[cont_rdf2$pfas > 0.1 * 1000,  ]$high = 1
+cont_rdf2[cont_rdf2$pfas > 0.1* 1000,  ]$pfas = 0.1* 1000
 
 
 figure1_sites = 
@@ -59,8 +59,8 @@ figure1_sites =
                                               title.hjust = 0.5,
                                               label.hjust = .5,
                                               label.position = "bottom"),
-                       breaks = c(0.0, 50, 100, 150),
-                       labels = c("0", "50", "100", expression("\u2265 150"))) +
+                       breaks = c(0.0, 50, 100),
+                       labels = c("0", "50", expression("\u2265 100"))) +
   theme_void() + 
   theme(axis.title.x = element_blank(),
         axis.text.x = element_blank(),

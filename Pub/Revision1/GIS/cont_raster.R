@@ -1,3 +1,5 @@
+drop_states = F
+relaxed_up = F
 source("PFAS-Code/Pub/config.R")
 source("PFAS-Code/Pub/Data/pfas_lab_sites.R")
 source("PFAS-Code/Pub/Data/wind.R")
@@ -111,7 +113,6 @@ down_well_dist = function(w){
   
   return(dw)
 }
-
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
