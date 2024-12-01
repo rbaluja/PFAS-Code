@@ -54,7 +54,7 @@ cont_sites = readxl::read_xlsx(modify_path('Data_Verify/Contamination/PFAS Proje
                 sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`, 
                 sum_pfas = `Max Total PFAS from a single sample (ppt)`, 
                 total_pfas = `PFAS Level (ppt)`) %>%
-  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= 1000) %>% #cut to 1000ppt by Bo meeting 4/21/23
+  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>% 
   st_as_sf(coords = c('lng', 'lat'), remove = F) %>%
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
@@ -90,4 +90,4 @@ figure_s6 = ggplot() +
         plot.margin = margin(0, 0, 0, 0)) + 
   xlab("") + ylab("")
 
-ggsave(modify_path3("Figures/National Costs/nat_map.png"), figure_s6, width = 2694, height = 2355, units = "px")
+ggsave(modify_path3(paste0("Figures/National Costs/nat_map", ppt, ".png")), figure_s6, width = 2694, height = 2355, units = "px")

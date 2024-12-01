@@ -67,7 +67,7 @@ if (rerun_placebos == TRUE){
   placebos_10 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells))
   save(placebos_10, file = "Data_Verify_Revision/RData/placebos_10.RData")
   
-
+  
   
   plac = NULL
   # Loop through the files
@@ -95,15 +95,102 @@ if (rerun_placebos == TRUE){
   while (n_na > 0){
     plac = plac %>%
       tidyr::drop_na(m_age)
-  
+    
     plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
     plac = plyr::rbind.fill(plac, plac_na)
     n_na = length(which(is.na(plac$m_age))) 
   }
   
   save(plac, file = "Data_Verify_Revision/RData/placebos_down_cor.RData" )
+  
+  
+  #IV version
+  placebos_1 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_1, file = "Data_Verify_Revision/RData/placebos_1_iv.RData")
+  
+  placebos_2 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_2, file = "Data_Verify_Revision/RData/placebos_2_iv.RData")
+  
+  placebos_3 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_3, file = "Data_Verify_Revision/RData/placebos_3_iv.RData")
+  
+  placebos_4 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_4, file = "Data_Verify_Revision/RData/placebos_4_iv.RData")
+  
+  placebos_5 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_5, file = "Data_Verify_Revision/RData/placebos_5_iv.RData")
+  
+  placebos_6 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_6, file = "Data_Verify_Revision/RData/placebos_6_iv.RData")
+  
+  placebos_7 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_7, file = "Data_Verify_Revision/RData/placebos_7_iv.RData")
+  
+  placebos_8 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_8, file = "Data_Verify_Revision/RData/placebos_8_iv.RData")
+  
+  placebos_9 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_9, file = "Data_Verify_Revision/RData/placebos_9_iv.RData")
+  
+  placebos_10 = dplyr::bind_rows(pblapply(1:100, placebo, df, wells, iv = TRUE))
+  save(placebos_10, file = "Data_Verify_Revision/RData/placebos_10_iv.RData")
+  
+  
+  
+  plac_iv = NULL
+  # Loop through the files
+  for (i in 1:10) {
+    #create a new environment for loading the file
+    env = new.env()
+    
+    #load the file into the new environment
+    load(paste0("Data_Verify_Revision/RData/placebos_", i, "_iv.RData"), envir = env)
+    
+    object_name = ls(env)
+    
+    current_placebo = get(object_name, env)
+    
+    # bind plac with current_placebo
+    if(is.null(plac_iv)) {
+      plac_iv = current_placebo
+    } else {
+      plac_iv = plyr::rbind.fill(plac_iv, current_placebo)
+    }
+  }
+  
+  #check for missing iterations, and redo them.
+  n_na = length(which(is.na(plac_iv$pre_d)))
+  while (n_na > 0){
+    plac_iv = plac_iv %>%
+      tidyr::drop_na(pre_d)
+    
+    plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
+    plac_iv = plyr::rbind.fill(plac_iv, plac_na)
+    n_na = length(which(is.na(plac_iv$pre_d))) 
+    print(n_na)
+  }
+  
+  save(plac_iv, file = "Data_Verify_Revision/RData/placebos_iv_du_966.RData" )
+  placebos_1m = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells, iv = TRUE))
+  plac_iv = plac_iv %>% 
+    dplyr::bind_rows(placebos_1m)
+  
+  n_na = length(which(is.na(plac_iv$pre_d)))
+  plac_iv = plac_iv %>%
+    tidyr::drop_na(pre_d)
+  placebos_1m = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells, iv = TRUE))
+  plac_iv = plac_iv %>% 
+    dplyr::bind_rows(placebos_1m)
+  
+  n_na = length(which(is.na(plac_iv$pre_d)))
+  plac_iv = plac_iv %>%
+    tidyr::drop_na(pre_d)
+  save(plac_iv, file = "Data_Verify_Revision/RData/placebos_iv_du.RData" )
+  
+  
 }else{
   load("Data_Verify_Revision/RData/placebos_down_cor.RData" )
+  load("Data_Verify_Revision/RData/placebos_iv_du.RData" )
 }
 
 #This is the input to table S-5. It counts the number of runs with sig positive coef estimates
@@ -224,3 +311,94 @@ print(table,
       hline.after = c(-1, 0, nrow(dt)), 
       format.args = list(big.mark = ",", scientific = FALSE),
       file = modify_path2("Tables/Revisions/placebo_down_cor.tex"))
+
+
+
+#do the same for the IV run
+plac_iv$pre_d_psig = as.numeric(plac_iv$pre_d/plac_iv$pre_d_se > 1.96)
+plac_iv$pre_d_nsig = as.numeric(plac_iv$pre_d/plac_iv$pre_d_se < -1.96)
+plac_iv$pre_u_psig = as.numeric(plac_iv$pre_u/plac_iv$pre_u_se > 1.96)
+plac_iv$pre_u_nsig = as.numeric(plac_iv$pre_u/plac_iv$pre_u_se < -1.96)
+
+plac_iv$mpre_d_psig = as.numeric(plac_iv$mpre_d/plac_iv$mpre_d_se > 1.96)
+plac_iv$mpre_d_nsig = as.numeric(plac_iv$mpre_d/plac_iv$mpre_d_se < -1.96)
+plac_iv$mpre_u_psig = as.numeric(plac_iv$mpre_u/plac_iv$mpre_u_se > 1.96)
+plac_iv$mpre_u_nsig = as.numeric(plac_iv$mpre_u/plac_iv$mpre_u_se < -1.96)
+
+plac_iv$vpre_d_psig = as.numeric(plac_iv$vpre_d/plac_iv$vpre_d_se > 1.96)
+plac_iv$vpre_d_nsig = as.numeric(plac_iv$vpre_d/plac_iv$vpre_d_se < -1.96)
+plac_iv$vpre_u_psig = as.numeric(plac_iv$vpre_u/plac_iv$vpre_u_se > 1.96)
+plac_iv$vpre_u_nsig = as.numeric(plac_iv$vpre_u/plac_iv$vpre_u_se < -1.96)
+
+plac_iv$epre_d_psig = as.numeric(plac_iv$epre_d/plac_iv$epre_d_se > 1.96)
+plac_iv$epre_d_nsig = as.numeric(plac_iv$epre_d/plac_iv$epre_d_se < -1.96)
+plac_iv$epre_u_psig = as.numeric(plac_iv$epre_u/plac_iv$epre_u_se > 1.96)
+plac_iv$epre_u_nsig = as.numeric(plac_iv$epre_u/plac_iv$epre_u_se < -1.96)
+
+
+plac_iv$lbw_d_psig = as.numeric(plac_iv$lbw_d/plac_iv$lbw_d_se > 1.96)
+plac_iv$lbw_d_nsig = as.numeric(plac_iv$lbw_d/plac_iv$lbw_d_se < -1.96)
+plac_iv$lbw_u_psig = as.numeric(plac_iv$lbw_u/plac_iv$lbw_u_se > 1.96)
+plac_iv$lbw_u_nsig = as.numeric(plac_iv$lbw_u/plac_iv$lbw_u_se < -1.96)
+
+plac_iv$mlbw_d_psig = as.numeric(plac_iv$mlbw_d/plac_iv$mlbw_d_se > 1.96)
+plac_iv$mlbw_d_nsig = as.numeric(plac_iv$mlbw_d/plac_iv$mlbw_d_se < -1.96)
+plac_iv$mlbw_u_psig = as.numeric(plac_iv$mlbw_u/plac_iv$mlbw_u_se > 1.96)
+plac_iv$mlbw_u_nsig = as.numeric(plac_iv$mlbw_u/plac_iv$mlbw_u_se < -1.96)
+
+plac_iv$vlbw_d_psig = as.numeric(plac_iv$vlbw_d/plac_iv$vlbw_d_se > 1.96)
+plac_iv$vlbw_d_nsig = as.numeric(plac_iv$vlbw_d/plac_iv$vlbw_d_se < -1.96)
+plac_iv$vlbw_u_psig = as.numeric(plac_iv$vlbw_u/plac_iv$vlbw_u_se > 1.96)
+plac_iv$vlbw_u_nsig = as.numeric(plac_iv$vlbw_u/plac_iv$vlbw_u_se < -1.96)
+
+plac_iv$elbw_d_psig = as.numeric(plac_iv$elbw_d/plac_iv$elbw_d_se > 1.96)
+plac_iv$elbw_d_nsig = as.numeric(plac_iv$elbw_d/plac_iv$elbw_d_se < -1.96)
+plac_iv$elbw_u_psig = as.numeric(plac_iv$elbw_u/plac_iv$elbw_u_se > 1.96)
+plac_iv$elbw_u_nsig = as.numeric(plac_iv$elbw_u/plac_iv$elbw_u_se < -1.96)
+
+
+plac_iv$mort_d_psig = as.numeric(plac_iv$mort_d/plac_iv$mort_d_se > 1.96)
+plac_iv$mort_d_nsig = as.numeric(plac_iv$mort_d/plac_iv$mort_d_se < -1.96)
+plac_iv$mort_u_psig = as.numeric(plac_iv$mort_u/plac_iv$mort_u_se > 1.96)
+plac_iv$mort_u_nsig = as.numeric(plac_iv$mort_u/plac_iv$mort_u_se < -1.96)
+
+#write to table
+dt = matrix(sprintf("%.1f", c(
+  sum(plac_iv$mort_d_psig)/1000 * 100, sum(plac_iv$mort_d_nsig)/1000 * 100 , sum(plac_iv$mort_u_psig)/1000 * 100, sum(plac_iv$mort_u_nsig)/1000 * 100, 
+  sum(plac_iv$pre_d_psig)/1000 * 100, sum(plac_iv$pre_d_nsig)/1000 * 100 , sum(plac_iv$pre_u_psig)/1000 * 100, sum(plac_iv$pre_u_nsig)/1000 * 100,
+  sum(plac_iv$mpre_d_psig)/1000 * 100, sum(plac_iv$mpre_d_nsig)/1000 * 100 , sum(plac_iv$mpre_u_psig)/1000 * 100, sum(plac_iv$mpre_u_nsig)/1000 * 100,
+  sum(plac_iv$vpre_d_psig)/1000 * 100, sum(plac_iv$vpre_d_nsig)/1000 * 100 , sum(plac_iv$vpre_u_psig)/1000 * 100, sum(plac_iv$vpre_u_nsig)/1000 * 100,
+  sum(plac_iv$epre_d_psig)/1000 * 100, sum(plac_iv$epre_d_nsig)/1000 * 100 , sum(plac_iv$epre_u_psig)/1000 * 100, sum(plac_iv$epre_u_nsig)/1000 * 100,
+  sum(plac_iv$lbw_d_psig)/1000 * 100, sum(plac_iv$lbw_d_nsig)/1000 * 100 , sum(plac_iv$lbw_u_psig)/1000 * 100, sum(plac_iv$lbw_u_nsig)/1000 * 100,
+  sum(plac_iv$mlbw_d_psig)/1000 * 100, sum(plac_iv$mlbw_d_nsig)/1000 * 100 , sum(plac_iv$mlbw_u_psig)/1000 * 100, sum(plac_iv$mlbw_u_nsig)/1000 * 100,
+  sum(plac_iv$vlbw_d_psig)/1000 * 100, sum(plac_iv$vlbw_d_nsig)/1000 * 100 , sum(plac_iv$vlbw_u_psig)/1000 * 100, sum(plac_iv$vlbw_u_nsig)/1000 * 100,
+  sum(plac_iv$elbw_d_psig)/1000 * 100, sum(plac_iv$elbw_d_nsig)/1000 * 100 , sum(plac_iv$elbw_u_psig)/1000 * 100, sum(plac_iv$elbw_u_nsig)/1000 * 100
+)), nrow = 9, byrow = TRUE)
+
+dt = matrix(paste0(dt, "%"), nrow = 9, byrow = TRUE)
+
+dt = data.frame(
+  row = c(
+    "Infant Mortality", 
+    "All Preterm", 
+    "Moderately Preterm", 
+    "Very Preterm", 
+    "Extremely Preterm", 
+    "All Low Birthweight", 
+    "Moderately Low Birthweight", 
+    "Very Low Birthweight", 
+    "Extremely Low Birthweight"
+  ),
+  dt
+)
+
+colnames(dt) = c("", "Downgrad Pos. Corr.", "Downgrad Neg. Corr.", "Upgrad Pos. Corr.", "Upgrad Neg. Corr.")
+
+table = xtable::xtable(dt, caption = "Placebo Test Results", label = "tab:placebo_iv")
+print(table, 
+      type = "latex", 
+      include.rownames = FALSE,
+      caption.placement = "top",
+      hline.after = c(-1, 0, nrow(dt)), 
+      format.args = list(big.mark = ",", scientific = FALSE),
+      file = modify_path2("Tables/Revisions/placebo_iv_rout.tex"))

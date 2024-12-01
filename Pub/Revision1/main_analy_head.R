@@ -12,3 +12,7 @@ if (drop_states){
 if (relaxed_up){
   source("PFAS-Code/Pub/Revision1/Robustness/relaxed_up/relaxed_up_robustness.R")
 }
+
+if (IV){
+  source("PFAS-Code/Pub/Main Analysis/first_stage.R") 
+}

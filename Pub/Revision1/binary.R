@@ -9,7 +9,7 @@ wells_ws = wells_ws %>% left_join(well_ll)
 load(modify_path(paste0("Data_Verify/GIS/cont_watershed_", ppt, ".RData")))
 
 #read in sites_ll to get right site number
-rs_ll = fread(modify_path("Data_Verify/Revision 1/GIS/rs_ll_ws.csv"))
+rs_ll = fread(modify_path(paste0("Data_Verify/Revision 1/GIS/rs_ll_ws_", ppt, ".csv"))) 
 
 cont_ws = cont_ws %>% 
   left_join(rs_ll)

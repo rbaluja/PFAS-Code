@@ -1,8 +1,8 @@
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-load(modify_path("Data_Verify/RData/preterm_sd.RData"))
-load(modify_path("Data_Verify/RData/lbw_sd.RData"))
-load(modify_path("Data_Verify/RData/mort_sd.RData"))
+load(modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData")))
 
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
@@ -246,7 +246,7 @@ iv_fig =  ggplot() +
         panel.grid.major = element_line(color = "grey60", size = 0.5),
         panel.grid.minor = element_line(color = "grey60", size = 0.25), 
         legend.key.size = unit(5, "lines")) + 
-  ylim(0, 100) + 
+  ylim(-50, 500) + 
   geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
   geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5)
 
@@ -293,7 +293,7 @@ iv_fig +
                                      vjust = -3), size = 14)
 
 
-ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")
+ggsave(modify_path3(paste0("Figures/IV/iv_figure", ppt, ".png")), width = 7353, height = 7076, units = "px")
 
 
-fwrite(r_coefs, modify_path3("Figures/Data/fig3a_data.csv"))
+fwrite(r_coefs, modify_path3(paste0("Figures/Data/fig3a_data", ppt, ".csv")))

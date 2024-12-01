@@ -6,10 +6,10 @@ well_ll = fread(modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
 wells_ws = wells_ws %>% left_join(well_ll)
 
 #read in and set cont site watersheds 
-load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
+load(modify_path(paste0("Data_Verify/GIS/cont_watershed_", ppt, ".RData")))
 
 #read in sites_ll to get right site number
-rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
+rs_ll = fread(modify_path(paste0("Data_Verify/GIS/rs_ll_ws_", ppt, ".csv"))) 
 
 cont_ws = cont_ws %>% 
   left_join(rs_ll)
@@ -217,7 +217,7 @@ well_assgn = function(i, drop_far_down, drop_far_up){
   
   #if we get to this point, then there are either no down sites (or down sites are too far and running reclass spec)
   w$down = 0
-    
+  
   #set up variables
   d_up = w$dist_up
   if (!is.na(d_up) & down_far == 0 & relaxed_up == FALSE){ #if there is an up site (and no down sites)
@@ -252,7 +252,7 @@ well_assgn = function(i, drop_far_down, drop_far_up){
     w$site = NA
     return(w)
   }
-
+  
 }
 
 wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, drop_far_up, cl = n_cores))
@@ -260,6 +260,6 @@ wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, dr
 df = df %>% 
   left_join(wells2 %>% 
               as_tibble() %>% 
-              dplyr::select(sys_id, source, pfas, dist,  wind_exposure, site, up, down, n_sites = n_sites_meters, dist_down, dist_up)) 
+              dplyr::select(sys_id, source, pfas, dist,  wind_exposure, site, up, down, n_sites = n_sites_meters, dist_down, dist_up, nsites_down = n_sites_down5, nsites_up = n_sites_up5)) 
 
 df$updown = ifelse(df$down == 1 | df$up == 1, 1, 0)

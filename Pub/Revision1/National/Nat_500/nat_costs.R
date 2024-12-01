@@ -32,20 +32,26 @@ bs = births
 
 
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
-#taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
-bs$pred_pfas = 0.769612 + 7.206569 * bs$down + 0.003181 * bs$sp + 
-  -0.003632 * bs$awc + -0.006685 * bs$clay + -0.001860 * bs$sand + 0.002208 * bs$silt + 
-  0.587664 * asinh(bs$pfas) + -0.420210 * log(bs$dist) + 
-  -0.226273 * bs$updown + -0.002080 * bs$sp * bs$down +   0.000853 * bs$awc * bs$down + 
-  -0.005056 * bs$clay * bs$down + -0.002351 * bs$sand * bs$down +  0.007307 * bs$silt * bs$down + 
-  -0.745619 * log(bs$dist) * bs$down
 
-#for those with missing soil data, use modified regression for imputation
-nind = which(is.na(bs$pred_pfas))
-bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down + 
-  0.671526 * asinh(bs[nind, ]$pfas) + -0.630132* log(bs[nind, ]$dist) + 
-  -0.308053 * bs[nind, ]$updown + 
-  -0.583208  * log(bs[nind, ]$dist) * bs[nind, ]$down
+if (ppt == 1000){
+  #taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
+  bs$pred_pfas = 0.769612 + 7.206569 * bs$down + 0.003181 * bs$sp + 
+    -0.003632 * bs$awc + -0.006685 * bs$clay + -0.001860 * bs$sand + 0.002208 * bs$silt + 
+    0.587664 * asinh(bs$pfas) + -0.420210 * log(bs$dist) + 
+    -0.226273 * bs$updown + -0.002080 * bs$sp * bs$down +   0.000853 * bs$awc * bs$down + 
+    -0.005056 * bs$clay * bs$down + -0.002351 * bs$sand * bs$down +  0.007307 * bs$silt * bs$down + 
+    -0.745619 * log(bs$dist) * bs$down
+  
+  #for those with missing soil data, use modified regression for imputation
+  nind = which(is.na(bs$pred_pfas))
+  bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down + 
+    0.671526 * asinh(bs[nind, ]$pfas) + -0.630132* log(bs[nind, ]$dist) + 
+    -0.308053 * bs[nind, ]$updown + 
+    -0.583208  * log(bs[nind, ]$dist) * bs[nind, ]$down 
+}else{
+  load(modify_path("Data_Verify/RData/w_reg500.RData"))
+  bs$pred_pfas = predict(w_reg, bs)
+}
 
 #read in IV estimates
 if (!file.exists(modify_path("Data_Verify/RData/preterm_iv_coef500.RData")) | 

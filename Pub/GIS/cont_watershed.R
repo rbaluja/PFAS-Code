@@ -29,8 +29,8 @@ cont_sites = cont_sites[which(!cont_sites$site %in% c("Former Aerotronic Site", 
 #set index to keep track of which site is which
 cont_sites$index = 1:nrow(cont_sites)
 #write this mapping to memory so we can know which wells correspond to which indices
-fwrite(cont_sites %>% as_tibble() %>% dplyr::select(site, lng, lat, pfas = sum_pfoa_pfos, index), modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
- 
+fwrite(cont_sites %>% as_tibble() %>% dplyr::select(site, lng, lat, pfas = sum_pfoa_pfos, index), modify_path(paste0("Data_Verify/GIS/rs_ll_ws_", ppt, ".csv")))
+
 #this function iterates over each site, returning a shape of its watershed
 cont_watershed = function(i){
   
@@ -73,7 +73,7 @@ cont_ws = function(f){
 #apply cont_ws to each file, resulting in a list of single row dataframes. Then bind rows into a single dataframe
 cont_ws = dplyr::bind_rows(pblapply(files, cont_ws, cl = 1))
 
-save(cont_ws, file = modify_path("Data_Verify/GIS/cont_watershed.RData")) 
+save(cont_ws, file = modify_path(paste0("Data_Verify/GIS/cont_watershed_", ppt, ".RData"))) 
 
 
 #delete intermediate files

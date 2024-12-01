@@ -23,7 +23,7 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
                 sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`, 
                 sum_pfas = `Max Total PFAS from a single sample (ppt)`, 
                 total_pfas = `PFAS Level (ppt)`) %>%
-  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= 1000) %>% #cut to 1000ppt by Bo meeting 4/21/23
+  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>% #cut to 1000ppt by Bo meeting 4/21/23
   st_as_sf(coords = c('lng', 'lat'), remove = F) %>%
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
@@ -32,40 +32,33 @@ bs = births
 
 
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
-#taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
-bs$pred_pfas = 0.769612 + 7.206569 * bs$down + 0.003181 * bs$sp + 
-  -0.003632 * bs$awc + -0.006685 * bs$clay + -0.001860 * bs$sand + 0.002208 * bs$silt + 
-  0.587664 * asinh(bs$pfas) + -0.420210 * log(bs$dist) + 
-  -0.226273 * bs$updown + -0.002080 * bs$sp * bs$down +   0.000853 * bs$awc * bs$down + 
-  -0.005056 * bs$clay * bs$down + -0.002351 * bs$sand * bs$down +  0.007307 * bs$silt * bs$down + 
-  -0.745619 * log(bs$dist) * bs$down
+#load first stage regressions
+load(modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
 
-#for those with missing soil data, use modified regression for imputation
-nind = which(is.na(bs$pred_pfas))
-bs[nind, ]$pred_pfas = 1.767553+ 5.543289 * bs[nind, ]$down + 
-  0.671526 * asinh(bs[nind, ]$pfas) + -0.630132* log(bs[nind, ]$dist) + 
-  -0.308053 * bs[nind, ]$updown + 
-  -0.583208  * log(bs[nind, ]$dist) * bs[nind, ]$down
+#taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
+bs$pred_pfas = predict(w_reg_nat, newdata = bs)
+bs[is.na(bs$pred_pfas), "pred_pfas"] = predict(w_reg_nos, newdata = bs[is.na(bs$pred_pfas), ])
+
 
 #read in IV estimates
-if (!file.exists(modify_path("Data_Verify/RData/preterm_iv_coef.RData")) | 
-    !file.exists(modify_path("Data_Verify/RData/lbw_iv_coef.RData")) | 
-    !file.exists(modify_path("Data_Verify/RData/mort_iv_coef.RData"))){
+if (!file.exists(modify_path(paste0("Data_Verify/RData/preterm_iv_coef", ppt, ".RData"))) | 
+    !file.exists(modify_path(paste0("Data_Verify/RData/lbw_iv_coef", ppt, ".RData"))) | 
+    !file.exists(modify_path(paste0("Data_Verify/RData/mort_iv_coef", ppt, ".RData")))){
   stop("Run main analysis through tables.R before calculating national cost.")
 }
-load(modify_path("Data_Verify/RData/preterm_iv_coef.RData"))
-load(modify_path("Data_Verify/RData/lbw_iv_coef.RData"))
-load(modify_path("Data_Verify/RData/mort_iv_coef.RData"))
+load(modify_path(paste0("Data_Verify/RData/preterm_iv_coef", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/lbw_iv_coef", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/mort_iv_coef", ppt, ".RData")))
 
 #read in standard errors
-if (!file.exists(modify_path("Data_Verify/RData/preterm_sd.RData")) | 
-    !file.exists(modify_path("Data_Verify/RData/lbw_sd.RData")) | 
-    !file.exists(modify_path("Data_Verify/RData/mort_sd.RData"))){
+if (!file.exists(modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData"))) | 
+    !file.exists(modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData"))) | 
+    !file.exists(modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData")))){
   stop("Run main analysis through tables.R before calculating national cost.")
 }
-load(modify_path("Data_Verify/RData/preterm_sd.RData"))
-load(modify_path("Data_Verify/RData/lbw_sd.RData"))
-load(modify_path("Data_Verify/RData/mort_sd.RData"))
+load(modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData")))
 #getting impacts in states with initiatives
 #vpre
 bs$add_vpre = bs$pred_pfas * bs$births * vpreterm_iv 
@@ -138,7 +131,7 @@ data_pre = data.frame(
 
 
 # Scaling factor for right axis values
-scale_factor = 2000/4
+scale_factor = 3000/5
 
 data_pre$Axis = factor(data_pre$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_pre$Weeks = factor(data_pre$Weeks, 
@@ -160,7 +153,7 @@ p_costs = ggplot(data_pre, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "Annual Additional Births",
     sec.axis = sec_axis(~./scale_factor, name=""), 
-    limits = c(NA, 2000) 
+    limits = c(NA, 3000) 
   )  +
   theme_minimal() + 
   ggtitle("Preterm Births") + 
@@ -178,7 +171,7 @@ p_costs = ggplot(data_pre, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) 
 
 p_costs = p_costs + geom_text(aes(label=round(Value, digits=2), 
-                                  y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 100),
+                                  y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor) + 150),
                               position=position_dodge(width=0.9), 
                               vjust=0, 
                               size=20)
@@ -201,7 +194,7 @@ data_bw = data.frame(
 )
 
 # Scaling factor
-scale_factor_bw = 2000/4
+scale_factor_bw = 3000/5
 
 data_bw$Axis = factor(data_bw$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_bw$Weeks = factor(data_bw$Weeks, 
@@ -224,7 +217,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "",
     sec.axis = sec_axis(~./scale_factor_bw, name="Annual Cost ($ Billion)"), 
-    limits = c(NA, 2000) 
+    limits = c(NA, 3000) 
   ) +
   ggtitle("Low-Weight Births") +
   theme_minimal() +
@@ -244,7 +237,7 @@ lbw_cost = ggplot(data_bw, aes(x=Weeks, y=Value, fill=Axis)) +
   guides(alpha = "none") + 
   scale_pattern_manual(values = c("none", "stripe")) 
 lbw_cost = lbw_cost + geom_text(aes(label=ifelse(Weeks != "Moderately" | Axis != "Costs (Right Axis)", round(Value, digits=2), ""), 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 100),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_bw) + 150),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=20)
@@ -267,7 +260,7 @@ data_mort = data.frame(
 )
 
 # Scaling factor
-scale_factor_mort = 2000/4
+scale_factor_mort = 3000/5
 
 data_mort$Axis = factor(data_mort$Axis, levels = c("Left", "Right"), labels = c("↑ Births (Left Axis)", "Costs (Right Axis)"))
 data_mort$Weeks = factor(data_mort$Weeks, 
@@ -290,7 +283,7 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_y_continuous(
     "Annual Additional Births",
     sec.axis = sec_axis(~./scale_factor_bw, name=""), 
-    limits = c(NA, 2000) 
+    limits = c(NA, 3000) 
   ) +
   ggtitle("Infant Mortality") +
   theme_minimal() +
@@ -308,7 +301,7 @@ mort_cost_fig = ggplot(data_mort, aes(x=Weeks, y=Value, fill=Axis)) +
   scale_pattern_manual(values = c("none", "stripe")) + 
   guides(alpha = "none", fill = "none", pattern = "none")
 mort_cost_fig = mort_cost_fig + geom_text(aes(label=round(Value, digits=2), 
-                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 100),
+                                    y=ifelse(Axis=="↑ Births (Left Axis)", Value, Value * scale_factor_mort) + 150),
                                 position=position_dodge(width=0.9), 
                                 vjust=0, 
                                 size=20)
@@ -329,7 +322,7 @@ mort_cost_fig = mort_cost_fig + guides(pattern = "none")
 figure_3 = (mort_cost_fig | p_costs | lbw_cost) + plot_layout(widths = c(1, 3, 3), guides = "collect")& 
   theme(legend.position = 'bottom')
 
-ggsave(modify_path3("Figures/Figure3/costs_bar.png"), figure_3, width = 12000, height = 9541, units = "px", device = "png", limitsize = FALSE)
+ggsave(modify_path3(paste0("Figures/Figure3/costs_bar", ppt, ".png")), figure_3, width = 12000, height = 9541, units = "px", device = "png", limitsize = FALSE)
 
 nat_costs_data = rbind(data_pre, data_bw, data_mort)
-fwrite(nat_costs_data, modify_path3("Figures/Data/fig3b_data.csv"))
+fwrite(nat_costs_data, modify_path3(paste0("Figures/Data/fig3b_data", ppt, ".csv")))

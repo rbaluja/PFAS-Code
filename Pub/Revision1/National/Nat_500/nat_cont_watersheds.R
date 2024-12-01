@@ -37,12 +37,12 @@ csite_buff = cont_sites %>%
 
 #create necessary directories
 dir.create(modify_path("Data_Verify/GIS/National"))
-dir.create(modify_path("Data_Verify/National/GIS"))
+dir.create(modify_path("Data_Verify/National/GIS_500"))
 
-dir.create(modify_path("Data_Verify/GIS/nat_cont"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_pp"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"))
+dir.create(modify_path("Data_Verify/GIS_500/nat_cont"))
+dir.create(modify_path("Data_Verify/GIS_500/nat_cont/cont_pp"))
+dir.create(modify_path("Data_Verify/GIS_500/nat_cont/cont_watershed"))
+dir.create(modify_path("Data_Verify/GIS_500/nat_cont/cont_watershed/Shapes"))
 
 cont_sites$index = 1:nrow(cont_sites)
 
@@ -61,23 +61,23 @@ states11 = c("Michigan",
 cont_sites = cont_sites %>% 
   dplyr::filter(state %in% states11)
 
-fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), modify_path("Data_Verify/GIS/National/nat_rs_ws_500.csv"))
+fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), modify_path("Data_Verify/GIS_500/National/nat_rs_ws.csv"))
 
 
 cont_ws = function(state, states11){
   
   #get dem for state
   e = get_elev_raster(states[which(states$NAME == state), ], z = 9)
-  writeRaster(e, modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), overwrite = TRUE)
+  writeRaster(e, modify_path(paste0("Data_Verify/GIS_500/National/", state, "dem.tif")), overwrite = TRUE)
   
   #fill the dem sinks
-  wbt_breach_depressions(modify_path(paste0("Data_Verify/GIS/National/", state, "dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")))
+  wbt_breach_depressions(modify_path(paste0("Data_Verify/GIS_500/National/", state, "dem.tif")), modify_path(paste0("Data_Verify/GIS_500/National/", state, "filled_dem.tif")))
   
   #flow accumulation
-  wbt_d8_flow_accumulation(modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")))
+  wbt_d8_flow_accumulation(modify_path(paste0("Data_Verify/GIS_500/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS_500/National/", state, "flow_acc.tif")))
   
   #flow direction
-  wbt_d8_pointer(modify_path(paste0("Data_Verify/GIS/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")))
+  wbt_d8_pointer(modify_path(paste0("Data_Verify/GIS_500/National/", state, "filled_dem.tif")), modify_path(paste0("Data_Verify/GIS_500/National/", state, "flow_dir.tif")))
   
   #########
   ##Calculate watershed
@@ -90,27 +90,27 @@ cont_ws = function(state, states11){
     
     # Run snap pour points
     wbt_snap_pour_points(pour_pts = temp_point_path, 
-                         flow_accum = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")), 
-                         output = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "pp.shp")),
+                         flow_accum = modify_path(paste0("Data_Verify/GIS_500/National/", state, "flow_acc.tif")), 
+                         output = modify_path(paste0("Data_Verify/GIS_500/nat_cont/site_", state_sites$index[i] ,  "pp.shp")),
                          snap_dist = 0.007569 * 5)
     
     #calculate watershed
-    wbt_watershed(d8_pntr = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")), 
-                  pour_pts = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "pp.shp")), 
-                  output = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
+    wbt_watershed(d8_pntr = modify_path(paste0("Data_Verify/GIS_500/National/", state, "flow_dir.tif")), 
+                  pour_pts = modify_path(paste0("Data_Verify/GIS_500/nat_cont/site_", state_sites$index[i] ,  "pp.shp")), 
+                  output = modify_path(paste0("Data_Verify/GIS_500/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
     
     #read in watershed
-    ws = terra::rast(modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
+    ws = terra::rast(modify_path(paste0("Data_Verify/GIS_500/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
     
     #transform watershed to a polygon
     ws_poly = as.polygons(ws)
     #save shapefile of watershed
-    writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/nat_cont/cont_watershed/Shapes/site_", state_sites$index[i] ,  "ws_shape.shp")), overwrite = TRUE)
+    writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS_500/nat_cont/cont_watershed/Shapes/site_", state_sites$index[i] ,  "ws_shape.shp")), overwrite = TRUE)
   }
 }
 pblapply(states11, cont_ws, states11, cl = n_cores) 
 
-files = list.files(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path("Data_Verify/GIS_500/nat_cont/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
 
 well_ws = function(f){
   w_ws1 = st_read(f)
@@ -121,7 +121,7 @@ well_ws = function(f){
 
 n_cont_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 n_cont_ws = n_cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index))
-save(n_cont_ws, file = modify_path("Data_Verify/RData/nat_cont_watershed_500.RData"))
+save(n_cont_ws, file = modify_path("Data_Verify/RData/nat_cont_watershed500.RData"))
 
 #delete intermediate files
-unlink(modify_path("Data_Verify/GIS/nat_cont/"), recursive = TRUE)
+unlink(modify_path("Data_Verify/GIS_500/nat_cont/"), recursive = TRUE)

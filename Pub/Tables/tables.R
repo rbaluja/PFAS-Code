@@ -162,14 +162,14 @@ lpreterm_iv = table2_preterm[["Moderately"]]$coefficients["pred_pfas"]
 mpreterm_iv = table2_preterm[["Very"]]$coefficients["pred_pfas"]
 vpreterm_iv = table2_preterm[["Extremely"]]$coefficients["pred_pfas"]
 
-save(preterm_iv, lpreterm_iv, mpreterm_iv, vpreterm_iv, file = modify_path("Data_Verify/RData/preterm_iv_coef.RData"))
+save(preterm_iv, lpreterm_iv, mpreterm_iv, vpreterm_iv, file = modify_path(paste0("Data_Verify/RData/preterm_iv_coef", ppt, ".RData")))
 
 #calculate bootstrapped standard errors
 preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
 lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Moderately"]])
 mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Very"]])
 vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Extremely"]])
-save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path("Data_Verify/RData/preterm_sd.RData"))
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
 1 - pnorm(table2_preterm[["All"]]$coefficients["pred_pfas"]/preterm_sd)
 1 - pnorm(table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/lpreterm_sd)
 1 - pnorm(table2_preterm[["Very"]]$coefficients["pred_pfas"]/mpreterm_sd)
@@ -197,7 +197,7 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
   cov_pre_lm = cov_boot(boot_coefs, "lpreterm", table2_preterm[["Moderately"]], "mpreterm", table2_preterm[["Very"]])
   cov_pre_lv = cov_boot(boot_coefs, "lpreterm", table2_preterm[["Moderately"]], "vpreterm", table2_preterm[["Extremely"]])
   cov_pre_mv = cov_boot(boot_coefs, "mpreterm", table2_preterm[["Very"]], "vpreterm", table2_preterm[["Extremely"]])
-  save(cov_pre_lm, cov_pre_lv, cov_pre_mv, file = modify_path("Data_Verify/RData/cov_preterm.RData"))  
+  save(cov_pre_lm, cov_pre_lv, cov_pre_mv, file = modify_path(paste0("Data_Verify/RData/cov_preterm", ppt, ".RData")))  
 }
 
 
@@ -250,14 +250,14 @@ llbw_iv = table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]
 mlbw_iv = table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]
 vlbw_iv = table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]
 
-save(lbw_iv, llbw_iv, mlbw_iv, vlbw_iv, file = modify_path("Data_Verify/RData/lbw_iv_coef.RData"))
+save(lbw_iv, llbw_iv, mlbw_iv, vlbw_iv, file = modify_path(paste0("Data_Verify/RData/lbw_iv_coef", ppt, ".RData")))
 
 #calculate bootstrapped standard errors
 lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
 llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
 mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
 vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
-save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path("Data_Verify/RData/lbw_sd.RData"))
+save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData")))
 
 #marginal effects
 table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
@@ -280,7 +280,7 @@ if(bs_cov){ #calculate and save covariance terms for national cost analysis
   cov_lbw_lm = cov_boot(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]], "mlbw", table2_lbw[["mLow Birthweight"]])
   cov_lbw_lv = cov_boot(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
   cov_lbw_mv = cov_boot(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
-  save(cov_lbw_lm, cov_lbw_lv, cov_lbw_mv, file = modify_path("Data_Verify/RData/cov_lbw.RData"))  
+  save(cov_lbw_lm, cov_lbw_lv, cov_lbw_mv, file = modify_path(paste0("Data_Verify/RData/cov_lbw", ppt, ".RData")))  
 }
 1 - pnorm(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/lbw_sd)
 1 - pnorm(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/llbw_sd)
@@ -352,13 +352,13 @@ modelsummary::modelsummary(mort_table,
 
 #mortality standard error
 mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
-save(mort_sd, file = modify_path("Data_Verify/RData/mort_sd.RData"))
+save(mort_sd, file = modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData")))
 #p value for IV
 1 - pnorm(mort_table[["IV"]]$coefficients["pred_pfas"]/mort_sd)
 
 #mortality IV estimate
 mort_iv = mort_table[["IV"]]$coefficients["pred_pfas"]
-save(mort_iv, file = modify_path("Data_Verify/RData/mort_iv_coef.RData"))
+save(mort_iv, file = modify_path(paste0("Data_Verify/RData/mort_iv_coef", ppt, ".RData")))
 
 #mortality marginal effect
 mort_table[["IV"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
@@ -374,7 +374,7 @@ if (bs_cov){
   cov_mort_bm = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "mlbw", table2_lbw[["mLow Birthweight"]])
   cov_mort_bv = cov_boot(boot_coefs, "mort", mort_table[["IV"]], "vlbw", table2_lbw[["Very Low Birthweight"]])
   
-  save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path("Data_Verify/RData/cov_mort.RData"))
+  save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path(paste0("Data_Verify/RData/cov_mort", ppt, ".RData")))
 }
 
 

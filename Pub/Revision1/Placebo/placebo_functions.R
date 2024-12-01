@@ -1,4 +1,4 @@
-placebo = function(i, df, wells){
+placebo = function(i, df, wells, iv = FALSE){
   psites = st_sample(nh_shape, 41)
   
   psites = do.call(rbind, st_geometry(psites)) %>% 
@@ -10,7 +10,7 @@ placebo = function(i, df, wells){
   
   psites$site = 1:nrow(psites)
   
-
+  
   #create directories for watershed calculation
   dir.create("Data_Verify_Revision/GIS/placebo")
   dir.create("Data_Verify_Revision/GIS/placebo/cont_pp")
@@ -30,32 +30,59 @@ placebo = function(i, df, wells){
   df$csite_dist = min_distances
   
   regr = tryCatch({
-    placebo_res(df)
+    if(!iv){
+      placebo_res_corr(df)
+    }else
+      placebo_res_iv(df)
   }, error = function(e) {
-    #if an error occurs, set regr to a predefined data frame
-    boot_coefs = data.frame(matrix(ncol = 44, nrow = 1))
-    colnames(boot_coefs) = c("m_age", "m_age_se", 
-                             "m_married", "m_married_se",
-                             "private_insurance", "private_insurance_se",
-                             "nbr_cgrtt", "nbr_cgrtt_se",
-                             "m_educ", "m_educ_se",
-                             "f_educ", "f_educ_se",
-                             "mr_04", "mr_04_se",
-                             "mr_18", "mr_18_se",
-                             "mr_08", "mr_08_se",
-                             "mr_21", "mr_21_se",
-                             "mr_26", "mr_26_se",
-                             "mr_27", "mr_27_se",
-                             "mthr_wgt_dlv", "mthr_wgt_dlv_se",
-                             "mthr_pre_preg_wgt", "mthr_pre_preg_wgt_se",
-                             "m_height", "m_height_se",
-                             "med_hprice", "med_hprice_se",
-                             "med_inc", "med_inc_se", 
-                             "rural", "rural_se", 
-                             "well_elev", "well_elev_se", 
-                             "resid_elev, resid_elev_se", 
-                             "temp", "temp_se", 
-                             "pm25", "pm25_se")
+    if (!iv){
+      #if an error occurs, set regr to a predefined data frame
+      boot_coefs = data.frame(matrix(ncol = 44, nrow = 1))
+      colnames(boot_coefs) = c("m_age", "m_age_se", 
+                               "m_married", "m_married_se",
+                               "private_insurance", "private_insurance_se",
+                               "nbr_cgrtt", "nbr_cgrtt_se",
+                               "m_educ", "m_educ_se",
+                               "f_educ", "f_educ_se",
+                               "mr_04", "mr_04_se",
+                               "mr_18", "mr_18_se",
+                               "mr_08", "mr_08_se",
+                               "mr_21", "mr_21_se",
+                               "mr_26", "mr_26_se",
+                               "mr_27", "mr_27_se",
+                               "mthr_wgt_dlv", "mthr_wgt_dlv_se",
+                               "mthr_pre_preg_wgt", "mthr_pre_preg_wgt_se",
+                               "m_height", "m_height_se",
+                               "med_hprice", "med_hprice_se",
+                               "med_inc", "med_inc_se", 
+                               "rural", "rural_se", 
+                               "well_elev", "well_elev_se", 
+                               "resid_elev, resid_elev_se", 
+                               "temp", "temp_se", 
+                               "pm25", "pm25_se") 
+    }else{
+      boot_coefs = data.frame(matrix(ncol = 40, nrow = 1))
+      colnames(boot_coefs) = c("pre_d", "pre_d_se", 
+                               "pre_u", "pre_u_se",
+                               "mpre_d", "mpre_d_se",
+                               "mpre_u", "mpre_u_se",
+                               "vpre_d", "vpre_d_se",
+                               "vpre_u", "vpre_u_se",
+                               "epre_d", "epre_d_se",
+                               "epre_u", "epre_u_se",
+                               "lbw_d", "lbw_d_se",
+                               "lbw_u", "lbw_u_se",
+                               "lbwft_d", "lbwft_d_se",
+                               "lbwft_u", "lbwft_u_se",
+                               "mlbw_d", "mlbw_d_se",
+                               "mlbw_u", "mlbw_u_se",
+                               "vlbw_d", "vlbw_d_se",
+                               "vlbw_u", "vlbw_u_se",
+                               "elbw_d", "elbw_d_se",
+                               "elbw_u", "elbw_u_se",
+                               "mort_d", "mort_d_se",
+                               "mort_u", "mort_u_se")
+    }
     return(boot_coefs)
   })
   
@@ -109,10 +136,10 @@ combine_placebo_ws = function(){
 
 bin_spec = function(df, wells, cont_ws, psites){
   # #read in and set well watersheds
-  load("Data_Verify/GIS/wells_watershed.RData")
+  load("Data_Verify_Pub/GIS/wells_watershed.RData")
   
   #read in well_ll to get appropriate sys and well ids
-  well_ll = fread("Data_Verify/GIS/wells_ll_ws.csv")
+  well_ll = fread("Data_Verify_Pub/GIS/wells_ll_ws.csv")
   wells_ws = wells_ws %>% left_join(well_ll)
   
   #a well is downgradient if there is a site in its watershed
@@ -200,10 +227,10 @@ down_well_dist = function(w, down_wells, psites, wells){
   
   #get the index of the nearest relevant release site
   ind_nearest = which.min(ds)
-
+  
   nearest_site = rsdw_site %>% 
     as_tibble() %>% 
-   dplyr::select(site)
+    dplyr::select(site)
   nearest_site = as.character(nearest_site[ind_nearest, "site"])
   
   #how many down sites are within 'meters' of the well?
@@ -349,7 +376,7 @@ well_assgn = function(i, drop_far_down, drop_far_up, wells1){
 }
 
 
-placebo_res = function(df){
+placebo_res_corr = function(df){
   boot_coefs = data.frame(matrix(ncol = 44, nrow = 1))
   colnames(boot_coefs) = c("m_age", "m_age_se", 
                            "m_married", "m_married_se",
@@ -455,4 +482,187 @@ placebo_res = function(df){
   
   
   
+}
+
+
+placebo_res_iv = function(df){
+  boot_coefs = data.frame(matrix(ncol = 40, nrow = 1))
+  colnames(boot_coefs) = c("pre_d", "pre_d_se", 
+                           "pre_u", "pre_u_se",
+                           "mpre_d", "mpre_d_se",
+                           "mpre_u", "mpre_u_se",
+                           "vpre_d", "vpre_d_se",
+                           "vpre_u", "vpre_u_se",
+                           "epre_d", "epre_d_se",
+                           "epre_u", "epre_u_se",
+                           "lbw_d", "lbw_d_se",
+                           "lbw_u", "lbw_u_se",
+                           "lbwft_d", "lbwft_d_se",
+                           "lbwft_u", "lbwft_u_se",
+                           "mlbw_d", "mlbw_d_se",
+                           "mlbw_u", "mlbw_u_se",
+                           "vlbw_d", "vlbw_d_se",
+                           "vlbw_u", "vlbw_u_se",
+                           "elbw_d", "elbw_d_se",
+                           "elbw_u", "elbw_u_se",
+                           "mort_d", "mort_d_se",
+                           "mort_u", "mort_u_se")
+  
+  
+  preterm = fixest::feols(I(gestation < 37) ~  1
+                          |county + year^month + birth_race_dsc_1
+                          |updown + down ~
+                            m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                            m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                            mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                            m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                          , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  mpreterm = fixest::feols(I(gestation < 37 & gestation >= 32) ~  1
+                           |county + year^month + birth_race_dsc_1
+                           |updown + down ~
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                             m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                           , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  vpreterm = fixest::feols(I(gestation < 32 & gestation >= 28) ~  1
+                           |county + year^month + birth_race_dsc_1
+                           |updown + down ~
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                             m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                           , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  epreterm = fixest::feols(I(gestation < 28) ~  1
+                           |county + year^month + birth_race_dsc_1
+                           |updown + down ~
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                             m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                           , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  
+  lbw = fixest::feols(I(bweight < 2500) ~  1
+                      |county + year^month + birth_race_dsc_1
+                      |updown + down ~
+                        m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                        m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                        m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                      , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  lbw_ft = fixest::feols(I(bweight < 2500) ~  1
+                         |county + year^month + birth_race_dsc_1
+                         |updown + down ~
+                           m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                           m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                           m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                         , data = df[which(df$gestation >= 37), ], warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  mlbw = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  1
+                       |county + year^month + birth_race_dsc_1
+                       |updown + down ~
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                         m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                       , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  vlbw = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  1
+                       |county + year^month + birth_race_dsc_1
+                       |updown + down ~
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                         m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                       , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  elbw = fixest::feols(I(bweight < 1000) ~  1
+                       |county + year^month + birth_race_dsc_1
+                       |updown + down ~
+                         m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                         m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                         m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                       , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  
+  
+  
+  mort_tab = fixest::feols(death ~  1
+                           |county + year^month + birth_race_dsc_1
+                           |updown + down ~
+                             m_age + m_married  + private_insurance  + nbr_cgrtt  + 
+                             m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                             m_height+ med_hprice + med_inc + well_elev + resid_elev + temp + pm25
+                           , data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+  
+  boot_coefs[1, "pre_d"] = preterm$coefficients["fit_down"]
+  boot_coefs[1, "pre_d_se"] = sqrt(vcov(preterm, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "pre_u"] = preterm$coefficients["fit_updown"]
+  boot_coefs[1, "pre_u_se"] = sqrt(vcov(preterm, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "mpre_d"] = mpreterm$coefficients["fit_down"]
+  boot_coefs[1, "mpre_d_se"] = sqrt(vcov(mpreterm, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "mpre_u"] = mpreterm$coefficients["fit_updown"]
+  boot_coefs[1, "mpre_u_se"] = sqrt(vcov(mpreterm, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "vpre_d"] = vpreterm$coefficients["fit_down"]
+  boot_coefs[1, "vpre_d_se"] = sqrt(vcov(vpreterm, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "vpre_u"] = vpreterm$coefficients["fit_updown"]
+  boot_coefs[1, "vpre_u_se"] = sqrt(vcov(vpreterm, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "epre_d"] = epreterm$coefficients["fit_down"]
+  boot_coefs[1, "epre_d_se"] = sqrt(vcov(epreterm, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "epre_u"] = epreterm$coefficients["fit_updown"]
+  boot_coefs[1, "epre_u_se"] = sqrt(vcov(epreterm, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "lbwft_d"] = lbw_ft$coefficients["fit_down"]
+  boot_coefs[1, "lbwft_d_se"] = sqrt(vcov(lbw_ft, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "lbwft_u"] = lbw_ft$coefficients["fit_updown"]
+  boot_coefs[1, "lbwft_u_se"] = sqrt(vcov(lbw_ft, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "lbw_d"] = lbw$coefficients["fit_down"]
+  boot_coefs[1, "lbw_d_se"] = sqrt(vcov(lbw, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "lbw_u"] = lbw$coefficients["fit_updown"]
+  boot_coefs[1, "lbw_u_se"] = sqrt(vcov(lbw, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "mlbw_d"] = mlbw$coefficients["fit_down"]
+  boot_coefs[1, "mlbw_d_se"] = sqrt(vcov(mlbw, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "mlbw_u"] = mlbw$coefficients["fit_updown"]
+  boot_coefs[1, "mlbw_u_se"] = sqrt(vcov(mlbw, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "vlbw_d"] = vlbw$coefficients["fit_down"]
+  boot_coefs[1, "vlbw_d_se"] = sqrt(vcov(vlbw, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "vlbw_u"] = vlbw$coefficients["fit_updown"]
+  boot_coefs[1, "vlbw_u_se"] = sqrt(vcov(vlbw, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  boot_coefs[1, "elbw_d"] = elbw$coefficients["fit_down"]
+  boot_coefs[1, "elbw_d_se"] = sqrt(vcov(elbw, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "elbw_u"] = elbw$coefficients["fit_updown"]
+  boot_coefs[1, "elbw_u_se"] = sqrt(vcov(elbw, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  
+  boot_coefs[1, "mort_d"] = mort_tab$coefficients["fit_down"]
+  boot_coefs[1, "mort_d_se"] = sqrt(vcov(mort_tab, cluster = c("site", "year^month"))["fit_down", "fit_down"])
+  boot_coefs[1, "mort_u"] = mort_tab$coefficients["fit_updown"]
+  boot_coefs[1, "mort_u_se"] = sqrt(vcov(mort_tab, cluster = c("site", "year^month"))["fit_updown", "fit_updown"])
+  
+  
+  
+  return(boot_coefs)
+  
+}
+
+
+placebo_res = function(df){
+  bc1 = placebo_res_corr(df)
+  bc2 = placebo_res_iv(df)
+  return(list(bc1, bc2))
 }
