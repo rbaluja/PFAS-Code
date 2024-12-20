@@ -1632,3 +1632,223 @@ cov_mort_bm = cov_boot(boot_coefs, "mort", mort_tab, "mlbw", table2_lbw[["mLow B
 cov_mort_bv = cov_boot(boot_coefs, "mort", mort_tab, "vlbw", table2_lbw[["Very Low Birthweight"]])
 
 save(cov_mort_pl, cov_mort_pm, cov_mort_pv, cov_mort_bl, cov_mort_bm, cov_mort_bv, file = modify_path(paste0("Data_Verify/RData/mort_cov", ppt, ".RData")))
+
+
+
+#Base IV table with updated marginal effects
+################
+###Table 2 Note, standard errors are read in from bootstrap_iv.R run
+if (!file.exists(modify_path("Data_Verify/RData/bootstrap.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/bootstrap.RData"))
+
+#preterm
+table2_preterm = list()
+
+table2_preterm[["All"]]= fixest::feols(I(gestation < 37) ~ pred_pfas + asinh(pfas) + 
+                                         n_sites + wind_exposure + 
+                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                         m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+
+table2_preterm[["Moderately"]]= fixest::feols(I(gestation < 37 & gestation >= 32) ~ pred_pfas + asinh(pfas) + 
+                                                n_sites + wind_exposure + 
+                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+table2_preterm[["Very"]]= fixest::feols(I(gestation < 32 & gestation >= 28) ~ pred_pfas + asinh(pfas) + 
+                                          n_sites + wind_exposure + 
+                                          m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                          pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                          m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+
+table2_preterm[["Extremely"]]= fixest::feols(I(gestation < 28) ~ pred_pfas + asinh(pfas) + 
+                                               n_sites + wind_exposure + 
+                                               m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                               pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                               mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                               mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                               m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+#calculate bootstrapped standard errors
+preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
+lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Moderately"]])
+mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Very"]])
+vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Extremely"]])
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
+
+#marginal effect of 100ppt at median
+table2_preterm[["All"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["All"]]$coefficients["pred_pfas"] - 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["All"]]$coefficients["pred_pfas"] + 1.96 * preterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_preterm[["Moderately"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] - 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] + 1.96 * lpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_preterm[["Very"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] + 1.96 *mpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_preterm[["Extremely"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Extremely"]]$coefficients["pred_pfas"] - 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_preterm[["Extremely"]]$coefficients["pred_pfas"] + 1.96 * vpreterm_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_preterm[["All"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["All"]]$coefficients["pred_pfas"] - 1.96 * preterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["All"]]$coefficients["pred_pfas"] + 1.96 * preterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_preterm[["Moderately"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] - 1.96 * lpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Moderately"]]$coefficients["pred_pfas"] + 1.96 * lpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_preterm[["Very"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] - 1.96 * mpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Very"]]$coefficients["pred_pfas"] + 1.96 * mpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_preterm[["Extremely"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Extremely"]]$coefficients["pred_pfas"] - 1.96 * vpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_preterm[["Extremely"]]$coefficients["pred_pfas"] + 1.96 * vpreterm_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+
+
+#lbw
+table2_lbw = list()
+table2_lbw[["Low Birthweight"]]= fixest::feols(I(bweight < 2500 ) ~ pred_pfas + asinh(pfas) +
+                                                 n_sites + wind_exposure + 
+                                                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                 pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                 m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+table2_lbw[["lLow Birthweight"]]= fixest::feols(I(bweight < 2500 & bweight >= 1500) ~ pred_pfas + asinh(pfas) +
+                                                  n_sites + wind_exposure + 
+                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                  m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+table2_lbw[["mLow Birthweight"]]= fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ pred_pfas + asinh(pfas) +
+                                                  n_sites + wind_exposure + 
+                                                  m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                  pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                  mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                  mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                  m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+
+table2_lbw[["Very Low Birthweight"]]= fixest::feols(I(bweight < 1000) ~ pred_pfas + asinh(pfas) +
+                                                      n_sites + wind_exposure + 
+                                                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                      pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                      m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df )
+
+#calculate bootstrapped standard errors
+lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
+llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
+mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
+vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
+
+#marginal effects
+table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * lbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * llbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * mlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * llbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["lLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * llbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] - 1.96 * mlbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["mLow Birthweight"]]$coefficients["pred_pfas"] + 1.96 * mlbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] - 1.96 * vlbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas"] + 1.96 * vlbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+
+
+#####################
+### Mortality effects
+mort_table = list()
+
+mort_table[["Binary"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                         m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                         mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                         m_height + tri5 +fa_resid + wind_exposure
+                                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["PFAS Interaction"]] = fixest::feols(death ~ (updown + down) *I(pfas/10^3) + dist  + n_sites + 
+                                                   m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                   pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                   mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                   mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                   m_height + tri5 + fa_resid + wind_exposure
+                                                 |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["Distance Interaction"]] = fixest::feols(death ~ (updown + down) *I(dist/1000) + I(pfas/10^3)  + n_sites + 
+                                                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                       m_height + tri5 + fa_resid + wind_exposure
+                                                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["Contr. Health"]] = fixest::feols(death ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
+                                                m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                                pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                                mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                                mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                                m_height + tri5 +fa_resid + wind_exposure + gestation + bweight
+                                              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+
+mort_table[["IV"]] = fixest::feols(death ~ pred_pfas + asinh(pfas) + 
+                                     n_sites + wind_exposure + 
+                                     m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                                     pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                                     mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                                     mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                                     m_height + tri5 + fa_resid|county + year^month + birth_race_dsc_1, data = df)
+
+#mortality standard error
+mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
+
+#mortality marginal effect
+mort_table[["IV"]]$coefficients["pred_pfas"]/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + median(sinh(df$pred_pfas), na.rm = T)^2)) * 100
+
+mort_table[["IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_table[["IV"]]$coefficients["pred_pfas"] - 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)
+(mort_table[["IV"]]$coefficients["pred_pfas"] + 1.96 * mort_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df$pred_pfas), na.rm = T) - 28.27)

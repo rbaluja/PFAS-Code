@@ -30,7 +30,7 @@ np = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + 
 
 data_pre = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 37) * 100, 
                np$coefficients["down"]/mean(df$gestation < 37) * 100),
   StdError = c(full$se["down"]/mean(df$gestation < 37) * 100, 
@@ -40,7 +40,7 @@ data_pre = data.frame(
 )
 
 
-data_pre$Check = factor(data_pre$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_pre$Check = factor(data_pre$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_pre$down = data_pre$Estimate
@@ -75,7 +75,7 @@ np = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfa
 
 data_mpre = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
                np$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
   StdError = c(full$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
@@ -85,7 +85,7 @@ data_mpre = data.frame(
 )
 
 
-data_mpre$Check = factor(data_mpre$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_mpre$Check = factor(data_mpre$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_mpre$down = data_mpre$Estimate
@@ -118,7 +118,7 @@ np = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfa
 
 data_vpre = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
                np$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
   StdError = c(full$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
@@ -128,7 +128,7 @@ data_vpre = data.frame(
 )
 
 
-data_vpre$Check = factor(data_vpre$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_vpre$Check = factor(data_vpre$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_vpre$down = data_vpre$Estimate
@@ -162,7 +162,7 @@ np = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + 
 
 data_epre = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$gestation < 28) * 100, 
                np$coefficients["down"]/mean(df$gestation < 28) * 100),
   StdError = c(full$se["down"]/mean(df$gestation < 28) * 100, 
@@ -172,7 +172,7 @@ data_epre = data.frame(
 )
 
 
-data_epre$Check = factor(data_epre$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_epre$Check = factor(data_epre$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_epre$down = data_epre$Estimate
@@ -210,7 +210,7 @@ np = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + 
 
 data_lbw = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500) * 100, 
                np$coefficients["down"]/mean(df$bweight < 2500) * 100),
   StdError = c(full$se["down"]/mean(df$bweight < 2500) * 100, 
@@ -220,7 +220,7 @@ data_lbw = data.frame(
 )
 
 
-data_lbw$Check = factor(data_lbw$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_lbw$Check = factor(data_lbw$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_lbw$down = data_lbw$Estimate
@@ -255,7 +255,7 @@ np = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfa
 
 data_mlbw = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
                np$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
   StdError = c(full$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
@@ -265,7 +265,7 @@ data_mlbw = data.frame(
 )
 
 
-data_mlbw$Check = factor(data_mlbw$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_mlbw$Check = factor(data_mlbw$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_mlbw$down = data_mlbw$Estimate
@@ -299,7 +299,7 @@ np = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfa
 
 data_vlbw = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
                np$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
   StdError = c(full$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
@@ -309,7 +309,7 @@ data_vlbw = data.frame(
 )
 
 
-data_vlbw$Check = factor(data_vlbw$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_vlbw$Check = factor(data_vlbw$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_vlbw$down = data_vlbw$Estimate
@@ -343,7 +343,7 @@ np = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + 
 
 data_elbw = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$bweight < 1000) * 100, 
                np$coefficients["down"]/mean(df$bweight < 1000) * 100),
   StdError = c(full$se["down"]/mean(df$bweight < 1000) * 100, 
@@ -353,7 +353,7 @@ data_elbw = data.frame(
 )
 
 
-data_elbw$Check = factor(data_elbw$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_elbw$Check = factor(data_elbw$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_elbw$down = data_elbw$Estimate
@@ -419,7 +419,7 @@ np = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wi
 
 data_mort = data.frame(
   Category = c("Baseline", "Controls"),
-  Check = c("Baseline", "Cluster SE at CWS-Month"),
+  Check = c("Baseline", "Cluster SE at PWS-Month"),
   Estimate = c(full$coefficients["down"]/mean(df$death) * 100, 
                np$coefficients["down"]/mean(df$death) * 100),
   StdError = c(full$se["down"]/mean(df$death) * 100, 
@@ -429,7 +429,7 @@ data_mort = data.frame(
 )
 
 
-data_mort$Check = factor(data_mort$Check, c("Baseline", "Cluster SE at CWS-Month"))
+data_mort$Check = factor(data_mort$Check, c("Baseline", "Cluster SE at PWS-Month"))
 
 
 data_mort$down = data_mort$Estimate

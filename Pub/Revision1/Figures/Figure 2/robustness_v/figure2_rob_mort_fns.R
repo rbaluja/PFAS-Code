@@ -456,11 +456,11 @@ figure2_still_fun_cws = function(data, category, keep_x, header, ti, left){
           pval = "p-value"
         )
       ) 
-    res_plot$Check = factor(res_plot$Check, c("Baseline", "Cluster SE at CWS-Month", "Model"
+    res_plot$Check = factor(res_plot$Check, c("Baseline", "Cluster SE at PWS-Month", "Model"
     ))
     res_plot$model = res_plot$Check
   }else{
-    res_plot$Check = factor(res_plot$Check, c("Baseline", "Cluster SE at CWS-Month",
+    res_plot$Check = factor(res_plot$Check, c("Baseline", "Cluster SE at PWS-Month",
     ))
     res_plot$model = res_plot$Check
   }
