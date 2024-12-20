@@ -28,10 +28,6 @@ rm(list = ls())
 #create figure of the first stage throughout NH
 source("PFAS-Code/Pub/Revision1/Figures/pred_pfas_map.R")
 rm(list = ls())
-#create binary cost figure from https://doi.org/10.1126/science.ado6638
-source("PFAS-Code/Pub/Revision1/National/xgboost_rob.R")
-rm(list = ls())
-rm(list = ls())
 #run IV setup with 500 ppt threshold, and save IV figure
 source("PFAS-Code/Pub/Revision1/ppt500/iv_nh.R")
 rm(list = ls())
@@ -42,5 +38,7 @@ source("PFAS-Code/Pub/Revision1/Figures/Figure 2/iv_500_1000.R")
 #create figure of the first stage throughout NH
 #source("PFAS-Code/Pub/Revision1/Figures/pred_pfas_map.R")
 rm(list = ls())
+#run national costs with 500 ppt as the threshold
+source("PFAS-Code/Pub/Revision1/national_costs_head500.R")
 
 

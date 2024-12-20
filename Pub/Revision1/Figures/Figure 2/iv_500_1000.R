@@ -82,7 +82,7 @@ data_pre = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(pre500, pre1000),
   StdError = c(pre500_sd, pre1000_sd),
-  pval = c(one_sp(pre500, pre500_sd), one_sp(pre1000, pre1000_sd))
+  pval = c(1 - pnorm(pre500/pre500_sd), 1 - pnorm(pre1000/pre1000_sd))
 )
 
 
@@ -107,7 +107,7 @@ data_mpre = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(lpre500, lpre1000),
   StdError = c(lpre500_sd, lpre1000_sd),
-  pval = c(one_sp(lpre500, lpre500_sd), one_sp(lpre1000, lpre1000_sd))
+  pval = c(1 - pnorm(lpre500/lpre500_sd), 1 - pnorm(lpre1000/lpre1000_sd))
 )
 
 
@@ -131,7 +131,7 @@ data_vpre = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(mpre500, mpre1000),
   StdError = c(mpre500_sd, mpre1000_sd),
-  pval = c(one_sp(mpre500, mpre500_sd), one_sp(mpre1000, mpre1000_sd))
+  pval = c(1 - pnorm(mpre500/mpre500_sd), 1 - pnorm(mpre1000/mpre1000_sd))
 )
 
 
@@ -154,7 +154,7 @@ data_epre = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(vpre500, vpre1000),
   StdError = c(vpre500_sd, vpre1000_sd),
-  pval = c(one_sp(vpre500, vpre500_sd), one_sp(vpre1000, vpre1000_sd))
+  pval = c(1 - pnorm(vpre500/vpre500_sd), 1 - pnorm(vpre1000/vpre1000_sd))
 )
 
 
@@ -182,7 +182,7 @@ data_lbw = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(lbw500, lbw1000),
   StdError = c(lbw500_sd, lbw1000_sd),
-  pval = c(one_sp(lbw500, lbw500_sd), one_sp(lbw1000, lbw1000_sd))
+  pval = c(1 - pnorm(lbw500/lbw500_sd), 1 - pnorm(lbw1000/lbw1000_sd))
 )
 
 
@@ -207,7 +207,7 @@ data_mlbw = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(llbw500, llbw1000),
   StdError = c(llbw500_sd, llbw1000_sd),
-  pval = c(one_sp(llbw500, llbw500_sd), one_sp(llbw1000, llbw1000_sd))
+  pval = c(1 - pnorm(llbw500/llbw500_sd), 1 - pnorm(llbw1000/llbw1000_sd))
 )
 
 
@@ -231,7 +231,7 @@ data_vlbw = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(mlbw500, mlbw1000),
   StdError = c(mlbw500_sd, mlbw1000_sd),
-  pval = c(one_sp(mlbw500, mlbw500_sd), one_sp(mlbw1000, mlbw1000_sd))
+  pval = c(1 - pnorm(mlbw500/mlbw500_sd), 1 - pnorm(mlbw1000/mlbw1000_sd))
 )
 
 
@@ -255,7 +255,7 @@ data_elbw = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(vlbw500, vlbw1000),
   StdError = c(vlbw500_sd, vlbw1000_sd),
-  pval = c(one_sp(vlbw500, vlbw500_sd), one_sp(vlbw1000, vlbw1000_sd))
+  pval = c(1 - pnorm(vlbw500/vlbw500_sd), 1 - pnorm(vlbw1000/vlbw1000_sd))
 )
 
 
@@ -312,7 +312,7 @@ data_mort = data.frame(
   Check = c("500 ppt", "1000 ppt"),
   Estimate = c(mort500, mort1000),
   StdError = c(mort500_sd, mort1000_sd),
-  pval = c(one_sp(mort500, mort500_sd), one_sp(mort1000, mort1000_sd))
+  pval = c(1 - pnorm(mort500/mort500_sd), 1 - pnorm(mort1000/mort1000_sd))
 )
 
 

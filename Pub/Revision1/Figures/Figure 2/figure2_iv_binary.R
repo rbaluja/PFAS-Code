@@ -148,7 +148,7 @@ mort_ivc = (mean(df2[which(df2$down == 1), ]$pred_mort) - mean(df2[which(df2$up 
 
 
 #load bootstrap data from these statistics
-load(modify_path("Data_Verify/Revision 1/RData/bootstrap_iv_bin_comp.RData"))
+load(modify_path(paste0("Data_Verify/Revision 1/RData/bootstrap_iv_bin_comp", ppt, ".RData")))
 pre_ivc_se = med_boot(boot_coefs, "pre", pre_ivc)
 mpre_ivc_se = med_boot(boot_coefs, "mpre", mpre_ivc)
 vpre_ivc_se = med_boot(boot_coefs, "vpre", vpre_ivc)
@@ -480,7 +480,7 @@ main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
 
 fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 
-ggsave("Figures Revision/figure2_ivbin.png", fig2, width = 17000, height = 5500, units = "px", limitsize = F)
+ggsave(paste0("Figures Revision/figure2_ivbin", ppt, ".png"), fig2, width = 17000, height = 5500, units = "px", limitsize = F)
 
 
 
@@ -517,4 +517,4 @@ data_mort$health_outcome = "lbw"
 
 mort_f2 = figure2_still_fun_ivbin(data_mort, "Infant Mortality", TRUE, TRUE, "Infant Mortality", FALSE)
 mort_f2 = mort_f2 + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
-ggsave("Figures Revision/figure2_mort_ivbin.png", mort_f2, width = 11000, height = 2000, units = "px", limitsize = F)
+ggsave(paste0("Figures Revision/figure2_mort_ivbin", ppt, ".png"), mort_f2, width = 11000, height = 2000, units = "px", limitsize = F)

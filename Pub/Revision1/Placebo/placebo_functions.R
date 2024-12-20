@@ -397,83 +397,145 @@ placebo_res_corr = function(df){
                            "med_inc", "med_inc_se", 
                            "rural", "rural_se", 
                            "well_elev", "well_elev_se", 
-                           "resid_elev, resid_elev_se", 
+                           "resid_elev", "resid_elev_se", 
                            "temp", "temp_se", 
                            "pm25", "pm25_se")
   
+
   
-  dreg = fixest::feols(down ~ m_age + m_married  + private_insurance  + nbr_cgrtt  + 
-                         m_educ + f_educ + mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                         mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                         m_height+ med_hprice + med_inc + rural + well_elev + resid_elev + temp + pm25
-                       |county + year^month + birth_race_dsc_1, 
+  dreg_m_age = fixest::feols(down ~ m_age,
                        data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "m_age"] = dreg$coefficients["m_age"]
-  boot_coefs[1, "m_age_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_age", "m_age"])
+  dreg_m_married = fixest::feols(down ~ m_married,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "m_married"] = dreg$coefficients["m_married"]
-  boot_coefs[1, "m_married_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_married", "m_married"])
+  dreg_private_insurance = fixest::feols(down ~ private_insurance,
+                                  data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "private_insurance"] = dreg$coefficients["private_insurance"]
-  boot_coefs[1, "private_insurance_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["private_insurance", "private_insurance"])
+  dreg_nbr_cgrtt = fixest::feols(down ~ nbr_cgrtt,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "nbr_cgrtt"] = dreg$coefficients["nbr_cgrtt"]
-  boot_coefs[1, "nbr_cgrtt_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["nbr_cgrtt", "nbr_cgrtt"])
+  dreg_m_educ = fixest::feols(down ~ m_educ,
+                        data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "m_educ"] = dreg$coefficients["m_educ"]
-  boot_coefs[1, "m_educ_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_educ", "m_educ"])
+  dreg_f_educ = fixest::feols(down ~ f_educ,
+                        data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "f_educ"] = dreg$coefficients["f_educ"]
-  boot_coefs[1, "f_educ_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["f_educ", "f_educ"])
+  dreg_mr04 = fixest::feols(down ~ mr_04,
+                      data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_04"] = dreg$coefficients["mr_04"]
-  boot_coefs[1, "mr_04_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_04", "mr_04"])
+  dreg_mr18 = fixest::feols(down ~ mr_18,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_18"] = dreg$coefficients["mr_18"]
-  boot_coefs[1, "mr_18_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_18", "mr_18"])
+  dreg_mr08 = fixest::feols(down ~ mr_08,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_08"] = dreg$coefficients["mr_08"]
-  boot_coefs[1, "mr_08_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_08", "mr_08"])
+  dreg_mr21 = fixest::feols(down ~ mr_21,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_21"] = dreg$coefficients["mr_21"]
-  boot_coefs[1, "mr_21_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_21", "mr_21"])
+  dreg_mr26 = fixest::feols(down ~ mr_26,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_26"] = dreg$coefficients["mr_26"]
-  boot_coefs[1, "mr_26_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_26", "mr_26"])
+  dreg_mr27 = fixest::feols(down ~ mr_27,
+                            data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mr_27"] = dreg$coefficients["mr_27"]
-  boot_coefs[1, "mr_27_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mr_27", "mr_27"])
+  dreg_mthr_wgt_dlv = fixest::feols(down ~ mthr_wgt_dlv,
+                              data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mthr_wgt_dlv"] = dreg$coefficients["mthr_wgt_dlv"]
-  boot_coefs[1, "mthr_wgt_dlv_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mthr_wgt_dlv", "mthr_wgt_dlv"])
+  dreg_mthr_pre_preg_wgt = fixest::feols(down ~ mthr_pre_preg_wgt,
+                                  data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "mthr_pre_preg_wgt"] = dreg$coefficients["mthr_pre_preg_wgt"]
-  boot_coefs[1, "mthr_pre_preg_wgt_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["mthr_pre_preg_wgt", "mthr_pre_preg_wgt"])
+  dreg_m_height = fixest::feols(down ~ m_height,
+                          data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "m_height"] = dreg$coefficients["m_height"]
-  boot_coefs[1, "m_height_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["m_height", "m_height"])
+  dreg_med_hprice = fixest::feols(down ~ med_hprice,
+                           data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "med_hprice"] = dreg$coefficients["med_hprice"]
-  boot_coefs[1, "med_hprice_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["med_hprice", "med_hprice"])
+  dreg_med_inc = fixest::feols(down ~ med_inc,
+                       data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+ 
+  dreg_rural = fixest::feols(down ~ rural,
+                      data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+ 
+  dreg_well_elev = fixest::feols(down ~ well_elev,
+                          data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+ 
+  dreg_resid_elev = fixest::feols(down ~ resid_elev,
+                           data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+ 
+  dreg_temp = fixest::feols(down ~ temp,
+                    data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+ 
+  dreg_pm25 = fixest::feols(down ~ pm25,
+                     data = df, warn = F, notes = F, cluster = c("site", "year^month"))
   
-  boot_coefs[1, "med_inc"] = dreg$coefficients["med_inc"]
-  boot_coefs[1, "med_inc_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["med_inc", "med_inc"])
   
-  boot_coefs[1, "rural"] = dreg$coefficients["rural"]
-  boot_coefs[1, "rural_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["rural", "rural"])
   
-  boot_coefs[1, "well_elev"] = dreg$coefficients["well_elev"]
-  boot_coefs[1, "well_elev_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["well_elev", "well_elev"])
+  boot_coefs[1, "m_age"] = dreg_m_age$coefficients["m_age"]
+  boot_coefs[1, "m_age_se"] = sqrt(vcov(dreg_m_age, cluster = c("site", "year^month"))["m_age", "m_age"])
   
-  boot_coefs[1, "resid_elev"] = dreg$coefficients["resid_elev"]
-  boot_coefs[1, "resid_elev_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["resid_elev", "resid_elev"])
+  boot_coefs[1, "m_married"] = dreg_m_married$coefficients["m_married"]
+  boot_coefs[1, "m_married_se"] = sqrt(vcov(dreg_m_married, cluster = c("site", "year^month"))["m_married", "m_married"])
   
-  boot_coefs[1, "temp"] = dreg$coefficients["temp"]
-  boot_coefs[1, "temp_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["temp", "temp"])
+  boot_coefs[1, "private_insurance"] = dreg_private_insurance$coefficients["private_insurance"]
+  boot_coefs[1, "private_insurance_se"] = sqrt(vcov(dreg_private_insurance, cluster = c("site", "year^month"))["private_insurance", "private_insurance"])
   
-  boot_coefs[1, "pm25"] = dreg$coefficients["pm25"]
-  boot_coefs[1, "pm25_se"] = sqrt(vcov(dreg, cluster = c("site", "year^month"))["pm25", "pm25"])
+  boot_coefs[1, "nbr_cgrtt"] = dreg_nbr_cgrtt$coefficients["nbr_cgrtt"]
+  boot_coefs[1, "nbr_cgrtt_se"] = sqrt(vcov(dreg_nbr_cgrtt, cluster = c("site", "year^month"))["nbr_cgrtt", "nbr_cgrtt"])
+  
+  boot_coefs[1, "m_educ"] = dreg_m_educ$coefficients["m_educ"]
+  boot_coefs[1, "m_educ_se"] = sqrt(vcov(dreg_m_educ, cluster = c("site", "year^month"))["m_educ", "m_educ"])
+  
+  boot_coefs[1, "f_educ"] = dreg_f_educ$coefficients["f_educ"]
+  boot_coefs[1, "f_educ_se"] = sqrt(vcov(dreg_f_educ, cluster = c("site", "year^month"))["f_educ", "f_educ"])
+  
+  boot_coefs[1, "mr_04"] = dreg_mr04$coefficients["mr_04"]
+  boot_coefs[1, "mr_04_se"] = sqrt(vcov(dreg_mr04, cluster = c("site", "year^month"))["mr_04", "mr_04"])
+  
+  boot_coefs[1, "mr_18"] = dreg_mr18$coefficients["mr_18"]
+  boot_coefs[1, "mr_18_se"] = sqrt(vcov(dreg_mr18, cluster = c("site", "year^month"))["mr_18", "mr_18"])
+  
+  boot_coefs[1, "mr_08"] = dreg_mr08$coefficients["mr_08"]
+  boot_coefs[1, "mr_08_se"] = sqrt(vcov(dreg_mr08, cluster = c("site", "year^month"))["mr_08", "mr_08"])
+  
+  boot_coefs[1, "mr_21"] = dreg_mr21$coefficients["mr_21"]
+  boot_coefs[1, "mr_21_se"] = sqrt(vcov(dreg_mr21, cluster = c("site", "year^month"))["mr_21", "mr_21"])
+  
+  boot_coefs[1, "mr_26"] = dreg_mr26$coefficients["mr_26"]
+  boot_coefs[1, "mr_26_se"] = sqrt(vcov(dreg_mr26, cluster = c("site", "year^month"))["mr_26", "mr_26"])
+  
+  boot_coefs[1, "mr_27"] = dreg_mr27$coefficients["mr_27"]
+  boot_coefs[1, "mr_27_se"] = sqrt(vcov(dreg_mr27, cluster = c("site", "year^month"))["mr_27", "mr_27"])
+  
+  boot_coefs[1, "mthr_wgt_dlv"] = dreg_mthr_wgt_dlv$coefficients["mthr_wgt_dlv"]
+  boot_coefs[1, "mthr_wgt_dlv_se"] = sqrt(vcov(dreg_mthr_wgt_dlv, cluster = c("site", "year^month"))["mthr_wgt_dlv", "mthr_wgt_dlv"])
+  
+  boot_coefs[1, "mthr_pre_preg_wgt"] = dreg_mthr_pre_preg_wgt$coefficients["mthr_pre_preg_wgt"]
+  boot_coefs[1, "mthr_pre_preg_wgt_se"] = sqrt(vcov(dreg_mthr_pre_preg_wgt, cluster = c("site", "year^month"))["mthr_pre_preg_wgt", "mthr_pre_preg_wgt"])
+  
+  boot_coefs[1, "m_height"] = dreg_m_height$coefficients["m_height"]
+  boot_coefs[1, "m_height_se"] = sqrt(vcov(dreg_m_height, cluster = c("site", "year^month"))["m_height", "m_height"])
+  
+  boot_coefs[1, "med_hprice"] = dreg_med_hprice$coefficients["med_hprice"]
+  boot_coefs[1, "med_hprice_se"] = sqrt(vcov(dreg_med_hprice, cluster = c("site", "year^month"))["med_hprice", "med_hprice"])
+  
+  boot_coefs[1, "med_inc"] = dreg_med_inc$coefficients["med_inc"]
+  boot_coefs[1, "med_inc_se"] = sqrt(vcov(dreg_med_inc, cluster = c("site", "year^month"))["med_inc", "med_inc"])
+  
+  boot_coefs[1, "rural"] = dreg_rural$coefficients["rural"]
+  boot_coefs[1, "rural_se"] = sqrt(vcov(dreg_rural, cluster = c("site", "year^month"))["rural", "rural"])
+  
+  boot_coefs[1, "well_elev"] = dreg_well_elev$coefficients["well_elev"]
+  boot_coefs[1, "well_elev_se"] = sqrt(vcov(dreg_well_elev, cluster = c("site", "year^month"))["well_elev", "well_elev"])
+  
+  boot_coefs[1, "resid_elev"] = dreg_resid_elev$coefficients["resid_elev"]
+  boot_coefs[1, "resid_elev_se"] = sqrt(vcov(dreg_resid_elev, cluster = c("site", "year^month"))["resid_elev", "resid_elev"])
+  
+  boot_coefs[1, "temp"] = dreg_temp$coefficients["temp"]
+  boot_coefs[1, "temp_se"] = sqrt(vcov(dreg_temp, cluster = c("site", "year^month"))["temp", "temp"])
+  
+  boot_coefs[1, "pm25"] = dreg_pm25$coefficients["pm25"]
+  boot_coefs[1, "pm25_se"] = sqrt(vcov(dreg_pm25, cluster = c("site", "year^month"))["pm25", "pm25"])
   
   
   

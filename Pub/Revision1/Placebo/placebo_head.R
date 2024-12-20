@@ -99,6 +99,7 @@ if (rerun_placebos == TRUE){
     plac_na = dplyr::bind_rows(pblapply(1:n_na, placebo, df, wells))
     plac = plyr::rbind.fill(plac, plac_na)
     n_na = length(which(is.na(plac$m_age))) 
+    cat(paste0("Number of missing rows: ", n_na), file = "Data_Verify_Revision/RData/placebos.txt", append = TRUE)
   }
   
   save(plac, file = "Data_Verify_Revision/RData/placebos_down_cor.RData" )

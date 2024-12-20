@@ -1367,7 +1367,9 @@ df2$group = ifelse(df2$down == 1, "down",
                    ifelse(df2$up == 1, "up", "side"))
 
 models = list()
-models[["(1)"]] = fixest::feols(sinh(pred_pfas) ~ down + updown|site, data = df2)
+models[["(1)"]] = fixest::feols(sinh(pred_pfas) ~ down + updown, data = df2)
+models[["(2)"]] = fixest::feols(sinh(pred_pfas) ~ down + updown|county, data = df2)
+models[["(3)"]] = fixest::feols(sinh(pred_pfas) ~ down + updown|site, data = df2)
 
 modelsummary::modelsummary(models,
                            stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), #gives one sided test stars, when it has right sign

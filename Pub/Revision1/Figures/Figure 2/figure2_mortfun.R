@@ -24,7 +24,7 @@ figure2_still_fun = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-0.05, 0.1)) + xlab("Change, in levels")
+      guides(color = "none") + xlim(c(-0.05, 0.1)) + xlab("Change, rate of incidence")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
@@ -219,7 +219,7 @@ figure2_still_fun_count = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-2500, 10000)) + xlab("Change, in number of births")
+      guides(color = "none") + xlim(c(-2500, 10000)) + xlab("Number of births, per 100k")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 

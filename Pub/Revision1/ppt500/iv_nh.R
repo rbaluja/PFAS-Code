@@ -214,4 +214,4 @@ save(w_reg, w_reg_nat, w_reg_nos, file = modify_path("Data_Verify/RData/w_reg500
 
 
 #save iv figure with 500ppt as the threshold
-source("PFAS-Code/Pub/Revision1/Figures/iv_figure.R")
+source("PFAS-Code/Pub/Figures/iv_figure.R")
