@@ -1,8 +1,14 @@
 ################
 ###Table 2 Note, standard errors are read in from bootstrap_iv.R run
-load(modify_path("Data_Verify/RData/preterm_sd.RData"))
-load(modify_path("Data_Verify/RData/lbw_sd.RData"))
-load(modify_path("Data_Verify/RData/mort_sd.RData"))
+if (ppt != 1000){
+  load(modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
+  load(modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData")))
+  load(modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData"))) 
+}else{
+  load(modify_path("Data_Verify/RData/preterm_sd.RData"))
+  load(modify_path("Data_Verify/RData/lbw_sd.RData"))
+  load(modify_path("Data_Verify/RData/mort_sd.RData"))
+}
 
 #function for one sided pvalue (upper)
 one_sp = function(tval, pval){
@@ -225,30 +231,57 @@ r_coefs_jittered1$b_outcome_legend = factor(r_coefs_jittered1$b_outcome, levels 
 r_coefs_jittered2$b_outcome_legend = factor(r_coefs_jittered2$b_outcome, levels = c("Preterm", "Low Birthweight"))
 r_coefs_mort$b_outcome_legend = factor(r_coefs_mort$b_outcome, levels = c("Preterm", "Low Birthweight"))
 
-iv_fig =  ggplot() +
-  geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
-  geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
-  geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
-  geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
-  geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
-  geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.1, size = 3) + 
-  scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
-  scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
-  labs(x = "", y = "Effect on Reproductive Outcomes\n(%↑ from +100 ppt PFAS)", color = "") +
-  theme_minimal() +
-  theme(axis.text = element_text(size = 50), 
-        axis.title = element_text(size = 52), 
-        legend.position = "bottom",   
-        legend.box = "horizontal",   
-        legend.title.align = 0.5, 
-        legend.text = element_text(size = 50), 
-        legend.title = element_text(size = 52), 
-        panel.grid.major = element_line(color = "grey60", size = 0.5),
-        panel.grid.minor = element_line(color = "grey60", size = 0.25), 
-        legend.key.size = unit(5, "lines")) + 
-  ylim(0, 100) + 
-  geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
-  geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5)
+if (ppt == 1000){
+  iv_fig =  ggplot() +
+    geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
+    geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
+    geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
+    geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
+    geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
+    geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.1, size = 3) + 
+    scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
+    scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
+    labs(x = "", y = "Effect on Reproductive Outcomes\n(%↑ from +100 ppt PFAS)", color = "") +
+    theme_minimal() +
+    theme(axis.text = element_text(size = 50), 
+          axis.title = element_text(size = 52), 
+          legend.position = "bottom",   
+          legend.box = "horizontal",   
+          legend.title.align = 0.5, 
+          legend.text = element_text(size = 50), 
+          legend.title = element_text(size = 52), 
+          panel.grid.major = element_line(color = "grey60", size = 0.5),
+          panel.grid.minor = element_line(color = "grey60", size = 0.25), 
+          legend.key.size = unit(5, "lines")) + 
+    ylim(-50, 150) + 
+    geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
+    geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5) 
+}else{
+  iv_fig =  ggplot() +
+    geom_point(data = r_coefs_jittered1, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 19) +
+    geom_errorbar(data = r_coefs_jittered1, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
+    geom_point(data = r_coefs_jittered2, aes(x = sev_num, y = effect_size, color = b_outcome_legend), size = 10, shape = 15) +
+    geom_errorbar(data = r_coefs_jittered2, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome_legend), width = 0.1, size = 3) +
+    geom_point(data = r_coefs_mort, aes(x = sev_num, y = effect_size, color = b_outcome), size = 10, shape = 17) +  
+    geom_errorbar(data = r_coefs_mort, aes(x = sev_num, ymin = lower_es, ymax = upper_es, color = b_outcome), width = 0.1, size = 3) + 
+    scale_x_continuous(breaks = 1:5, labels = levels(as.factor(r_coefs$sev))[1:5]) +
+    scale_color_manual(values = c("Preterm" = "dodgerblue3", "Low Birthweight" = "firebrick4", "Infant Mortality" = "darkolivegreen")) +
+    labs(x = "", y = "Effect on Reproductive Outcomes\n(%↑ from +100 ppt PFAS)", color = "") +
+    theme_minimal() +
+    theme(axis.text = element_text(size = 50), 
+          axis.title = element_text(size = 52), 
+          legend.position = "bottom",   
+          legend.box = "horizontal",   
+          legend.title.align = 0.5, 
+          legend.text = element_text(size = 50), 
+          legend.title = element_text(size = 52), 
+          panel.grid.major = element_line(color = "grey60", size = 0.5),
+          panel.grid.minor = element_line(color = "grey60", size = 0.25), 
+          legend.key.size = unit(5, "lines")) + 
+    ylim(-50, 500) + 
+    geom_hline(yintercept = 0, linetype = "dashed", size = 1) + 
+    geom_vline(xintercept = 1.5, linetype = "dashed", size = 1.5)
+}
 
 #add p value label
 iv_fig = iv_fig + 
@@ -293,7 +326,7 @@ iv_fig +
                                      vjust = -3), size = 14)
 
 
-ggsave(modify_path3("Figures/IV/iv_figure.png"), width = 7353, height = 7076, units = "px")
+ggsave(modify_path3(paste0("Figures/IV/iv_figure", ppt, ".png")), width = 7353, height = 7076, units = "px")
 
 
-fwrite(r_coefs, modify_path3("Figures/Data/fig3a_data.csv"))
+fwrite(r_coefs, modify_path3(paste0("Figures/Data/fig3a_data", ppt, ".csv")))

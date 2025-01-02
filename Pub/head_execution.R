@@ -25,3 +25,6 @@ source("PFAS-Code/Pub/Robustness/ny_spec.R")
 rm(list = ls())
 #NOTE: THIS RECREATES FIGURE S-1. IT TAKES A LONG TIME TO RUN
 source("PFAS-Code/Pub/GIS/cs_downstream.R")
+rm(list = ls())
+#Revisions code
+source("PFAS-Code/Pub/Revision1/head_ex_r1.R")

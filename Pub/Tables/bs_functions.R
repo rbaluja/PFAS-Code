@@ -70,3 +70,13 @@ cov_boot = function(boot_coefs, outcome1, reg1, outcome2, reg2){
   bs_sd = sum((boot_coefs[[outcome1]] - reg1$coefficients["pred_pfas"]) * (boot_coefs[[outcome2]] - reg2$coefficients["pred_pfas"]))/(nrow(boot_coefs) - 1)
   return(bs_sd)
 }
+
+
+#mean effect difference bootstrap
+med_boot = function(boot_coefs, outcome, central_estimate){
+  
+  #subtract off mean, divide by dof
+  bs_sd = sqrt(sum((boot_coefs[[outcome]] - central_estimate)^2)/(nrow(boot_coefs) - 1))
+  
+  return(bs_sd)
+}

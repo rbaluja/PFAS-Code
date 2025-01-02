@@ -21,10 +21,15 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
                 sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`, 
                 sum_pfas = `Max Total PFAS from a single sample (ppt)`, 
                 total_pfas = `PFAS Level (ppt)`) %>%
-  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= 1000) %>% #cut to 1000ppt by Bo meeting 4/21/23
+  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>%
   st_as_sf(coords = c('lng', 'lat'), remove = F) %>%
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
+
+#there are two "Adams Plating" when ppt <= 500 select that with the largest em
+cont_sites %>% 
+  dplyr::group_by(site, state) %>% 
+  dplyr::filter(sum_pfoa_pfos == max(sum_pfoa_pfos)) -> cont_sites
 
 #subset cbgs (births) to only those within 5km of a cont site
 csite_buff = cont_sites %>% 
@@ -48,7 +53,10 @@ births = births %>%
 #merge watersheds
 #cont sites
 cont_ws = cont_ws %>% 
-  left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, state, pfas = sum_pfoa_pfos))
+  left_join(cont_sites %>% as_tibble() %>% dplyr::select(site, state, pfas = sum_pfoa_pfos)) %>% 
+  dplyr::group_by(state, site) %>% 
+  #only keep one row per state by site (Get rid of duplicate Adams Plating)
+  dplyr::filter(index == min(index)) 
 
 #births
 births_ws = births_ws %>%  #this is how the original object was named. It isnt actually wells

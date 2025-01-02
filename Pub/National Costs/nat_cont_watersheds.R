@@ -12,7 +12,7 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
                 sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`, 
                 sum_pfas = `Max Total PFAS from a single sample (ppt)`, 
                 total_pfas = `PFAS Level (ppt)`) %>%
-  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= 1000) %>% #cut to 1000ppt by Bo meeting 4/21/23
+  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>% #cut to 1000ppt by Bo meeting 4/21/23
   st_as_sf(coords = c('lng', 'lat'), remove = F) %>%
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
@@ -37,12 +37,12 @@ csite_buff = cont_sites %>%
 
 #create necessary directories
 dir.create(modify_path("Data_Verify/GIS/National"))
-dir.create(modify_path("Data_Verify/National/GIS"))
+dir.create(modify_path(paste0("Data_Verify/National/GIS/ppt_", ppt)))
 
-dir.create(modify_path("Data_Verify/GIS/nat_cont"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_pp"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed"))
-dir.create(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"))
+dir.create(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt)), recursive = T)
+dir.create(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/cont_pp")), recursive = T)
+dir.create(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/cont_watershed")), recursive = T)
+dir.create(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/cont_watershed/Shapes")), recursive = T)
 
 cont_sites$index = 1:nrow(cont_sites)
 
@@ -61,7 +61,7 @@ states11 = c("Michigan",
 cont_sites = cont_sites %>% 
   dplyr::filter(state %in% states11)
 
-fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), modify_path("Data_Verify/GIS/National/nat_rs_ws.csv"))
+fwrite(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index), modify_path(paste("Data_Verify/GIS/National/nat_rs_ws_", ppt, ".csv")))
 
 
 cont_ws = function(state, states11){
@@ -91,37 +91,37 @@ cont_ws = function(state, states11){
     # Run snap pour points
     wbt_snap_pour_points(pour_pts = temp_point_path, 
                          flow_accum = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_acc.tif")), 
-                         output = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "pp.shp")),
+                         output = modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/site_", state_sites$index[i] ,  "pp.shp")),
                          snap_dist = 0.007569 * 5)
     
     #calculate watershed
     wbt_watershed(d8_pntr = modify_path(paste0("Data_Verify/GIS/National/", state, "flow_dir.tif")), 
-                  pour_pts = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "pp.shp")), 
-                  output = modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
+                  pour_pts = modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/site_", state_sites$index[i] ,  "pp.shp")), 
+                  output = modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/site_", state_sites$index[i] ,  "_watershed.tif")))
     
     #read in watershed
-    ws = terra::rast(modify_path(paste0("Data_Verify/GIS/nat_cont/site_", state_sites$index[i] ,  "_watershed.tif")))
+    ws = terra::rast(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/site_", state_sites$index[i] ,  "_watershed.tif")))
     
     #transform watershed to a polygon
     ws_poly = as.polygons(ws)
     #save shapefile of watershed
-    writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/nat_cont/cont_watershed/Shapes/site_", state_sites$index[i] ,  "ws_shape.shp")), overwrite = TRUE)
+    writeVector(ws_poly, modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/cont_watershed/Shapes/site_", state_sites$index[i] ,  "ws_shape.shp")), overwrite = TRUE)
   }
 }
 pblapply(states11, cont_ws, states11, cl = n_cores) 
 
-files = list.files(modify_path("Data_Verify/GIS/nat_cont/cont_watershed/Shapes"), pattern = "*.shp", recursive = T, full.names = T)
+files = list.files(modify_path(paste0("Data_Verify/GIS/nat_cont/ppt_", ppt, "/cont_watershed/Shapes")), pattern = "*.shp", recursive = T, full.names = T)
 
 well_ws = function(f){
   w_ws1 = st_read(f)
   w_ws1 = w_ws1 %>% st_transform(3437) %>% dplyr::summarise(geometry = st_union(geometry))
-  w_ws1$index = as.numeric(gsub("[^0-9]", "", f))
+  w_ws1$index = as.numeric(gsub(".*site_([0-9]+)ws_shape\\.shp$", "\\1", f))
   return(w_ws1)
 }
 
 n_cont_ws = dplyr::bind_rows(pblapply(files, well_ws, cl = n_cores))
 n_cont_ws = n_cont_ws %>% left_join(cont_sites %>% as_tibble() %>% dplyr::select(state, site, index))
-save(n_cont_ws, file = modify_path("Data_Verify/RData/nat_cont_watershed.RData"))
+save(n_cont_ws, file = modify_path(paste0("Data_Verify/RData/nat_cont_watershed", ppt, ".RData")))
 
 #delete intermediate files
 unlink(modify_path("Data_Verify/GIS/nat_cont/"), recursive = TRUE)

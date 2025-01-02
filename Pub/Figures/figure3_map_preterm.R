@@ -24,7 +24,7 @@ cont_sites = read_xlsx(modify_path('Data_Verify/Contamination/PFAS Project Lab K
                 sum_pfoa_pfos = `Max PFOA+PFOS from a single sample (ppt)`, 
                 sum_pfas = `Max Total PFAS from a single sample (ppt)`, 
                 total_pfas = `PFAS Level (ppt)`) %>%
-  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= 1000) %>% #cut to 1000ppt by Bo meeting 4/21/23
+  dplyr::filter(industry != 'Unknown' & sum_pfoa_pfos >= ppt) %>% #cut to 1000ppt by Bo meeting 4/21/23
   st_as_sf(coords = c('lng', 'lat'), remove = F) %>%
   st_set_crs('+proj=longlat +datum=WGS84' ) %>% 
   st_transform(4326)
@@ -120,9 +120,9 @@ cost_map = ggplot() +
   geom_sf(data = cs, aes(fill = cost), color = NA, alpha = 0.8, lwd = 0) +
   geom_sf(data = states, color = "black", fill = "transparent", lwd = 1) +
   scale_fill_gradient(low = "white", high = "firebrick4",
-                      limits =c(0, 1000),
-                      breaks = c(0, 250, 500, 750,  1000),
-                      labels = c("0", "$0.25B", "$0.5B", "$0.75B", "$1B"),
+                      limits =c(0, 2000),
+                      breaks = c(0, 500, 1000, 1500, 2000),
+                      labels = c("0", "$0.5B", "$1B", "$1.5B", "$2B"),
                       name = "Annual Infant Mortality + Preterm Births Costs",
                       guide = guide_colorbar(barwidth = 100, barheight = 1,
                                              title.position = "top",
@@ -133,7 +133,7 @@ cost_map = ggplot() +
              aes(x = lng, y = lat, color = ""), 
              alpha = 0.4, size = 3) +
   scale_color_manual(values = "black",
-                     name = "Site with Confirmed Groundwater Contamination above 1000 ppt") +
+                     name = paste0("Site with Confirmed Groundwater Contamination above ", ppt, "ppt")) +
   guides(color = guide_legend(override.aes = list(size = 10),
                               title.position = "left")) + 
   theme_void() +
@@ -145,4 +145,4 @@ cost_map = ggplot() +
         legend.key.height = unit(2, "cm"),
         legend.key.width = unit(2, "cm")) +
   geom_sf_text(data = s_lab, aes(label = l), size = 18)
-ggsave(modify_path3("Figures/Figure3/costs_map_premort.png"), cost_map,  width = 9166, height = 5875, units = "px", device = "png", limitsize = FALSE)
+ggsave(modify_path3(paste0("Figures/Figure3/costs_map_premort", ppt, ".png")), cost_map,  width = 9166, height = 5875, units = "px", device = "png", limitsize = FALSE)

@@ -8,7 +8,8 @@ source("PFAS-Code/Pub/Main Analysis/watershed_functions.R")
 load_library(sfheaders, lwgeom, dplyr, geosphere, sp, readxl, sf, raster, plyr, 
              pbapply, tigris, terra, readr, data.table, stringr, elevatr, gmodels, 
              modelsummary, kableExtra, ggplot2, patchwork, pBrackets, whitebox, 
-             rgdal, units, tidycensus, ggpattern, forcats, rayshader)
+             rgdal, units, tidycensus, ggpattern, forcats, rayshader, sandwich, 
+             mgcv, mgcViz)
 options("modelsummary_format_numeric_latex" = "plain")
 config_modelsummary(factory_latex = "kableExtra")
 options(tigris_use_cache = TRUE)
@@ -16,8 +17,9 @@ options(tigris_use_cache = TRUE)
 
 census_key = "9f59b9fec9cffa85b5740734df3d81e7b617cf82" #"Enter your Census API key:"
 code_check = FALSE
-n_cores = 3
+n_cores = 1
 code_verify = TRUE
+revision_verify = FALSE
 
 #preliminaries environment
 redo_GIS = FALSE
@@ -33,6 +35,8 @@ run_cleaning = FALSE #clean natality data?
 drop_far_down = TRUE
 drop_far_up = FALSE
 IV = TRUE #Run IV spec?
+oster_factor = 1.3 #base for Oster calcs
+total_births = 122950 #total number of NH births from 2010-2019
 
 #national environment
 nat_run_cont_ws = FALSE#recreate national watershed shapes?

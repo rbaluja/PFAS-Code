@@ -1,6 +1,8 @@
 dem = terra::rast(modify_path("Data_Verify/Supplemental/LiDAR-Derived Bare Earth DEM - NH.tiff"))
 z_raster = terra::init(dem, fun=0)
 
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
+
 #get lat long of each grid
 ll = dplyr::bind_rows(pblapply(1:ncell(z_raster), function(x) data.frame(xyFromCell(z_raster, x))))
 ll$index = 1:nrow(ll)
@@ -25,17 +27,28 @@ ll =ll %>%
   st_transform(4326)
 
 sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
-
-fs_sp = exactextractr::exact_extract(sp,ll)
-
+fs_sp = exactextractr::exact_extract(sp, ll)
 ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc,fs_sp,ll, "sp", cl = n_cores))
 
 #available water capacity
 awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
+fs_awc = exactextractr::exact_extract(awc, ll)
+ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc, fs_awc, ll, "awc", cl = n_cores))
 
-fs_awc = exactextractr::exact_extract(awc,ll)
+#clay content
+clay = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_clay.tif"))
+fs_clay = exactextractr::exact_extract(clay, ll)
+ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc, fs_clay, ll, "clay", cl = n_cores))
 
-ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc,fs_awc,ll, "awc", cl = n_cores))
+#sand content
+sand = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_sand.tif"))
+fs_sand = exactextractr::exact_extract(sand, ll)
+ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc, fs_sand, ll, "sand", cl = n_cores))
+
+#silt content
+silt = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_silt.tif"))
+fs_silt = exactextractr::exact_extract(silt, ll)
+ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc, fs_silt, ll, "silt", cl = n_cores))
 
 
 #get up and down for grid points
@@ -261,15 +274,18 @@ ll$wind_exposure = pbmapply(wind_function,ll$x,ll$y, rep(dist_allow, nrow(ll)))
 
 ll$updown = ifelse((ll$down == 1 |ll$up == 1) & !is.na(ll$up) & !is.na(ll$down), 1, 0)
 
-ll$pred_pfas = 0.017041 + 6.886192 *ll$down + 0.004021 *ll$sp + 
-  -0.005266 *ll$awc + 0.665858 * asinh(ll$pfas) + -0.568659 * log(ll$dist) + 
-  -0.270853 *ll$updown + -0.002472 *ll$sp *ll$down + 0.001074 *ll$awc *ll$down + 
-  -0.625525 *ll$down * log(ll$dist)
+ll$pred_pfas = 0.769612 + 7.206569 * ll$down + 0.003181 * ll$sp + 
+  -0.003632 * ll$awc + -0.006685 * ll$clay + -0.001860 * ll$sand + 0.002208 * ll$silt + 
+  0.587664 * asinh(ll$pfas) + -0.420210 * log(ll$dist) + 
+  -0.226273 * ll$updown + -0.002080 * ll$sp * ll$down +   0.000853 * ll$awc * ll$down + 
+  -0.005056 * ll$clay * ll$down + -0.002351 * ll$sand * ll$down +  0.007307 * ll$silt * ll$down + 
+  -0.745619 * log(ll$dist) * ll$down
 
-ll[is.na(ll$pred_pfas), ]$pred_pfas = 1.767553 +  5.543289 *ll[is.na(ll$pred_pfas), ]$down +
-  0.671526 * asinh(ll[is.na(ll$pred_pfas), ]$pfas) + -0.630132 * log(ll[is.na(ll$pred_pfas), ]$dist) + 
-  -0.308053 *ll[is.na(ll$pred_pfas), ]$updown  + 
-  -0.583208 *ll[is.na(ll$pred_pfas), ]$down * log(ll[is.na(ll$pred_pfas), ]$dist)
+nind = which(is.na(ll$pred_pfas))
+ll[nind, ]$pred_pfas = 1.767553+ 5.543289 * ll[nind, ]$down + 
+  0.671526 * asinh(ll[nind, ]$pfas) + -0.630132* log(ll[nind, ]$dist) + 
+  -0.308053 * ll[nind, ]$updown + 
+  -0.583208  * log(ll[nind, ]$dist) * ll[nind, ]$down
 
 
 z_raster[ll$index] =ll$pred_pfas

@@ -45,7 +45,7 @@ df_ost$lbw = as.numeric(df_ost$bweight < 2500)
 r2_tilde = 1 - (inter_r$ssr)/(sum((df_ost$lbw - mean(df_ost$lbw))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(bweight < 2500) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -92,7 +92,7 @@ df_ost$llbw = as.numeric(df_ost$bweight < 2500 & df_ost$bweight >= 1500)
 r2_tilde = 1 - (inter_r$ssr)/(sum((df_ost$llbw - mean(df_ost$llbw))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -118,8 +118,8 @@ d_llbw = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
            (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
            2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
            (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -138,7 +138,7 @@ df_ost$mlbw = as.numeric(df_ost$bweight < 1500 & df_ost$bweight >= 1000)
 r2_tilde = 1 - (inter_r$ssr)/(sum((df_ost$mlbw - mean(df_ost$mlbw))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -164,8 +164,8 @@ d_mlbw = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -183,7 +183,7 @@ df_ost$vlbw = as.numeric(df_ost$bweight < 1000)
 r2_tilde = 1 - (inter_r$ssr)/(sum((df_ost$vlbw - mean(df_ost$vlbw))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(bweight < 1000) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -209,8 +209,8 @@ d_vlbw = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -230,7 +230,7 @@ df_ost$preterm = as.numeric(df_ost$gestation < 37)
 r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$preterm - mean(df_ost$preterm))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(gestation < 37) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -256,8 +256,8 @@ d_pre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
                     (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
                     2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
                     (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -277,7 +277,7 @@ df_ost$lpreterm = as.numeric(df_ost$gestation < 37 & df_ost$gestation >= 32)
 r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$lpreterm - mean(df_ost$lpreterm))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -303,8 +303,8 @@ d_lpre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
            (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
            2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
            (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -324,7 +324,7 @@ df_ost$mpreterm = as.numeric(df_ost$gestation < 32 & df_ost$gestation >= 28)
 r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$mpreterm - mean(df_ost$mpreterm))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -350,8 +350,8 @@ d_mpre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -371,7 +371,7 @@ df_ost$vpreterm = as.numeric(df_ost$gestation < 28)
 r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$vpreterm - mean(df_ost$vpreterm))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(I(gestation < 28) ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -397,8 +397,8 @@ d_vpre = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 
@@ -418,7 +418,7 @@ b_tilde = inter_r$coefficients["down"]
 r2_tilde = 1 - (sum(inter_r$ssr))/(sum((df_ost$death - mean(df_ost$death))^2))
 
 #max r^2
-rmax = 1.3 * r2_tilde
+rmax = oster_factor * r2_tilde
 
 #short regression
 short_r = fixest::feols(death ~  updown + down|county + year^month, data = df_ost, warn = F, notes = F)
@@ -444,8 +444,8 @@ d_mort = ((b_tilde - 0) * (r2_tilde - short_r2) * var_y * tau_x +
             (b_tilde - 0) * var_x * tau_x * (b_dot - b_tilde)^2 + 
             2 * (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
             (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))/
-  ((1.3 * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
-     (b_tilde - 0) * (1.3 * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
+  ((oster_factor * r2_tilde - r2_tilde) * var_y * (b_dot - b_tilde) * var_x + 
+     (b_tilde - 0) * (oster_factor * r2_tilde - r2_tilde) * var_y * (var_x - tau_x) + 
      (b_tilde - 0)^2 * (tau_x * (b_dot - b_tilde) * var_x) + 
      (b_tilde - 0)^3 * (tau_x * var_x - tau_x^2))
 

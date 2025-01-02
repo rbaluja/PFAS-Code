@@ -266,6 +266,9 @@ w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, sil
 w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
                             updown, data = fs_cont) 
 
+save(w_reg, w_reg_nat, w_reg_nos, fs_cont, file = modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
+save(fs_cont, file = modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
+
 
 #get soil characteristics at drinking wells
 wells_fa= wells %>%

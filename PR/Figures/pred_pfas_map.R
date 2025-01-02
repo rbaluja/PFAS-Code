@@ -48,7 +48,8 @@ cont_rdf2[cont_rdf2$pfas > 0.15 * 1000,  ]$high = 1
 cont_rdf2[cont_rdf2$pfas > 0.15* 1000,  ]$pfas = 0.15* 1000
 
 
-figure1_sites = nh_map_plot +
+figure1_sites = 
+  nh_map_plot +
   geom_tile(data = cont_rdf2, aes(x = x, y = y, fill = pfas)) + 
   scale_fill_gradientn(colors = c("transparent", "yellow", "red"),
                        values = scales::rescale(c(0, 0.01, 1)),
@@ -74,4 +75,4 @@ figure1_sites = nh_map_plot +
         legend.box.spacing = unit(-150, "pt"), 
         plot.margin = unit(c(0, -2, 0, -2), "cm"))  + 
   labs(fill = "Predicted PFAS") 
-ggsave(modify_path3("Figures/Figure1/figure1_sites2.png"), figure1_sites,  limitsize = F, scale = 2)
+ggsave("Figures Revision/first_stage_plot.png", figure1_sites,  limitsize = F, scale = 2)

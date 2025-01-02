@@ -2,11 +2,11 @@
 pre_mort_c11 = vpre_cost + mpre_cost + lpre_cost + mort_cost
 pre_c11 = vpre_cost + mpre_cost + lpre_cost
 #read in covariance terms
-load(modify_path("Data_Verify/RData/cov_preterm.RData"))
-load(modify_path("Data_Verify/RData/cov_mort.RData"))
+load(modify_path(paste0("Data_Verify/RData/cov_preterm", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/cov_mort", ppt, ".RData")))
 #read in se terms
-load(modify_path("Data_Verify/RData/preterm_sd.RData"))
-load(modify_path("Data_Verify/RData/mort_sd.RData"))
+load(modify_path(paste0("Data_Verify/RData/preterm_sd", ppt, ".RData")))
+load(modify_path(paste0("Data_Verify/RData/mort_sd", ppt, ".RData")))
 #variance of preterm costs in 11 states
 var_pre11 = sum(bs$pred_pfas * bs$births)^2 * 
   ((lpre_pc/10^9)^2 * lpreterm_sd^2 + (mpre_pc/10^9)^2 * mpreterm_sd^2 + (vpre_pc/10^9)^2 * vpreterm_sd^2 + (mort_pc/10^9)^2 * mort_sd^2 + #variance terms
@@ -18,9 +18,9 @@ sd_pre11 = sqrt(var_pre11)
 #low birthweight costs in 11 states
 lbw_c11 = vlbw_cost + mlbw_cost
 #read in covariance terms
-load(modify_path("Data_Verify/RData/cov_lbw.RData"))
+load(modify_path(paste0("Data_Verify/RData/cov_lbw", ppt, ".RData")))
 #read in se terms
-load(modify_path("Data_Verify/RData/lbw_sd.RData"))
+load(modify_path(paste0("Data_Verify/RData/lbw_sd", ppt, ".RData")))
 #variance of low birthweight costs in 11 states
 var_lbw11 = sum(bs$pred_pfas * bs$births)^2 *
   ((vlbw_pc/10^9)^2 * vlbw_sd^2 + (mlbw_pc/10^9)^2 * mlbw_sd^2 + #variance terms
@@ -90,7 +90,7 @@ cost_hist = ggplot(cost_d, aes(x = bout, y = costs, fill = geo)) +
   guides(alpha = "none")
 
 cost_hist +
-  geom_text(aes(label = costs, y = costs + 0.6), 
+  geom_text(aes(label = costs, y = costs + 1.1), 
             position = position_dodge(width = 0.9), 
             vjust = -0.25,
             size = 22) +
@@ -99,6 +99,6 @@ cost_hist +
             vjust = -0.25,
             size = 20)
 
-ggsave(modify_path3("Figures/Figure3/full_cost.png"), width = 10358, height = 6133, units = "px", limitsize = FALSE)
+ggsave(modify_path3(paste0("Figures/Figure3/full_cost", ppt, ".png")), width = 10358, height = 6133, units = "px", limitsize = FALSE)
 
-fwrite(cost_d, modify_path3("Figures/Data/fig3d_data.csv"))
+fwrite(cost_d, modify_path3(paste0("Figures/Data/fig3d_data", ppt, ".csv")))
