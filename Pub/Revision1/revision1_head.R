@@ -15,9 +15,6 @@ source("PFAS-Code/Pub/Revision1/main_analy_head.R")
 #create tables
 source("PFAS-Code/Pub/Revision1/Tables/tables.R")
 
-#confounder check tables
-source("PFAS-Code/Pub/Revision1/Tables/confounders_check.R")
-
 #build cws cluster figure
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/cws_cluster.R")
 
@@ -46,5 +43,18 @@ source("PFAS-Code/Pub/Revision1/Tables/iv_covars_down_up.R")
 #build no pease afb figure
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/npease.R")
 
-#build IV figure
-source("PFAS-Code/Pub/Figures/iv_figure.R")
+# #build IV figure
+# source("PFAS-Code/Pub/Figures/iv_figure.R")
+
+#build IV figure, with correct baseline (estimation sample)
+source("PFAS-Code/Pub/Revision1/Figures/iv_figure.R")
+
+#build figure 2, with correct baseline (estimation sample)
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/Baseline/figure2.R")
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/Baseline/figure2_mort.R")
+
+#build figure 2 upgradient, with correct baseline (estimation sample)
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/Baseline/figure2_upgradient.R")
+
+#build figure 2 full term, with correct baseline (estimation sample)
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/Baseline/figure2_lbw_ft.R")

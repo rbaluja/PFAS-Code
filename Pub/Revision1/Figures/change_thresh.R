@@ -81,7 +81,7 @@ for (thresh in seq(from = 100, to = 1000, by = 100)){
   n_births[index, "n_sample"] = nrow(df)
   n_births[index, "n_down_g1"] = length(which(df$down == 1 & df$nsites_down > 1))
   n_births[index, "n_up_g1"] = length(which(df$up == 1 & df$nsites_up > 1))
-  n_births[index, "n+sites"] = length(unique(cont_sites$site))
+  n_births[index, "n_sites"] = length(unique(cont_sites$site))
   
   #save regression coefs and standard errors
   preterm_any = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
@@ -260,7 +260,7 @@ n_births1 = n_births %>%
 n_births1 = t(n_births1)
 #shift all rows down 1, put the last row in the first row
 n_births1 = rbind(n_births1[nrow(n_births1), ], n_births1[-nrow(n_births1), ])
-rownames(n_births1) = c("Threshold", "N Down of 1", "N Up of 1", "Est Sample", "N Down $>$ 1", "N Up $>$ 1")
+rownames(n_births1) = c("N Sites", "N Down of 1", "N Up of 1", "Est Sample", "N Down $>$ 1", "N Up $>$ 1", "Threshold")
 
 n_births1_df = as.data.frame(n_births1)
 

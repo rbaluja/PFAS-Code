@@ -25,14 +25,9 @@ rm(list = ls())
 #create figure for changing the threshold of a contaminated site
 source("PFAS-Code/Pub/Revision1/Figures/change_thresh.R")
 rm(list = ls())
-#create figure of the first stage throughout NH
-source("PFAS-Code/Pub/Revision1/Figures/pred_pfas_map.R")
-rm(list = ls())
 #run IV setup with 500 ppt threshold, and save IV figure
 source("PFAS-Code/Pub/Revision1/ppt500/iv_nh.R")
 rm(list = ls())
-#run placebo for correlations between downgradient and the covariates
-source("PFAS-Code/Pub/Revision1/Placebo/placebo_head.R")
 #get iv comparison figure for 500 ppt and 1000 ppt
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/iv_500_1000.R")
 #create figure of the first stage throughout NH
@@ -40,5 +35,10 @@ source("PFAS-Code/Pub/Revision1/Figures/Figure 2/iv_500_1000.R")
 rm(list = ls())
 #run national costs with 500 ppt as the threshold
 source("PFAS-Code/Pub/Revision1/national_costs_head500.R")
-
+rm(list = ls())
+placebo = FALSE
+if (placebo){
+  #run placebo for correlations between downgradient and the covariates
+  source("PFAS-Code/Pub/Revision1/Placebo/placebo_head.R")
+}
 

@@ -34,6 +34,8 @@ bs = births
 bs$updown = ifelse(bs$up == 1 | bs$down == 1, 1, 0)
 #load first stage regressions
 load(modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
+#load first stage data
+load(modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
 
 #taken from national first stage. These coefficients come from w_reg_nat and w_reg_nos in first_stage.R
 bs$pred_pfas = predict(w_reg_nat, newdata = bs)

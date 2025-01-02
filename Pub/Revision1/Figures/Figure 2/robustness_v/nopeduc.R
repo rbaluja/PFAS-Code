@@ -8,6 +8,35 @@ one_sp = function(tval, pval){
     return(pval/2)
   }
 }
+df_est_np = df[which(!is.na(df$dist) & df$dist <= 5000), ]
+df_est_np = df_est %>% 
+  dplyr::filter(!is.na(gestation) & 
+                  !is.na(m_age) & 
+                  !is.na(m_married) & 
+                  !is.na(private_insurance) & 
+                  !is.na(nbr_cgrtt) & 
+                  !is.na(m_educ) & 
+                  !is.na(pm25) & 
+                  !is.na(temp) & 
+                  !is.na(p_manuf) & 
+                  !is.na(n_hunits) & 
+                  !is.na(med_hprice) & 
+                  !is.na(well_elev) & 
+                  !is.na(resid_elev) & 
+                  !is.na(mr_04) & 
+                  !is.na(mr_18) & 
+                  !is.na(mr_21) & 
+                  !is.na(mr_26) & 
+                  !is.na(mr_27) & 
+                  !is.na(mthr_wgt_dlv) & 
+                  !is.na(mthr_pre_preg_wgt) & 
+                  !is.na(m_height) & 
+                  !is.na(tri5) & 
+                  !is.na(county) & 
+                  !is.na(year) & 
+                  !is.na(month) & 
+                  !is.na(birth_race_dsc_1) & 
+                  !is.na(wic))
 
 #preterm
 full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
@@ -16,7 +45,7 @@ full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites 
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                 m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -24,16 +53,16 @@ np = fixest::feols(I(gestation < 37) ~  updown + down +  I(pfas/10^3) + dist  + 
                 mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                 mthr_wgt_dlv +mthr_pre_preg_wgt + 
                 m_height + tri5 +fa_resid + wind_exposure 
-              |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+              |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_pre = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 37) * 100, 
-               np$coefficients["down"]/mean(df$gestation < 37) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 37) * 100, 
-               np$se["down"]/mean(df$gestation < 37) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$gestation < 37) * 100, 
+               np$coefficients["down"]/mean(df_est$gestation < 37) * 100),
+  StdError = c(full$se["down"]/mean(df_est$gestation < 37) * 100, 
+               np$se["down"]/mean(df_est$gestation < 37) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
   )
@@ -61,7 +90,7 @@ full = fixest::feols(I(gestation < 37 & gestation >= 32) ~  down + updown +  I(p
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -69,16 +98,16 @@ np = fixest::feols(I(gestation < 37 & gestation >= 32) ~  updown + down +  I(pfa
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_mpre = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               np$coefficients["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100, 
-               np$se["down"]/mean(df$gestation < 37 & df$gestation >= 32) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100, 
+               np$coefficients["down"]/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100),
+  StdError = c(full$se["down"]/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100, 
+               np$se["down"]/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -105,7 +134,7 @@ full = fixest::feols(I(gestation < 32 & gestation >= 28) ~  down + updown +  I(p
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -113,16 +142,16 @@ np = fixest::feols(I(gestation < 32 & gestation >= 28) ~  updown + down +  I(pfa
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_vpre = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               np$coefficients["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100, 
-               np$se["down"]/mean(df$gestation < 32 & df$gestation >= 28) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100, 
+               np$coefficients["down"]/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100),
+  StdError = c(full$se["down"]/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100, 
+               np$se["down"]/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -149,7 +178,7 @@ full = fixest::feols(I(gestation < 28) ~  down + updown +  I(pfas/10^3) + dist  
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -157,16 +186,16 @@ np = fixest::feols(I(gestation < 28) ~  updown + down +  I(pfas/10^3) + dist  + 
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_epre = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$gestation < 28) * 100, 
-               np$coefficients["down"]/mean(df$gestation < 28) * 100),
-  StdError = c(full$se["down"]/mean(df$gestation < 28) * 100, 
-               np$se["down"]/mean(df$gestation < 28) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$gestation < 28) * 100, 
+               np$coefficients["down"]/mean(df_est$gestation < 28) * 100),
+  StdError = c(full$se["down"]/mean(df_est$gestation < 28) * 100, 
+               np$se["down"]/mean(df_est$gestation < 28) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -197,7 +226,7 @@ full = fixest::feols(I(bweight < 2500) ~  down + updown +  I(pfas/10^3) + dist  
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -205,16 +234,16 @@ np = fixest::feols(I(bweight < 2500) ~  updown + down +  I(pfas/10^3) + dist  + 
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_lbw = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500) * 100, 
-               np$coefficients["down"]/mean(df$bweight < 2500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500) * 100, 
-               np$se["down"]/mean(df$bweight < 2500) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$bweight < 2500) * 100, 
+               np$coefficients["down"]/mean(df_est$bweight < 2500) * 100),
+  StdError = c(full$se["down"]/mean(df_est$bweight < 2500) * 100, 
+               np$se["down"]/mean(df_est$bweight < 2500) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -242,7 +271,7 @@ full = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  down + updown +  I(p
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -250,16 +279,16 @@ np = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  updown + down +  I(pfa
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_mlbw = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               np$coefficients["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100, 
-               np$se["down"]/mean(df$bweight < 2500 & df$bweight >= 1500) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100, 
+               np$coefficients["down"]/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100),
+  StdError = c(full$se["down"]/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100, 
+               np$se["down"]/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -286,7 +315,7 @@ full = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  down + updown +  I(p
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -294,16 +323,16 @@ np = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~  updown + down +  I(pfa
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_vlbw = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               np$coefficients["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100, 
-               np$se["down"]/mean(df$bweight < 1500 & df$bweight >= 1000) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100, 
+               np$coefficients["down"]/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100),
+  StdError = c(full$se["down"]/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100, 
+               np$se["down"]/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -330,7 +359,7 @@ full = fixest::feols(I(bweight < 1000) ~  down + updown +  I(pfas/10^3) + dist  
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + n_sites + 
                      m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -338,16 +367,16 @@ np = fixest::feols(I(bweight < 1000) ~  updown + down +  I(pfas/10^3) + dist  + 
                      mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                      mthr_wgt_dlv +mthr_pre_preg_wgt + 
                      m_height + tri5 +fa_resid + wind_exposure 
-                   |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                   |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 data_elbw = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$bweight < 1000) * 100, 
-               np$coefficients["down"]/mean(df$bweight < 1000) * 100),
-  StdError = c(full$se["down"]/mean(df$bweight < 1000) * 100, 
-               np$se["down"]/mean(df$bweight < 1000) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$bweight < 1000) * 100, 
+               np$coefficients["down"]/mean(df_est$bweight < 1000) * 100),
+  StdError = c(full$se["down"]/mean(df_est$bweight < 1000) * 100, 
+               np$se["down"]/mean(df_est$bweight < 1000) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
@@ -407,7 +436,7 @@ full = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + 
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 np = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + 
@@ -415,15 +444,15 @@ np = fixest::feols(death ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wi
                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
                        m_height + tri5 + fa_resid
-                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+                     |county + year^month + birth_race_dsc_1, data = df_est, warn = F, notes = F, cluster = c("site", "year^month"))
 
 data_mort = data.frame(
   Category = c("Baseline", "Controls"),
   Check = c("Baseline", "W/O Paternal Education"),
-  Estimate = c(full$coefficients["down"]/mean(df$death) * 100, 
-               np$coefficients["down"]/mean(df$death) * 100),
-  StdError = c(full$se["down"]/mean(df$death) * 100, 
-               np$se["down"]/mean(df$death) * 100),
+  Estimate = c(full$coefficients["down"]/mean(df_est$death) * 100, 
+               np$coefficients["down"]/mean(df_est$death) * 100),
+  StdError = c(full$se["down"]/mean(df_est$death) * 100, 
+               np$se["down"]/mean(df_est$death) * 100),
   pval = c(one_sp(full$coeftable["down", "t value"], full$coeftable["down", "Pr(>|t|)"]), 
            one_sp(np$coeftable["down", "t value"], np$coeftable["down", "Pr(>|t|)"]))
 )
