@@ -22,7 +22,7 @@ source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/cws_cluster.R")
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/nopeduc.R")
 
 #get iv comparison figure
-source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2_iv_binary.R")
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2_ivbin_take2.R")
 
 #make long-term resident figure
 source("PFAS-Code/Pub/Revision1/Figures/ltr_figure.R")

@@ -24,7 +24,7 @@ figure2_still_fun_np = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Population Base Rate")
+      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Base Rate")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
@@ -211,7 +211,7 @@ figure2_still_fun_npease = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Population Base Rate")
+      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Base Rate")
   }else{
     pany1 = data %>% 
       dplyr::arrange(Check) %>%
@@ -397,7 +397,7 @@ figure2_still_fun_cws = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Population Base Rate")
+      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Base Rate")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
@@ -582,7 +582,7 @@ figure2_still_fun_ivbin = function(data, category, keep_x, header, ti, left){
             axis.title.y= element_blank(), 
             axis.text.x = element_text(size = 46), 
             axis.title.x = element_text(size = 50)) + 
-      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Population Base Rate")
+      guides(color = "none") + xlim(c(-300, 400)) + xlab("Change, as % of Base Rate")
   }else{
     pany1 = data %>% 
       ggplot(aes(y = Check)) + 
