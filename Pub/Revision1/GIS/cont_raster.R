@@ -59,7 +59,7 @@ ll = dplyr::bind_rows(pblapply(1:nrow(ll), flowacc, fs_silt, ll, "silt", cl = n_
 
 #get up and down for grid points
 if (!file.exists(modify_path("Data_Verify/GIS/grid_ll_watershed.RData"))){
-  source("PFAS-Code/PR/Figures/Grid Contamination/grid_cont_gis.R")
+  source("PFAS-Code/Pub/Figures/Grid Contamination/grid_cont_gis.R")
 }else{
   load(modify_path("Data_Verify/GIS/grid_ll_watershed.RData")) 
 }

@@ -5,7 +5,7 @@ dir.create(modify_path("Data_Verify/GIS/wells/wells_watershed"))
 dir.create(modify_path("Data_Verify/GIS/wells/wells_watershed/Shapes"))
 
 #read in wells
-source("PFAS-Code/PR/Data/NHDES_PWS.R")
+source("PFAS-Code/Pub/Data/NHDES_PWS.R")
 #set index to track wells
 wells$index = 1:nrow(wells)
 #get spatial dataframe for wells
