@@ -21,6 +21,9 @@ source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/cws_cluster.R")
 #build no paternal education figure
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/nopeduc.R")
 
+#build no pease afb figure
+source("PFAS-Code/Pub/Revision1/Figures/Figure 2/robustness_v/npease.R")
+
 #get iv comparison figure
 source("PFAS-Code/Pub/Revision1/Figures/Figure 2/figure2_ivbin_take2.R")
 
