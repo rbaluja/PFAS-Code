@@ -1,5 +1,5 @@
-### PFAS in Drinking Water Wells Cause Preterm and Low-Weight Births
-#### Baluja, Guo, Howden, Langer, Lemoine
+### PFAS-Contaminated Drinking Water Harms Infants
+#### Robert Baluja, Bo Guo, Wesley Howden, Ashley Langer, Derek Lemoine
 
 ### Software Dependencies
 - GDAL
@@ -39,9 +39,9 @@ This was run on an iMac with a 3.8 GHz 8-Core Intel Core i7 processor and 128GB 
 #### Execution file: head_execution.R
 - This runs the source code for the project from top to bottom
 
-##### 1. PR/preliminaries.R
+##### 1. Pub/preliminaries.R
 
-1. #####Pub/GIS/gis_head.R
+1. ##### Pub/GIS/gis_head.R
    Note: This only runs if either redo_GIS is true, or one of the (primary) outputs from the below files is missing from the working directory
    **Pub/GIS/cont_watershed.R**
    Note: This is only run if GIS_create is true
@@ -91,9 +91,9 @@ Note: These should each be run with a clean environment
   * This creates Figure S-3
 * **PFAS-Code/Pub/Figures/quintiles_pfas.R**
   * This creates Figure Figure S-5 and Table S-12
-* **PFAS-Code/PR/Robustness/drop_near_state/drop_near_state_head.R**
+* **PFAS-Code/Pub/Robustness/drop_near_state/drop_near_state_head.R**
   * This saves regression results for robustness spec where we drop contaminated sites within meters of NH state border
-* **FAS-Code/PR/Robustness/relaxed_up/relaxed_up_head.R**
+* **FAS-Code/Pub/Robustness/relaxed_up/relaxed_up_head.R**
   *  This saves regression results for robustness spec where we relax our upgradient defintion
 
 ### New Hampshire impacts:Pub/infant_health_head.R  
