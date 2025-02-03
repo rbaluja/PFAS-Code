@@ -1,5 +1,12 @@
 #read in bootstrap functions
 source("PFAS-Code/Pub/Tables/bs_functions.R")
+one_sp = function(tval, pval){
+  if (tval < 0){
+    return(1 - pval/2)
+  }else{
+    return(pval/2)
+  }
+}
 
 
 #First set of tables, health outcomes on covariates without anything to do with exposure to PFAS
@@ -322,8 +329,11 @@ modelsummary::modelsummary(table1_cont_ges,
 ges_sd = linear_bootstrap(boot_coefs, "gestation_all", table1_cont_ges[["Gestation IV"]])
 ges_pre_sd = linear_bootstrap(boot_coefs, "gestation_pre", table1_cont_ges[["Gestation IV: Preterm"]])
 save(ges_sd, ges_pre_sd, file = modify_path("Data_Verify/Revision 1/RData/ges_sd.RData"))
-1 - pnorm(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"]/ges_sd)
-1 - pnorm(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"]/ges_pre_sd)
+
+ivges_pval = pnorm(table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"]/ges_sd)
+ivges_pre_pval = pnorm(table1_cont_ges[["Gestation IV: Preterm"]]$coefficients["pred_pfas"]/ges_pre_sd)
+binges_pval = one_sp(-1 * table1_cont_ges[["Gestation"]]$coeftable["down", "t value"], table1_cont_ges[["Gestation"]]$coeftable["down", "Pr(>|t|)"]) #one sided, multiply by -1 since one_sp is for weakly positive effect
+binges_pre_pval = one_sp(-1 * table1_cont_ges[["Gestation: Preterm"]]$coeftable["down", "t value"], table1_cont_ges[["Gestation: Preterm"]]$coeftable["down", "Pr(>|t|)"])
 
 table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df_est$pred_pfas), na.rm = T)^2)) * 100
 (table1_cont_ges[["Gestation IV"]]$coefficients["pred_pfas"] - 1.96 * ges_sd) * 1/(sqrt(1 + median(sinh(df_est$pred_pfas), na.rm = T)^2)) * 100
@@ -393,8 +403,11 @@ modelsummary::modelsummary(table1_cont_bw,
 bw_sd = linear_bootstrap(boot_coefs, "bweight_all", table1_cont_bw[["Birthweight IV"]])
 bw_lbw_sd = linear_bootstrap(boot_coefs, "bweight_lbw", table1_cont_bw[["Birthweight IV: LBW"]])
 save(bw_sd, bw_lbw_sd, file = modify_path("Data_Verify/Revision 1/RData/bweight_sd.RData"))
-1 - pnorm(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"]/bw_sd)
-1 - pnorm(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"]/bw_lbw_sd)
+
+ivbw_pval = pnorm(table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"]/bw_sd)
+ivbw_lbw_pval = pnorm(table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"]/bw_lbw_sd)
+binbw_pval = one_sp(-1 * table1_cont_bw[["Birthweight"]]$coeftable["down", "t value"], table1_cont_bw[["Birthweight"]]$coeftable["down", "Pr(>|t|)"]) #one sided, multiply by -1 since one_sp is for weakly positive effect
+binbw_lbw_pval = one_sp(-1 * table1_cont_bw[["Birthweight: LBW"]]$coeftable["down", "t value"], table1_cont_bw[["Birthweight: LBW"]]$coeftable["down", "Pr(>|t|)"])
 
 
 table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + median(sinh(df_est$pred_pfas), na.rm = T)^2)) * 100
@@ -412,6 +425,14 @@ table1_cont_bw[["Birthweight IV"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27
 table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df_est$pred_pfas), na.rm = T) - 28.27)
 (table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] - 1.96 * bw_lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df_est$pred_pfas), na.rm = T) - 28.27)
 (table1_cont_bw[["Birthweight IV: LBW"]]$coefficients["pred_pfas"] + 1.96 * bw_lbw_sd) * 1/(sqrt(1 + 28.27^2)) * (median(sinh(df_est$pred_pfas), na.rm = T) - 28.27)
+
+#save pvalue csv
+pval_df = data.frame(
+  "Outcome" = c("Gestation", "Gestation", "Gestation", "Gestation", "Birthweight", "Birthweight", "Birthweight", "Birthweight"),
+  "Model" = c("Binary", "Binary-Preterm", "IV", "IV-Preterm", "Binary", "Binary-LBW", "IV", "IV-LBW"),
+  "P-Value" = c(binges_pval, binges_pre_pval, ivges_pval, ivges_pre_pval, binbw_pval, binbw_lbw_pval, ivbw_pval, ivbw_lbw_pval)
+)
+fwrite(pval_df, modify_path2("Tables/Revisions/cont_pvals.csv"))
 
 
 

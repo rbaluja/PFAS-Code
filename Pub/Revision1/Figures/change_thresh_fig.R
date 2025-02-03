@@ -1,45 +1,46 @@
+source("PFAS-Code/Pub/config.R")
 load("Data Revisions/RData/reg_data_thresh.RData")
-load(paste0(natality_path, "[UA Box Health] birth_records_matched_cv_", code_verify, ".RData")) 
+load(paste0(natality_path, "[UA Box Health] birth_records_estimation.RData"))
 
 #get death rate
 path = paste0(natality_path, "[UA Box Health] VR2210_Deliverable/dr_6264_deliverable.xlsx")
 df_d = read_excel(path, sheet = 3)
-df = df %>% 
+df_est = df_est %>% 
   left_join(df_d %>% 
               dplyr::rename(age_death = DECD_AGE_YR, 
                             manner_death = CERTFR_MANNER_DTH_CD, 
                             id = BRTH_CERT_FILE_NBR))
 
-df$death = as.numeric(!is.na(df$age_death))
+df_est$death = as.numeric(!is.na(df_est$age_death))
 
 #subset to every 200 ppt
 #reg_data = reg_data %>% dplyr::filter(threshold %% 200 == 0)
 
 #subset to above 0 and below 1000
 reg_data = reg_data %>% dplyr::filter(threshold > 0 & threshold <= 1000)
-reg_data$pre_down = reg_data$pre_down/mean(df$gestation < 37) * 100
-reg_data$lpre_down = reg_data$lpre_down/mean(df$gestation < 37 & df$gestation >= 32) * 100
-reg_data$mpre_down = reg_data$mpre_down/mean(df$gestation < 32 & df$gestation >= 28) * 100
-reg_data$vpre_down = reg_data$vpre_down/mean(df$gestation < 28) * 100
+reg_data$pre_down = reg_data$pre_down/mean(df_est$gestation < 37) * 100
+reg_data$lpre_down = reg_data$lpre_down/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100
+reg_data$mpre_down = reg_data$mpre_down/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100
+reg_data$vpre_down = reg_data$vpre_down/mean(df_est$gestation < 28) * 100
 
-reg_data$lbw_down = reg_data$lbw_down/mean(df$bweight < 2500) * 100
-reg_data$llbw_down = reg_data$llbw_down/mean(df$bweight < 2500 & df$bweight >= 1500) * 100
-reg_data$vlbw_down = reg_data$vlbw_down/mean(df$bweight < 1500 & df$bweight >= 1000) * 100
-reg_data$elbw_down = reg_data$elbw_down/mean(df$bweight < 1000) * 100
+reg_data$lbw_down = reg_data$lbw_down/mean(df_est$bweight < 2500) * 100
+reg_data$llbw_down = reg_data$llbw_down/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100
+reg_data$vlbw_down = reg_data$vlbw_down/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100
+reg_data$elbw_down = reg_data$elbw_down/mean(df_est$bweight < 1000) * 100
 
-reg_data$mort_down = reg_data$mort_down/mean(df$death) * 100
+reg_data$mort_down = reg_data$mort_down/mean(df_est$death) * 100
 
-reg_data$pre_dse = reg_data$pre_dse/mean(df$gestation < 37) * 100
-reg_data$lpre_dse = reg_data$lpre_dse/mean(df$gestation < 37 & df$gestation >= 32) * 100
-reg_data$mpre_dse = reg_data$mpre_dse/mean(df$gestation < 32 & df$gestation >= 28) * 100
-reg_data$vpre_dse = reg_data$vpre_dse/mean(df$gestation < 28) * 100
+reg_data$pre_dse = reg_data$pre_dse/mean(df_est$gestation < 37) * 100
+reg_data$lpre_dse = reg_data$lpre_dse/mean(df_est$gestation < 37 & df_est$gestation >= 32) * 100
+reg_data$mpre_dse = reg_data$mpre_dse/mean(df_est$gestation < 32 & df_est$gestation >= 28) * 100
+reg_data$vpre_dse = reg_data$vpre_dse/mean(df_est$gestation < 28) * 100
 
-reg_data$lbw_dse = reg_data$lbw_dse/mean(df$bweight < 2500) * 100
-reg_data$llbw_dse = reg_data$llbw_dse/mean(df$bweight < 2500 & df$bweight >= 1500) * 100
-reg_data$vlbw_dse = reg_data$vlbw_dse/mean(df$bweight < 1500 & df$bweight >= 1000) * 100
-reg_data$elbw_dse = reg_data$elbw_dse/mean(df$bweight < 1000) * 100
+reg_data$lbw_dse = reg_data$lbw_dse/mean(df_est$bweight < 2500) * 100
+reg_data$llbw_dse = reg_data$llbw_dse/mean(df_est$bweight < 2500 & df_est$bweight >= 1500) * 100
+reg_data$vlbw_dse = reg_data$vlbw_dse/mean(df_est$bweight < 1500 & df_est$bweight >= 1000) * 100
+reg_data$elbw_dse = reg_data$elbw_dse/mean(df_est$bweight < 1000) * 100
 
-reg_data$mort_dse = reg_data$mort_dse/mean(df$death) * 100
+reg_data$mort_dse = reg_data$mort_dse/mean(df_est$death) * 100
 
 reg_data$pre_dlower = reg_data$pre_down - 1.96 * reg_data$pre_dse
 reg_data$pre_dupper = reg_data$pre_down + 1.96 * reg_data$pre_dse
@@ -81,15 +82,13 @@ p_combined = ggplot() +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = pre_dupper, label = pre_down_p_label), nudge_y = 50, size = 10) +
   ylab("Any (<37 Weeks)") + 
   xlab("") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   theme(legend.position = "bottom", 
         axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24), 
-        plot.title = element_text(hjust = 0.5, size = 34)) +
+        plot.title = element_text(hjust = 0.5)) +
   guides(color = "none", fill = "none")+ ggtitle("Preterm") + 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500))+ 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750))+ 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 
@@ -99,14 +98,12 @@ lp_combined = ggplot() +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = lpre_dupper, label = lpre_down_p_label), nudge_y = 50, size = 10) +
   ylab("Moderately (32-36 Weeks)") + 
   xlab("") +
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+        axis.text.x = element_blank()) +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25)+  guides(color = FALSE)+
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 mp_combined = ggplot() +
@@ -115,14 +112,12 @@ mp_combined = ggplot() +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = mpre_dupper, label = mpre_down_p_label), nudge_y = 50, size = 10) +
   ylab("Very (28-31 Weeks)") + 
   xlab("") +
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+        axis.text.x = element_blank()) +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25)+  guides(color = FALSE)+
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 
@@ -131,17 +126,12 @@ vp_combined = ggplot() +
   geom_errorbar(data = reg_data_upgradient, aes(x = threshold, ymin = vpre_dlower, ymax = vpre_dupper), width = 20) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = vpre_dupper, label = vpre_down_p_label), nudge_y = 50, size = 10) +
   ylab("Extremely (<28 Weeks)") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   xlab("Threshold (ppt)") +
-  theme(legend.position = "bottom", 
-        axis.text.x = element_text(size = 26), 
-        axis.title.x = element_text(size = 28), 
-        legend.text = element_text(size = 24),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+  theme(legend.position = "bottom") +
   guides(color = guide_legend(title = ""), fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 reg_data$lbw_dlower = reg_data$lbw_down - 1.96 * reg_data$lbw_dse
@@ -180,16 +170,14 @@ lbw_combined = ggplot(reg_data, aes(x = threshold)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = threshold, ymin = lbw_dlower, ymax = lbw_dupper), width = 20) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = lbw_dupper, label = lbw_down_p_label), nudge_y = 50, size = 10) +
   ylab("Any (<2500g)") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   xlab("") + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24), 
-        plot.title = element_text(hjust = 0.5, size = 34)) +
+        axis.text.x = element_blank(), 
+        plot.title = element_text(hjust = 0.5)) +
   guides(color = "none", fill = "none")+ ggtitle("Low Birthweight") + 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 
@@ -198,15 +186,13 @@ llbw_combined = ggplot(reg_data, aes(x = threshold)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = threshold, ymin = llbw_dlower, ymax = llbw_dupper), width = 20) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = llbw_dupper, label = llbw_down_p_label), nudge_y = 50, size = 10) +
   ylab("Moderately (1500-2499g)") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   xlab("") + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+        axis.text.x = element_blank()) +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 vlbw_combined = ggplot(reg_data, aes(x = threshold)) + 
@@ -214,15 +200,13 @@ vlbw_combined = ggplot(reg_data, aes(x = threshold)) +
   geom_errorbar(data = reg_data_upgradient, aes(x = threshold, ymin = vlbw_dlower, ymax = vlbw_dupper), width = 20) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = vlbw_dupper, label = vlbw_down_p_label), nudge_y = 50, size = 10) +
   ylab("Very (1000-1499g)") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   xlab("") + 
   theme(legend.position = "bottom", 
-        axis.text.x = element_blank(),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+        axis.text.x = element_blank()) +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) + guides(color = FALSE)+
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 
@@ -232,18 +216,13 @@ elbw_combined = ggplot(reg_data, aes(x = threshold)) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = elbw_dupper, 
                                             label = elbw_down_p_label), nudge_y = 50, size = 10) +
   ylab("Extremely (<1000g)") + 
-  theme_minimal() + 
+  theme_minimal(base_size = 34) + 
   xlab("Threshold (ppt)") +
-  theme_minimal() + 
-  theme(legend.position = "bottom", 
-        axis.text.x = element_text(size = 26), 
-        axis.title.x = element_text(size = 28), 
-        legend.text = element_text(size = 24),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+  theme_minimal(base_size = 34) + 
+  theme(legend.position = "bottom") +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 #infant mortality
@@ -259,18 +238,12 @@ mort_fig = ggplot(reg_data, aes(x = threshold)) +
   geom_text(data = reg_data_upgradient, aes(x = threshold, y = mort_dupper, 
                                             label = mort_down_p_label), nudge_y = 50, size = 10) +
   ylab("Infant Mortality") + 
-  theme_minimal() + 
   xlab("Threshold (ppt)") +
-  theme_minimal() + 
-  theme(legend.position = "bottom", 
-        axis.text.x = element_text(size = 26), 
-        axis.title.x = element_text(size = 28), 
-        legend.text = element_text(size = 24),
-        axis.title.y = element_text(size = 28), 
-        axis.text.y = element_text(size = 24)) +
+  theme_minimal(base_size = 34) + 
+  theme(legend.position = "bottom") +
   guides(color = "none", fill = "none")+ 
   geom_hline(yintercept = 0, color = "black", size = 0.25) +
-  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 500)) + 
+  scale_y_continuous(labels = scales::percent_format(scale = 1), limits = c(-400, 750)) + 
   scale_x_continuous(breaks = seq(from = 100, to = 1000, by = 100))
 
 

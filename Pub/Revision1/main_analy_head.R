@@ -39,6 +39,7 @@ df_est = df_est %>%
                   !is.na(month) & 
                   !is.na(birth_race_dsc_1) & 
                   !is.na(wic))
+save(df_est, file = paste0(natality_path, "[UA Box Health] birth_records_estimation.RData"))
 
 if (drop_states){
   source("PFAS-Code/Pub/Revision1/Robustness/drop_near_state/drop_near_state.R")
