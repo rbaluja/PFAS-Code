@@ -207,14 +207,14 @@ ltr_fun = function(out, reg_data){
                                        ymin = get(d_name) - 1.96 * get(dse_name),
                                        ymax = get(d_name) + 1.96 * get(dse_name), color = "Short-Term Resident"), 
                   width = 1, size = 2) + 
-    theme_minimal(base_size = 28) + 
+    theme_minimal(base_size = 34) + 
     labs(x = "Long-Term Resident Cutoff (Months)", y = "Effect Size", color = element_blank()) + 
     scale_x_continuous(labels = seq(from = 6, to = 60, by = 6), breaks = seq(from = 6, to = 60, by = 6)) + 
     scale_y_continuous(labels = scales::label_percent(), limits = c(-4, 5), breaks = c(-4, -2, 0, 2, 4)) + 
     geom_hline(yintercept = 0, linetype = "dashed") + 
     theme(legend.position = "bottom", 
           legend.key.size = unit(5, "lines"), 
-          legend.text = element_text(size = 32)) + 
+          legend.text = element_text(size = 40)) + 
     scale_color_manual(values = c("Long-Term Resident" = "dodgerblue3", "Short-Term Resident" = "firebrick4")) + 
     guides(size = "none", shape = "none") + 
     scale_shape_manual(values = c("sig" = 15, "nsig" = 20))
