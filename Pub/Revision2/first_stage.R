@@ -1,35 +1,3 @@
-setwd("~/Dropbox/PFAS Infants")
-source("PFAS-Code/Pub/preliminaries.R")
-
-#obtain theta info for Northeastern contamination data
-source("PFAS-Code/Pub/Data/pfas_lab_sites.R")
-
-#well location and service area data (NHDES)
-source("PFAS-Code/Pub/Data/NHDES_PWS.R")
-
-#set up wind
-source("PFAS-Code/Pub/Data/wind.R")
-
-# #read in and set well watersheds
-load(modify_path("Data_Verify/GIS/wells_watershed.RData"))
-
-#read in well_ll to get appropriate sys and well ids
-well_ll = fread(modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
-wells_ws = wells_ws %>% left_join(well_ll)
-
-#read in and set cont site watersheds 
-load(modify_path(paste0("Data_Verify/GIS/cont_watershed_", ppt, ".RData")))
-
-#read in sites_ll to get right site number
-rs_ll = fread(modify_path(paste0("Data_Verify/GIS/rs_ll_ws_", ppt, ".csv"))) 
-
-cont_ws = cont_ws %>% 
-  left_join(rs_ll)
-
-if (drop_states == TRUE){
-  cont_ws = cont_ws[which(cont_ws$site %in% cont_sites$site), ]
-}
-
 #read in watersheds for test wells
 load(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
 fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
@@ -300,3 +268,38 @@ w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down 
 
 save(w_reg, w_reg_nat, w_reg_nos, fs_cont, file = modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
 save(fs_cont, file = modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
+
+
+#get soil characteristics at drinking wells
+wells_fa= wells %>%
+  st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
+  st_transform(32110) %>% 
+  st_buffer(10) %>% 
+  st_transform(4326)
+#soil porosity
+wells_sp = exactextractr::exact_extract(sp, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_sp, wells_fa, "sp", cl = n_cores))
+
+#available water capacity
+wells_awc = exactextractr::exact_extract(sp, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells_fa), flowacc, wells_awc, wells, "awc", cl = n_cores))
+
+#clay content
+wells_clay = exactextractr::exact_extract(clay, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_clay, wells, "clay", cl = n_cores))
+
+#sand content
+wells_sand = exactextractr::exact_extract(sand, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_sand, wells, "sand", cl = n_cores))
+
+#silt content
+wells_silt = exactextractr::exact_extract(silt, wells_fa)
+wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_silt, wells, "silt", cl = n_cores))
+
+df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc, clay, sand, silt)) 
+
+#impute predicted pfas from w_reg
+df$domestic = 0
+df$elevation = df$well_elev
+df$t = as.numeric(df$year) - 2010
+df$pred_pfas = predict(w_reg, df)

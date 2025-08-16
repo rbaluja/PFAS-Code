@@ -1,14 +1,11 @@
 setwd("~/Dropbox/PFAS Infants")
-source("PFAS-Code/Pub/preliminaries.R")
-
-#obtain theta info for Northeastern contamination data
-source("PFAS-Code/Pub/Data/pfas_lab_sites.R")
-
-#well location and service area data (NHDES)
-source("PFAS-Code/Pub/Data/NHDES_PWS.R")
-
-#set up wind
-source("PFAS-Code/Pub/Data/wind.R")
+source("PFAS-Code/Pub/config.R")
+#set up environment
+drop_states = FALSE #running spec where we drop sites within meters of state border?
+relaxed_up = FALSE #relaxed upgradient robustness spec?
+tables = TRUE
+figures = TRUE
+bs_cov = TRUE #bootstrap covariance matrix for IV
 
 # #read in and set well watersheds
 load(modify_path("Data_Verify/GIS/wells_watershed.RData"))
@@ -30,31 +27,40 @@ if (drop_states == TRUE){
   cont_ws = cont_ws[which(cont_ws$site %in% cont_sites$site), ]
 }
 
-#read in watersheds for test wells
-load(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
-fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
 
-#This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
-#it instead looks at test wells. For any questions on code, see relevant comments in binary.R
+######################
+##### Downgradient matching
+
 #a well is downgradient if there is a site in its watershed
-down_wells = st_intersection(cont_sites %>% 
-                               dplyr::select(-any_of("index")) %>%
-                               st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% st_transform(3437), 
-                             test_ws %>% st_transform(3437))
-down_wells = down_wells %>% as_tibble() %>% dplyr::select(index, site, pfas = sum_pfoa_pfos) 
-dwells = unique(down_wells$index)
+#form intersection of cont sites with the watersheds of each well
+#if a well is in the watershed of multiple sites, this returns multiple rows for that well
+#if a well is in the watershed of no sites, then it doesnt show up in this 
+down_wells = st_intersection(cont_sites %>% st_transform(3437), wells_ws %>% st_transform(3437))
+#select well identifiers (sys_id, source) and site info (site, pfas)
+down_wells = down_wells %>% as_tibble() %>% dplyr::select(sys_id, source, site, pfas = sum_pfoa_pfos) 
+down_wells$sys_id = str_pad(as.character(down_wells$sys_id), 7, "left", "0")
+down_wells$source = str_pad(as.character(down_wells$source), 3, "left", "0")
+#set well as grouped indice across sys_id and source to iterate over
+down_wells$well = down_wells %>% 
+  dplyr::group_by(sys_id, source) %>%
+  dplyr::group_indices(sys_id, source)
+#grab unique wells with a cont site in its watershed
+dwells = unique(down_wells$well)
 
 #only close down determines whether we include individuals on down wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
+#this function takes as input a well identifier and returns dataframe with that well, 
+#its matched site, the number of down sites within 5km, the distance to the nearest down site,
+#and the pfas level at its matched site
 down_well_dist = function(w){
   #select all observations in down_well for well w
-  dw = down_wells[which(down_wells$index == w), ]
+  dw = down_wells[which(down_wells$well == w), ]
   #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
-  dw_ll = fs_cont %>% 
+  dw_ll = wells %>% 
     as_tibble() %>%
-    dplyr::filter(index == dw$index[1]) %>% 
-    dplyr::select(c("well_lng", "well_lat"))
+    dplyr::filter(source == dw$source[1] & sys_id == dw$sys_id[1]) %>% 
+    dplyr::select(c("lng", "lat"))
   
   #get the lat longs for all sites in w's watershed
   rsdw_ll = rs_ll[which(rs_ll$site %in% dw$site), c("lng", "lat")]
@@ -84,33 +90,42 @@ down_well_dist = function(w){
   return(dw)
 }
 
+#apply down_well_dist (well to site matching, for down) to all wells with a cont site in its watershed
 down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
 
+######################
+##### Upgradient matching
+
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
-up_wells = st_intersection(fs_cont %>% 
-                             st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
+up_wells = st_intersection(wells %>% 
+                             as_tibble() %>% 
+                             dplyr::select(!geometry) %>% 
+                             st_as_sf(coords = c("lng", "lat"), crs = 4326) %>% 
                              st_transform(3437), 
                            cont_ws %>% 
-                             left_join(cont_sites %>% 
-                                         as_tibble() %>% 
+                             left_join(cont_sites %>% as_tibble() %>% 
                                          dplyr::select(site, pfas = sum_pfoa_pfos)) %>% 
-                                         st_transform(3437) %>% 
-                                         dplyr::select(!index))
+                             st_transform(3437))
 
-up_wells = up_wells %>% as_tibble() %>% dplyr::select(index, site, pfas) 
-uwells = unique(up_wells$index)
+up_wells = up_wells %>% as_tibble() %>% dplyr::select(sys_id, source, site, pfas) 
+up_wells$sys_id = str_pad(as.character(up_wells$sys_id), 7, "left", "0")
+up_wells$source = str_pad(as.character(up_wells$source), 3, "left", "0")
+up_wells$well = up_wells %>% 
+  dplyr::group_by(sys_id, source) %>%
+  dplyr::group_indices(sys_id, source)
+uwells = unique(up_wells$well)
 
 #only close up determines whether we include individuals on up wells that are further than meters in analysis
 #if 1, then we do include them if they have a nearby well that is closer than meters (they will be on the side)
 #if 0, then we do not include them
 up_well_dist = function(w){
   #select all observations in up_well for well w
-  uw = up_wells[which(up_wells$index == w), ]
+  uw = up_wells[which(up_wells$well == w), ]
   #filter wells (from NHDES_PWS.R) to only include that well and its coordinates
-  uw_ll = fs_cont %>% 
+  uw_ll = wells %>% 
     as_tibble() %>%
-    dplyr::filter(index == uw$index[1]) %>% 
-    dplyr::select(c("well_lng", "well_lat"))
+    dplyr::filter(source == uw$source[1] & sys_id == uw$sys_id[1]) %>% 
+    dplyr::select(c("lng", "lat"))
   
   #get the lat longs for all sites for which w is in their watershed
   rsuw_ll = rs_ll[which(rs_ll$site %in% uw$site), c("lng", "lat")]
@@ -138,32 +153,36 @@ up_well_dist = function(w){
   uw$up = 1
   
   return(uw)
-}     
-
+}
+#apply up_well_dist (well to site matching, for up) to all wells which are in the watershed of a cont site
 up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = n_cores))
 
-fs_cont = fs_cont %>% 
-  left_join(down_wells, by = c("index")) %>% 
-  left_join(up_wells, by = c("index"))
+#bind wells with down_wells and up_wells to obtain the relevant up/down variables
+wells = wells %>% 
+  left_join(down_wells %>% dplyr::select(!well), by = c("sys_id", "source")) %>% 
+  left_join(up_wells %>% dplyr::select(!well), by = c("sys_id", "source"))
 
 #when NA, that means that they had no cont sites in their watershed (down) or 
 #they were not in the watershed of any sites (up)
-fs_cont[is.na(fs_cont$down), ]$down = 0
-fs_cont[is.na(fs_cont$up), ]$up = 0
-fs_cont[is.na(fs_cont$n_sites_down5), ]$n_sites_down5 = 0
-fs_cont[is.na(fs_cont$n_sites_up5), ]$n_sites_up5 = 0
+wells[is.na(wells$down), ]$down = 0
+wells[is.na(wells$up), ]$up = 0
+wells[is.na(wells$n_sites_down5), ]$n_sites_down5 = 0
+wells[is.na(wells$n_sites_up5), ]$n_sites_up5 = 0
 
-#find nearest site and its chars
-fs_cont_dist = function(i){
-  w = fs_cont[i, ]
+#get wind exposure
+wells$wind_exposure = pbmapply(wind_function, wells$lng, wells$lat, rep(dist_allow, nrow(wells)))
+
+#Find nearest release site for each well
+well_dist = function(i){
+  w = wells[i, ]
   
-  dists = distm(c(w$well_lng, w$well_lat), rs_ll[, c("lng", "lat")])
+  dists = distm(c(w$lng, w$lat), rs_ll[, c("lng", "lat")])
   
   ind = which.min(dists)
   
-  #if neither down, nor up, set distance as that to the nearest site
+  #set distance as that to the nearest site
   w$dist_near = dists[ind]
-  #if neither down, nor up, set pfas as that at the nearest site
+  #set pfas as that at the nearest site
   w$pfas_near = rs_ll$pfas[ind]
   #get number of nearby sites
   w$n_sites_meters = length(which(dists <= meters))
@@ -174,11 +193,12 @@ fs_cont_dist = function(i){
   
   
 }
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = n_cores))
+wells1 = dplyr::bind_rows(pblapply(1:nrow(wells), well_dist, cl = n_cores))
+
 
 #fill in down, up, side variables
-fs_cont_assgn = function(i, drop_far_down, drop_far_up){
-  w = fs_cont[i, ]
+well_assgn = function(i, drop_far_down, drop_far_up){
+  w = wells1[i, ]
   down_far = 0
   
   #if distance for down well is less than meters, classify well as down, set pfas at level of relevant site
@@ -190,6 +210,7 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
       w$site = w$site_down
       w$dist = w$dist_down
       w$down = 1
+      w$up = 0
       return(w)
     }else if (d > meters & drop_far_down == TRUE){ #if the down site is outside the buffer, set values as missing (this will drop it in the regression)
       w$pfas = NA
@@ -243,60 +264,4 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   
 }
 
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up, cl = n_cores))
-
-######
-###Soil variables at the test well
-fs_cont_fa= fs_cont %>% 
-  st_as_sf(coords = c("well_lng", "well_lat"), crs = 4326) %>% 
-  st_transform(32110) %>% 
-  st_buffer(10) %>% 
-  st_transform(4326)
-
-#soil porosity
-sp = terra::rast(modify_path("Data_Verify/Soil/por_gNATSGO/por_gNATSGO_US.tif"))
-fs_sp = exactextractr::exact_extract(sp, fs_cont_fa)
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sp, fs_cont, "sp", cl = n_cores))
-
-#available water capacity
-awc = terra::rast(modify_path("Data_Verify/Soil/awc_gNATSGO/awc_gNATSGO_US.tif"))
-fs_awc = exactextractr::exact_extract(awc, fs_cont_fa)
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_awc, fs_cont, "awc", cl = n_cores))
-
-#clay content
-clay = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_clay.tif"))
-fs_clay = exactextractr::exact_extract(clay, fs_cont_fa)
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_clay, fs_cont, "clay", cl = n_cores))
-
-#sand content
-sand = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_sand.tif"))
-fs_sand = exactextractr::exact_extract(sand, fs_cont_fa)
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_sand, fs_cont, "sand", cl = n_cores))
-
-#silt content
-silt = terra::rast(modify_path("Data_Verify/Soil/isric/NH_mean_silt.tif"))
-fs_silt = exactextractr::exact_extract(silt, fs_cont_fa)
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_silt, fs_cont, "silt", cl = n_cores))
-
-
-###############
-###run regressions
-#get wind exposure
-fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
-
-fs_cont$wellpfas = fs_cont$pfos + fs_cont$pfoa
-fs_cont$domestic = ifelse(fs_cont$watervapusage == "DOMESTIC", 1, 0)
-fs_cont$t = fs_cont$year - 2010
-fs_cont$updown = ifelse((fs_cont$down == 1 | fs_cont$up == 1) & !is.na(fs_cont$up) & !is.na(fs_cont$down), 1, 0)
-w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
-                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
-                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
-
-w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
-                        updown, data = fs_cont) 
-
-w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
-                            updown, data = fs_cont) 
-
-save(w_reg, w_reg_nat, w_reg_nos, fs_cont, file = modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
-save(fs_cont, file = modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
+wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, drop_far_up, cl = n_cores))
