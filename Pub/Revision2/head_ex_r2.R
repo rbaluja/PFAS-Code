@@ -1,5 +1,6 @@
 setwd("~/Dropbox/PFAS Infants")
 
+source("PFAS-Code/Pub/Revision2/Bootstrap/bootstrap_iv.R")
 rm(list = ls())
 sys_levelbin = FALSE
 source("PFAS-Code/Pub/Revision2/revision2.R")
