@@ -144,7 +144,7 @@ boot_err_linear = function(i, df, fs_cont){
   
   return(boot_coefs)
 }
-boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = n_cores))
+boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_linear, df, fs_cont, cl = n_cores))
 save(boot_coefs, file = modify_path("Data_Verify/RData/Revision2/bootstrap_linear.RData")) 
 
 
@@ -279,5 +279,5 @@ boot_err_nott = function(i, df, fs_cont){
   
   return(boot_coefs)
 }
-boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err, df, fs_cont, cl = n_cores))
+boot_coefs = dplyr::bind_rows(pblapply(1:bts, boot_err_nott, df, fs_cont, cl = n_cores))
 save(boot_coefs, file = modify_path("Data_Verify/RData/Revision2/bootstrap_nott.RData")) 
