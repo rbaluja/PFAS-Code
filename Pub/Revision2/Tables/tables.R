@@ -146,8 +146,18 @@ load(modify_path(paste0("Data_Verify/RData/nott_w_reg", ppt, ".RData")))
 
 
 
-dfpred_pfas_linear = predict(w_reg_linear, df)
+df$pred_pfas_linear = predict(w_reg_linear, df)
 df$pred_pfas_nott = predict(w_reg_nott, df)
+
+if (!file.exists(modify_path("Data_Verify/RData/Revision2/bootstrap_linear.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/Revision2/bootstrap_linear.RData"))
+
+if (!file.exists(modify_path("Data_Verify/RData/Revision2/bootstrap_nott.RData"))) {
+  stop("Bootstrap standard errors")
+}
+load(modify_path("Data_Verify/RData/Revision2/bootstrap_nott.RData"))
 
 #preterm
 table2_preterm = list()
@@ -197,6 +207,13 @@ preterm_iv = table2_preterm[["All"]]$coefficients["I(pred_pfas_linear/1000)"]
 lpreterm_iv = table2_preterm[["Moderately"]]$coefficients["I(pred_pfas_linear/1000)"]
 mpreterm_iv = table2_preterm[["Very"]]$coefficients["I(pred_pfas_linear/1000)"]
 vpreterm_iv = table2_preterm[["Extremely"]]$coefficients["I(pred_pfas_linear/1000)"]
+
+#calculate bootstrapped standard errors
+preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
+lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Moderately"]])
+mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Very"]])
+vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Extremely"]])
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path(paste0("Data_Verify/RData/preterm_sd_linear", ppt, ".RData")))
 
 save(preterm_iv, lpreterm_iv, mpreterm_iv, vpreterm_iv, file = modify_path(paste0("Data_Verify/RData/preterm_iv_coef_linear", ppt, ".RData")))
 
@@ -251,6 +268,12 @@ vlbw_iv = table2_lbw[["Very Low Birthweight"]]$coefficients["I(pred_pfas_linear/
 
 save(lbw_iv, llbw_iv, mlbw_iv, vlbw_iv, file = modify_path(paste0("Data_Verify/RData/lbw_iv_coef_linear", ppt, ".RData")))
 
+lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
+llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
+mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
+vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
+save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path(paste0("Data_Verify/RData/lbw_sd_linear", ppt, ".RData")))
+
 mort_table = list()
 mort_table[["IV"]] = fixest::feols(death ~ I(pred_pfas_linear/1000) + pfas + 
                                      n_sites + wind_exposure + 
@@ -278,6 +301,9 @@ modelsummary::modelsummary(mort_table,
 
 mort_iv = mort_table[["IV"]]$coefficients["I(pred_pfas_linear/1000)"]
 save(mort_iv, file = modify_path(paste0("Data_Verify/RData/mort_iv_coef_linear", ppt, ".RData")))
+
+mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
+save(mort_sd, file = modify_path(paste0("Data_Verify/RData/mort_sd_linear", ppt, ".RData")))
 
 ###No Time trend
 #preterm
@@ -331,6 +357,13 @@ vpreterm_iv = table2_preterm[["Extremely"]]$coefficients["pred_pfas_nott"]
 
 save(preterm_iv, lpreterm_iv, mpreterm_iv, vpreterm_iv, file = modify_path(paste0("Data_Verify/RData/preterm_iv_coef_nott", ppt, ".RData")))
 
+#calculate bootstrapped standard errors
+preterm_sd = linear_bootstrap(boot_coefs, "preterm", table2_preterm[["All"]])
+lpreterm_sd = linear_bootstrap(boot_coefs, "lpreterm", table2_preterm[["Moderately"]])
+mpreterm_sd = linear_bootstrap(boot_coefs, "mpreterm", table2_preterm[["Very"]])
+vpreterm_sd = linear_bootstrap(boot_coefs, "vpreterm", table2_preterm[["Extremely"]])
+save(preterm_sd, lpreterm_sd, mpreterm_sd, vpreterm_sd, file = modify_path(paste0("Data_Verify/RData/preterm_sd_nott", ppt, ".RData")))
+
 
 #lbw
 table2_lbw = list()
@@ -382,6 +415,12 @@ vlbw_iv = table2_lbw[["Very Low Birthweight"]]$coefficients["pred_pfas_nott"]
 
 save(lbw_iv, llbw_iv, mlbw_iv, vlbw_iv, file = modify_path(paste0("Data_Verify/RData/lbw_iv_coef_nott", ppt, ".RData")))
 
+lbw_sd = linear_bootstrap(boot_coefs, "lbw", table2_lbw[["Low Birthweight"]])
+llbw_sd = linear_bootstrap(boot_coefs, "llbw", table2_lbw[["lLow Birthweight"]])
+mlbw_sd = linear_bootstrap(boot_coefs, "mlbw", table2_lbw[["mLow Birthweight"]])
+vlbw_sd = linear_bootstrap(boot_coefs, "vlbw", table2_lbw[["Very Low Birthweight"]])
+save(lbw_sd, llbw_sd, mlbw_sd, vlbw_sd, file = modify_path(paste0("Data_Verify/RData/lbw_sd_linear_nott", ppt, ".RData")))
+
 mort_table = list()
 mort_table[["IV"]] = fixest::feols(death ~ pred_pfas_nott + asinh(pfas) + 
                                      n_sites + wind_exposure + 
@@ -409,3 +448,29 @@ modelsummary::modelsummary(mort_table,
 
 mort_iv = mort_table[["IV"]]$coefficients["pred_pfas_nott"]
 save(mort_iv, file = modify_path(paste0("Data_Verify/RData/mort_iv_coef_nott", ppt, ".RData")))
+
+mort_sd = linear_bootstrap(boot_coefs, "mort", mort_table[["IV"]])
+save(mort_sd, file = modify_path(paste0("Data_Verify/RData/mort_sd_nott", ppt, ".RData")))
+
+
+#######################
+#### Alternate first stage
+w_reg = fixest::feols(I(wellpfas/1000) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + pfas + log(dist)*down + 
+                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
+
+table_s11 = modelsummary::modelsummary(list(w_reg),
+                                       stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                       gof_map = c("nobs", "r.squared"), 
+                                       output = modify_path2("Tables/Revisions/first_stage_linear.tex"))
+
+w_reg_nott = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5, data = fs_cont) 
+
+table_s11 = modelsummary::modelsummary(list(w_reg_nott),
+                                       stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                       gof_map = c("nobs", "r.squared"), 
+                                       output = modify_path2("Tables/Revisions/first_stage_nott.tex"))
