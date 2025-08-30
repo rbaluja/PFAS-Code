@@ -8,6 +8,13 @@ one_sp = function(tval, pval){
     return(pval/2)
   }
 }
+df %>%
+  mutate(missing_pers = ifelse(
+  is.na(m_age) | is.na(m_married) | is.na(m_educ) | is.na(f_educ) | is.na(med_inc) | is.na(p_manuf) | is.na(n_hunits) | is.na(med_hprice) | is.na(fa_resid) | is.na(wic), 1, 0
+  ), 
+  missing_med = ifelse(
+    is.na(mthr_wgt_dlv) | is.na(m_height) | is.na(mthr_pre_preg_wgt) | is.na(private_insurance) | is.na(nbr_cgrtt) | is.na(mr_04) | is.na(mr_18) | is.na(mr_08) | is.na(mr_21) | is.na(mr_26) | is.na(mr_27), 1, 0
+  )) -> df
 #preterm
 load(modify_path("Data_Verify/Robustness/drop_nearby_state_robustness.RData"))
 load(modify_path("Data_Verify/Robustness/relaxed_up_robust.RData"))
@@ -20,53 +27,14 @@ full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites 
                        m_height + tri5 + fa_resid
                      |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-site  = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid
-                      |site + county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
-no_fe = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                        m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                        pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                        mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                        mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                        m_height + tri5 + fa_resid
-                      |birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-drop_close = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                             m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                             pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                             mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                             mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                             m_height + tri5 + fa_resid
-                           |county + year^month + birth_race_dsc_1, data = df[which(df$dist > 1000), ], warn = F, notes = F, cluster = c("site", "year^month"))
-
-pre_2016 = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                           m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
-                           pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                           mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                           mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                           m_height + tri5 + fa_resid
-                         |county + year^month + birth_race_dsc_1, data = df[which(df$year < 2016), ], warn = F, notes = F, cluster = c("site", "year^month"))
-
-
-no_pers = fixest::feols(preterm ~ down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                          private_insurance  + nbr_cgrtt +
-                          pm25 + temp +med_inc  + well_elev + resid_elev + csite_dist +
-                          mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
-                          mthr_wgt_dlv +mthr_pre_preg_wgt + 
-                          m_height + tri5
-                        |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
-
-
-no_med = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
-                         m_age + m_married  + m_educ + f_educ +
-                         pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
-                         + tri5
-                       |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
+full = fixest::feols(preterm ~  down + updown +  I(pfas/10^3) + dist  + n_sites + wind_exposure +
+                       m_age + m_married  + private_insurance  + nbr_cgrtt  + m_educ + f_educ +
+                       pm25 + temp +med_inc+ p_manuf + n_hunits + med_hprice  + well_elev + resid_elev + csite_dist + wic+
+                       mr_04 + mr_18 + mr_08 + mr_21 + mr_26 + mr_27 + 
+                       mthr_wgt_dlv +mthr_pre_preg_wgt + 
+                       m_height + tri5 + fa_resid
+                     |county + year^month + birth_race_dsc_1, data = df, warn = F, notes = F, cluster = c("site", "year^month"))
 
 
 
@@ -528,7 +496,7 @@ data_epre$health_outcome = "extremely preterm"
 
 pre_very = figure2_fun(data_epre, "Extremely", TRUE, FALSE, "Extremely", TRUE)
 
-pre_fig = pre_any/pre_very
+pre_fig = pre_any/pre_late/pre_mod/pre_very
 
 
 
@@ -1146,7 +1114,7 @@ data_elbw$health_outcome = "extremely low birthweight"
 lbw_very = figure2_fun(data_elbw, "Extremely", TRUE, FALSE, "Extremely", FALSE)
 
 
-lbw = lbw_all/lbw_very
+lbw = lbw_all/lbw_slight/lbw_mod/lbw_very
 
 legend_data <- data.frame(
   category = factor(c("Any", "Moderately", "Very", "Extremely"), levels = c("Any", "Moderately", "Very", "Extremely")),
@@ -1176,9 +1144,9 @@ main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
 
 fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 
-ggsave(modify_path3("Figures/Revisions/figure2.png"), fig2, width = 17000, height = 5000, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2.png"), fig2, width = 17000, height = 10000, units = "px", limitsize = F)
 
 
 fig2_data = rbind(data_pre, data_mpre, data_vpre, data_epre, 
                   data_lbw, data_mlbw, data_vlbw, data_elbw)
-fwrite(fig2_data, modify_path3("Figures/Data/figure2_data_revisions.csv"))
+fwrite(fig2_data, modify_path3("Figures/Data/figure2_data.csv"))

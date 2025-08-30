@@ -474,3 +474,260 @@ table_s11 = modelsummary::modelsummary(list(w_reg_nott),
                                        fmt = modelsummary::fmt_significant(2, scientific = F), 
                                        gof_map = c("nobs", "r.squared"), 
                                        output = modify_path2("Tables/Revisions/first_stage_nott.tex"))
+
+
+
+w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
+
+modelsummary::modelsummary(list(w_reg),
+                                       stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                       gof_map = c("nobs", "r.squared"), 
+                                       output = modify_path2("Tables/Revisions/first_stage_rev2.tex"))
+
+w_reg_nd = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                           updown + wind_exposure + temp + pm25 + med_inc +
+                           p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont %>% filter(domestic == 0)) 
+
+modelsummary::modelsummary(list(w_reg_nd),
+                                       stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01), 
+                                       fmt = modelsummary::fmt_significant(2, scientific = F), 
+                                       gof_map = c("nobs", "r.squared"), 
+                                       output = modify_path2("Tables/Revisions/first_stage_nod.tex"))
+
+
+#missing obs indicators
+#Preterm
+df %>%
+  mutate(mis_m_age = ifelse(is.na(m_age), 1, 0), 
+         mis_m_married = ifelse(is.na(m_married), 1, 0),
+         mis_private_insurance = ifelse(is.na(private_insurance), 1, 0),
+         mis_nbr_cgrtt = ifelse(is.na(nbr_cgrtt), 1, 0),
+         mis_m_educ = ifelse(is.na(m_educ), 1, 0),
+         mis_f_educ = ifelse(is.na(f_educ), 1, 0),
+         mis_pm25 = ifelse(is.na(pm25), 1, 0),
+         mis_temp = ifelse(is.na(temp), 1, 0),
+         mis_med_inc = ifelse(is.na(med_inc), 1, 0),
+         mis_p_manuf = ifelse(is.na(p_manuf), 1, 0),
+         mis_n_hunits = ifelse(is.na(n_hunits), 1, 0),
+         mis_med_hprice = ifelse(is.na(med_hprice), 1, 0),
+         mis_well_elev = ifelse(is.na(well_elev), 1, 0),
+         mis_resid_elev = ifelse(is.na(resid_elev), 1, 0),
+         mis_csite_dist = ifelse(is.na(csite_dist), 1, 0),
+         mis_mthr_wgt_dlv = ifelse(is.na(mthr_wgt_dlv), 1, 0),
+         mis_mthr_pre_preg_wgt = ifelse(is.na(mthr_pre_preg_wgt), 1, 0),
+         mis_m_height = ifelse(is.na(m_height), 1, 0),
+         mis_fa_resid = ifelse(is.na(fa_resid), 1, 0), 
+         mis_wic = ifelse(is.na(wic), 1, 0), 
+         mis_mr_04 = ifelse(is.na(mr_04), 1, 0),
+         mis_mr_08 = ifelse(is.na(mr_08), 1, 0),
+         mis_mr_18 = ifelse(is.na(mr_18), 1, 0),
+         mis_mr_21 = ifelse(is.na(mr_21), 1, 0),
+         mis_mr_26 = ifelse(is.na(mr_26), 1, 0),
+         mis_mr_27 = ifelse(is.na(mr_27), 1, 0), 
+         mis_tri5 = ifelse(is.na(tri5), 1, 0), 
+         mis_birth_race = ifelse(is.na(birth_race_dsc_1), 1, 0)) -> df
+
+  
+          
+table1_preterm = list() 
+table1_preterm[["All"]] = fixest::feols(I(gestation < 37) ~ mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                          mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                          mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                          mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                          mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                          mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                          
+                                        |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_preterm[["Moderately"]] = fixest::feols(I(gestation < 37 & gestation >= 32) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                 mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                 mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                 mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                 mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                 mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                               
+                                               |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_preterm[["Very"]] = fixest::feols(I(gestation < 32 & gestation >= 28) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                           mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                           mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                           mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                           mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                           mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                         
+                                         |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_preterm[["Extremely"]] = fixest::feols(I(gestation < 28) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                              
+                                              |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+modelsummary::modelsummary(table1_preterm, 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("mis_m_age" = "Missing Maternal Age", 
+                                        "mis_m_married" = "Missing Maternal Marital Status",
+                                        "mis_private_insurance" = "Missing Private Insurance",
+                                        "mis_nbr_cgrtt" = "Missing Number of Cigarettes",
+                                        "mis_m_educ" = "Missing Maternal Education",
+                                        "mis_f_educ" = "Missing Paternal Education",
+                                        "mis_pm25" = "Missing PM2.5",
+                                        "mis_temp" = "Missing Temperature",
+                                        "mis_med_inc" = "Missing Median Income",
+                                        "mis_p_manuf" = "Missing Percent Manufacturing",
+                                        "mis_n_hunits" = "Missing Number of Housing Units",
+                                        "mis_med_hprice" = "Missing Median Home Price",
+                                        "mis_well_elev" = "Missing Well Elevation",
+                                        "mis_resid_elev" = "Missing Residential Elevation",
+                                        "mis_csite_dist" = "Missing Contaminated Site Distance",
+                                        "mis_wic" = "Missing WIC",
+                                        "mis_mr_04" = "Missing Pre-Pregnancy Diabetes",
+                                        "mis_mr_18" = "Missing Gestational Diabetes",
+                                        "mis_mr_08" = "Missing Hypertension",
+                                        "mis_mr_21" = "Missing Previous C-Section",
+                                        "mis_mr_26" = "Missing Fertility Enhancing Drugs",
+                                        "mis_mr_27" = "Missing Invitro Fertilization",
+                                        "mis_mthr_wgt_dlv" = "Missing Maternal Delivery Weight",
+                                        "mis_mthr_pre_preg_wgt" = "Missing Maternal Pre-Pregnancy Weight",
+                                        "mis_m_height" = "Missing Maternal Height",
+                                        "mis_fa_resid" = "Missing Flow Accumulation at Residence",
+                                        "mis_tri5" = "Missing TRI sites",
+                                        "mis_birth_race" = "Missing Birth Race"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/preterm_miss_covars.tex")) 
+
+
+#low birthweight
+table1_lbw = list() 
+table1_lbw[["Low Birthweight all "]] = fixest::feols(I(bweight < 2500) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                       mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                       mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                       mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                       mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                       mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                                     
+                                                     |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_lbw[["Low Birthweight among full term "]] = fixest::feols(I(bweight < 2500) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                                   mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                                   mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                                   mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                                   mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                                   mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                                                 
+                                                                 |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+
+table1_lbw[["Low Birthweight "]] = fixest::feols(I(bweight < 2500 & bweight >= 1500) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                   mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                   mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                   mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                   mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                   mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                                 
+                                                 |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_lbw[["Moderately Low Birthweight"]] = fixest::feols(I(bweight < 1500 & bweight >= 1000) ~ mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                             mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                             mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                             mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                             mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                             mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                                           
+                                                           |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+table1_lbw[["Very Low Birthweight"]] = fixest::feols(I(bweight < 1000) ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                                       mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                                       mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                                       mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                                       mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                                       mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                                     
+                                                     |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+
+modelsummary::modelsummary(table1_lbw, 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("mis_m_age" = "Missing Maternal Age", 
+                                        "mis_m_married" = "Missing Maternal Marital Status",
+                                        "mis_private_insurance" = "Missing Private Insurance",
+                                        "mis_nbr_cgrtt" = "Missing Number of Cigarettes",
+                                        "mis_m_educ" = "Missing Maternal Education",
+                                        "mis_f_educ" = "Missing Paternal Education",
+                                        "mis_pm25" = "Missing PM2.5",
+                                        "mis_temp" = "Missing Temperature",
+                                        "mis_med_inc" = "Missing Median Income",
+                                        "mis_p_manuf" = "Missing Percent Manufacturing",
+                                        "mis_n_hunits" = "Missing Number of Housing Units",
+                                        "mis_med_hprice" = "Missing Median Home Price",
+                                        "mis_well_elev" = "Missing Well Elevation",
+                                        "mis_resid_elev" = "Missing Residential Elevation",
+                                        "mis_csite_dist" = "Missing Contaminated Site Distance",
+                                        "mis_wic" = "Missing WIC",
+                                        "mis_mr_04" = "Missing Pre-Pregnancy Diabetes",
+                                        "mis_mr_18" = "Missing Gestational Diabetes",
+                                        "mis_mr_08" = "Missing Hypertension",
+                                        "mis_mr_21" = "Missing Previous C-Section",
+                                        "mis_mr_26" = "Missing Fertility Enhancing Drugs",
+                                        "mis_mr_27" = "Missing Invitro Fertilization",
+                                        "mis_mthr_wgt_dlv" = "Missing Maternal Delivery Weight",
+                                        "mis_mthr_pre_preg_wgt" = "Missing Maternal Pre-Pregnancy Weight",
+                                        "mis_m_height" = "Missing Maternal Height",
+                                        "mis_fa_resid" = "Missing Flow Accumulation at Residence",
+                                        "mis_tri5" = "Missing TRI sites",
+                                        "mis_birth_race" = "Missing Birth Race"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/lbw_mis_covars.tex")) 
+
+mort_table = list()
+
+mort_table[["Binary"]] = fixest::feols(death ~  mis_m_age + mis_m_married + mis_private_insurance + mis_nbr_cgrtt + 
+                                         mis_m_educ + mis_f_educ + mis_pm25 + mis_temp + mis_med_inc + mis_p_manuf + mis_n_hunits +
+                                         mis_med_hprice + mis_well_elev + mis_resid_elev + mis_csite_dist + mis_wic +
+                                         mis_mr_04 + mis_mr_18 + mis_mr_08 + mis_mr_21 + mis_mr_26 + mis_mr_27 +
+                                         mis_mthr_wgt_dlv + mis_mthr_pre_preg_wgt +
+                                         mis_m_height + mis_fa_resid + mis_tri5 + mis_birth_race
+                                       
+                                       |county +  year^month, data = df %>% filter(!is.na(down) & !is.na(updown) & !is.na(dist) & dist <= 5000), warn = F, notes = F)
+
+modelsummary::modelsummary(mort_table, 
+                           stars = c("*" = 0.2, "**" = 0.1, "***" = 0.02), #gives one sided test stars, when it has right sign
+                           fmt = modelsummary::fmt_significant(2, scientific = F), 
+                           coef_map = c("mis_m_age" = "Missing Maternal Age", 
+                                                   "mis_m_married" = "Missing Maternal Marital Status",
+                                                   "mis_private_insurance" = "Missing Private Insurance",
+                                                   "mis_nbr_cgrtt" = "Missing Number of Cigarettes",
+                                                   "mis_m_educ" = "Missing Maternal Education",
+                                                   "mis_f_educ" = "Missing Paternal Education",
+                                                   "mis_pm25" = "Missing PM2.5",
+                                                   "mis_temp" = "Missing Temperature",
+                                                   "mis_med_inc" = "Missing Median Income",
+                                                   "mis_p_manuf" = "Missing Percent Manufacturing",
+                                                   "mis_n_hunits" = "Missing Number of Housing Units",
+                                                   "mis_med_hprice" = "Missing Median Home Price",
+                                                   "mis_well_elev" = "Missing Well Elevation",
+                                                   "mis_resid_elev" = "Missing Residential Elevation",
+                                                   "mis_csite_dist" = "Missing Contaminated Site Distance",
+                                                   "mis_wic" = "Missing WIC",
+                                                   "mis_mr_04" = "Missing Pre-Pregnancy Diabetes",
+                                                   "mis_mr_18" = "Missing Gestational Diabetes",
+                                                   "mis_mr_08" = "Missing Hypertension",
+                                                   "mis_mr_21" = "Missing Previous C-Section",
+                                                   "mis_mr_26" = "Missing Fertility Enhancing Drugs",
+                                                   "mis_mr_27" = "Missing Invitro Fertilization",
+                                                   "mis_mthr_wgt_dlv" = "Missing Maternal Delivery Weight",
+                                                   "mis_mthr_pre_preg_wgt" = "Missing Maternal Pre-Pregnancy Weight",
+                                                   "mis_m_height" = "Missing Maternal Height",
+                                                   "mis_fa_resid" = "Missing Flow Accumulation at Residence",
+                                                   "mis_tri5" = "Missing TRI sites",
+                                                   "mis_birth_race" = "Missing Birth Race"),
+                           gof_map = c("nobs", "r.squared"), 
+                           output = modify_path2("Tables/Revisions/mort_mis_covars.tex")) 

@@ -296,8 +296,19 @@ w_reg_nat_nott = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand
 w_reg_nos_nott = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
                             updown, data = fs_cont)
 
+w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                               updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                               p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
+
+w_reg_nd = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                        updown + wind_exposure + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont %>% filter(domestic == 0)) 
+
 save(w_reg_linear, w_reg_nat_linear, w_reg_nos_linear, fs_cont, file = modify_path(paste0("Data_Verify/RData/linear_w_reg", ppt, ".RData")))
 save(w_reg_nott, w_reg_nat_nott, w_reg_nos_nott, fs_cont, file = modify_path(paste0("Data_Verify/RData/nott_w_reg", ppt, ".RData")))
+save(w_reg, file = modify_path(paste0("Data_Verify/RData/w_reg_rev2", ppt, ".RData")))
+save(w_reg_nd, file = modify_path(paste0("Data_Verify/RData/nd_w_reg", ppt, ".RData")))
+
 
 
 #get soil characteristics at drinking wells
