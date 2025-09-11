@@ -6,6 +6,23 @@ linear_bootstrap = function(boot_coefs, outcome, reg){
   return(bs_sd)
 }
 
+
+linear_linear_bootstrap = function(boot_coefs, outcome, reg){
+  
+  #subtract off mean, divide by dof
+  bs_sd = sqrt(sum((boot_coefs[[outcome]] - reg$coefficients["pred_pfas_linear"])^2)/(nrow(boot_coefs) - 1))
+  
+  return(bs_sd)
+}
+
+linear_nott_bootstrap = function(boot_coefs, outcome, reg){
+  
+  #subtract off mean, divide by dof
+  bs_sd = sqrt(sum((boot_coefs[[outcome]] - reg$coefficients["pred_pfas_nott"])^2)/(nrow(boot_coefs) - 1))
+  
+  return(bs_sd)
+}
+
 quintile_bootstrap = function(boot_coefs, reg_data){
   p2_sd = sqrt(sum((boot_coefs$preterm2 - reg_data[2, "pre_coef"])^2)/(nrow(boot_coefs) - 1))
   p3_sd = sqrt(sum((boot_coefs$preterm3 - reg_data[3, "pre_coef"])^2)/(nrow(boot_coefs) - 1))
