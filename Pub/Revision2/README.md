@@ -1,5 +1,5 @@
 #### Outline of Code
-PFAS-Code/Pub/Revision1/head_ex_r1.R
+PFAS-Code/Pub/Revision1/head_ex_r2.R
 
 
 - PFAS-Code/Pub/Revision2/Bootstrap/bootstrap_iv.R: This bootstraps the standard errors for the two new IV specs (no domestic wells and no time trend in the first stage).
