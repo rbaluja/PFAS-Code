@@ -259,7 +259,11 @@ wells2 = dplyr::bind_rows(pblapply(1:nrow(wells1), well_assgn, drop_far_down, dr
 
 wells2 %>%
   dplyr::group_by(sys_id) %>%
-  dplyr::mutate(down = max(down, na.rm = T)) -> wells2
+  dplyr::mutate(down = max(down, na.rm = T), 
+                up = max(up, na.rm = T)) -> wells2
+
+wells2 <- wells2 %>%
+  mutate(up = ifelse(down == 1 & up == 1, 0, up)) 
 
 df = df %>% 
   left_join(wells2 %>% 

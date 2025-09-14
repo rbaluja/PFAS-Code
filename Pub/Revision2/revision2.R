@@ -22,6 +22,9 @@ source("PFAS-Code/Pub/Revision2/Tables/tables.R")
 #remake Figure 2 (SIMPLE)
   source("PFAS-Code/Pub/Revision2/Figures/figure2_simple.R")
   source("PFAS-Code/Pub/Revision2/Figures/figure2_mort_simple.R")
+
+  #make missing obs figure
+  source("PFAS-Code/Pub/Revision2/Figures/include_missing.R")
   
   }else{
   

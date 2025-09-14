@@ -1,5 +1,5 @@
-setwd("~/Dropbox/PFAS Infants")
-
+rm(list = ls())
+gc()
 source("PFAS-Code/Pub/Revision2/Bootstrap/bootstrap_iv.R")
 rm(list = ls())
 gc()
@@ -13,7 +13,3 @@ rm(list = ls())
 gc()
 sys_levelbin = FALSE
 source("PFAS-Code/Pub/Revision2/Surface Water/surface_water.R")
-rm(list = ls())
-gc()
-sys_levelbin = FALSE
-source("PFAS-Code/Pub/Revision2/industy_100ppt.R")

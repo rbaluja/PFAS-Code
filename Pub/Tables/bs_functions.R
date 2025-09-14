@@ -7,10 +7,10 @@ linear_bootstrap = function(boot_coefs, outcome, reg){
 }
 
 
-linear_linear_bootstrap = function(boot_coefs, outcome, reg){
+linear_nd_bootstrap = function(boot_coefs, outcome, reg){
   
   #subtract off mean, divide by dof
-  bs_sd = sqrt(sum((boot_coefs[[outcome]] - reg$coefficients["pred_pfas_linear"])^2)/(nrow(boot_coefs) - 1))
+  bs_sd = sqrt(sum((boot_coefs[[outcome]] - reg$coefficients["pred_pfas_nd"])^2)/(nrow(boot_coefs) - 1))
   
   return(bs_sd)
 }
