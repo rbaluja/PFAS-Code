@@ -1,3 +1,23 @@
+# #read in and set well watersheds
+load(modify_path("Data_Verify/GIS/wells_watershed.RData"))
+
+#read in well_ll to get appropriate sys and well ids
+well_ll = fread(modify_path("Data_Verify/GIS/wells_ll_ws.csv"))
+wells_ws = wells_ws %>% left_join(well_ll)
+
+#read in and set cont site watersheds 
+load(modify_path(paste0("Data_Verify/GIS/cont_watershed_", ppt, ".RData")))
+
+#read in sites_ll to get right site number
+rs_ll = fread(modify_path(paste0("Data_Verify/GIS/rs_ll_ws_", ppt, ".csv"))) 
+
+cont_ws = cont_ws %>% 
+  left_join(rs_ll)
+
+if (drop_states == TRUE){
+  cont_ws = cont_ws[which(cont_ws$site %in% cont_sites$site), ]
+}
+
 #read in watersheds for test wells
 load(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
 fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
@@ -256,18 +276,39 @@ fs_cont$wellpfas = fs_cont$pfos + fs_cont$pfoa
 fs_cont$domestic = ifelse(fs_cont$watervapusage == "DOMESTIC", 1, 0)
 fs_cont$t = fs_cont$year - 2010
 fs_cont$updown = ifelse((fs_cont$down == 1 | fs_cont$up == 1) & !is.na(fs_cont$up) & !is.na(fs_cont$down), 1, 0)
-w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+w_reg_linear = fixest::feols(wellpfas ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + pfas + log(dist)*down + 
                         updown + wind_exposure + domestic + temp + pm25 + med_inc +
                         p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
 
-w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+w_reg_nat_linear = fixest::feols(wellpfas ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + pfas + log(dist)*down + 
                             updown, data = fs_cont) 
 
-w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
+w_reg_nos_linear = fixest::feols(wellpfas ~ down + pfas + log(dist)*down + 
+                            updown, data = fs_cont)
+
+w_reg_nott = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5, data = fs_cont) 
+
+w_reg_nat_nott = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
                             updown, data = fs_cont) 
 
-save(w_reg, w_reg_nat, w_reg_nos, fs_cont, file = modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
-save(fs_cont, file = modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
+w_reg_nos_nott = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
+                            updown, data = fs_cont)
+
+w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                               updown + wind_exposure + domestic + temp + pm25 + med_inc +
+                               p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
+
+w_reg_nd = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
+                        updown + wind_exposure + temp + pm25 + med_inc +
+                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont %>% filter(domestic == 0)) 
+
+save(w_reg_linear, w_reg_nat_linear, w_reg_nos_linear, fs_cont, file = modify_path(paste0("Data_Verify/RData/linear_w_reg", ppt, ".RData")))
+save(w_reg_nott, w_reg_nat_nott, w_reg_nos_nott, fs_cont, file = modify_path(paste0("Data_Verify/RData/nott_w_reg", ppt, ".RData")))
+save(w_reg, file = modify_path(paste0("Data_Verify/RData/w_reg_rev2", ppt, ".RData")))
+save(w_reg_nd, file = modify_path(paste0("Data_Verify/RData/nd_w_reg", ppt, ".RData")))
+
 
 
 #get soil characteristics at drinking wells
@@ -302,4 +343,3 @@ df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp
 df$domestic = 0
 df$elevation = df$well_elev
 df$t = as.numeric(df$year) - 2010
-df$pred_pfas = predict(w_reg, df)

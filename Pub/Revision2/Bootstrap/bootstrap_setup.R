@@ -2,6 +2,15 @@
 load(modify_path("Data_Verify/GIS/fs_test_watershed.RData"))
 fs_cont = fread(modify_path("Data_Verify/Contamination/cleaned_contwell.csv"))
 
+#read in and set cont site watersheds 
+load(modify_path("Data_Verify/GIS/cont_watershed.RData"))
+
+#read in sites_ll to get right site number
+rs_ll = fread(modify_path("Data_Verify/GIS/rs_ll_ws.csv"))
+
+cont_ws = cont_ws %>% 
+  left_join(rs_ll)
+
 #This follows the same general algorithm given in binary.R, where instead of looking at drinking water wells
 #it instead looks at test wells. For any questions on code, see relevant comments in binary.R
 #a well is downgradient if there is a site in its watershed
@@ -52,7 +61,7 @@ down_well_dist = function(w){
   return(dw)
 }
 
-down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = n_cores))
+down_wells = dplyr::bind_rows(pblapply(dwells, down_well_dist, cl = 1))
 
 #for calculating upgradient, first obtain set of wells in the catchment area of sites
 up_wells = st_intersection(fs_cont %>% 
@@ -108,7 +117,7 @@ up_well_dist = function(w){
   return(uw)
 }     
 
-up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = n_cores))
+up_wells = dplyr::bind_rows(pblapply(uwells, up_well_dist, cl = 1))
 
 fs_cont = fs_cont %>% 
   left_join(down_wells, by = c("index")) %>% 
@@ -142,7 +151,7 @@ fs_cont_dist = function(i){
   
   
 }
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = n_cores))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_dist, cl = 1))
 
 #fill in down, up, side variables
 fs_cont_assgn = function(i, drop_far_down, drop_far_up){
@@ -152,7 +161,6 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   #if distance for down well is less than meters, classify well as down, set pfas at level of relevant site
   d = w$dist_down
   if (!is.na(d)){ #if there is a down site
-    w$up = 0
     if (d < meters){ #if the down site is within the buffer, assign its values to the well
       w$pfas = w$pfas_down
       w$site = w$site_down
@@ -211,7 +219,7 @@ fs_cont_assgn = function(i, drop_far_down, drop_far_up){
   
 }
 
-fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up, cl = n_cores))
+fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), fs_cont_assgn, drop_far_down, drop_far_up))
 
 ######
 ###Soil variables at the test well
@@ -247,27 +255,14 @@ fs_silt = exactextractr::exact_extract(silt, fs_cont_fa)
 fs_cont = dplyr::bind_rows(pblapply(1:nrow(fs_cont), flowacc, fs_silt, fs_cont, "silt", cl = n_cores))
 
 
-###############
-###run regressions
 #get wind exposure
-fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont)))
+fs_cont$wind_exposure = pbmapply(wind_function, fs_cont$well_lng, fs_cont$well_lat, rep(dist_allow, nrow(fs_cont), cl = n_cores))
 
 fs_cont$wellpfas = fs_cont$pfos + fs_cont$pfoa
 fs_cont$domestic = ifelse(fs_cont$watervapusage == "DOMESTIC", 1, 0)
 fs_cont$t = fs_cont$year - 2010
 fs_cont$updown = ifelse((fs_cont$down == 1 | fs_cont$up == 1) & !is.na(fs_cont$up) & !is.na(fs_cont$down), 1, 0)
-w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
-                        updown + wind_exposure + domestic + temp + pm25 + med_inc +
-                        p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
 
-w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
-                            updown, data = fs_cont) 
-
-w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
-                            updown, data = fs_cont) 
-
-save(w_reg, w_reg_nat, w_reg_nos, fs_cont, file = modify_path(paste0("Data_Verify/RData/w_reg", ppt, ".RData")))
-save(fs_cont, file = modify_path(paste0("Data_Verify/RData/fs_cont", ppt, ".RData")))
 
 
 #get soil characteristics at drinking wells
@@ -297,9 +292,3 @@ wells_silt = exactextractr::exact_extract(silt, wells_fa)
 wells = dplyr::bind_rows(pblapply(1:nrow(wells), flowacc, wells_silt, wells, "silt", cl = n_cores))
 
 df = df %>% left_join(wells %>% as_tibble() %>% dplyr::select(sys_id, source, sp, awc, clay, sand, silt)) 
-
-#impute predicted pfas from w_reg
-df$domestic = 0
-df$elevation = df$well_elev
-df$t = as.numeric(df$year) - 2010
-df$pred_pfas = predict(w_reg, df)

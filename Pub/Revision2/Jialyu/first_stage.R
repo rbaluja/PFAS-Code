@@ -62,8 +62,8 @@ up_wells = st_intersection(fs_cont %>%
                              left_join(cont_sites %>% 
                                          as_tibble() %>% 
                                          dplyr::select(site, pfas = sum_pfoa_pfos)) %>% 
-                             st_transform(3437) %>% 
-                             dplyr::select(!index))
+                                         st_transform(3437) %>% 
+                                         dplyr::select(!index))
 
 up_wells = up_wells %>% as_tibble() %>% dplyr::select(index, site, pfas) 
 uwells = unique(up_wells$index)
@@ -261,7 +261,7 @@ w_reg = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, sand, clay, silt, d
                         p_manuf + n_hunits + med_hprice + elevation + tri5 + t, data = fs_cont) 
 
 w_reg_nat = fixest::feols(asinh(wellpfas) ~ down * poly(sp, awc, clay, sand, silt, degree = 1, raw = TRUE) + asinh(pfas) + log(dist)*down + 
-                            updown, data = fs_cont) 
+                        updown, data = fs_cont) 
 
 w_reg_nos = fixest::feols(asinh(wellpfas) ~ down + asinh(pfas) + log(dist)*down + 
                             updown, data = fs_cont) 

@@ -28,3 +28,6 @@ source("PFAS-Code/Pub/GIS/cs_downstream.R")
 rm(list = ls())
 #Revisions code
 source("PFAS-Code/Pub/Revision1/head_ex_r1.R")
+rm(list = ls())
+gc()
+source("PFAS-Code/Pub/Revision2/head_ex_r2.R")
