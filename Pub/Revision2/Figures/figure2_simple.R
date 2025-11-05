@@ -1176,9 +1176,9 @@ main_fig = (pre_fig | lbw) + plot_layout(widths = c(1.5, 1))
 
 fig2 = (title/main_fig)  + plot_layout(heights = c(0.5, 50))
 
-ggsave("Figures Revision/figure2_simple.png", fig2, width = 17000, height = 5000, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2_simple.png"), fig2, width = 17000, height = 5000, units = "px", limitsize = F)
 
 
 fig2_data = rbind(data_pre, data_mpre, data_vpre, data_epre, 
                   data_lbw, data_mlbw, data_vlbw, data_elbw)
-fwrite(fig2_data, "Figures Revision/Data/figure2_data_simple.csv")
+fwrite(fig2_data, modify_path3("Figures/Data/figure2_data_simple.csv"))
