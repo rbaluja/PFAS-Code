@@ -40,7 +40,7 @@ inner_ws = function(j, spoints, site, cs){
   
   temp_point_path = tempfile(fileext = ".shp")
   st_write(spo, temp_point_path, quiet = TRUE)
-  # Run snap pour points
+  #snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
                        flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
                        output = modify_path(paste0("Data_Verify/GIS/cs_down/cont_pp/pp_site_", j, ".shp")), 
@@ -91,7 +91,7 @@ watershed = function(i, n){
   #subset to down points
   dws_points = cs_dws_sf[cs_dws_sf$d_ws == TRUE, ]
   
-  # Compute the convex hull of the true points as the down watershed
+  #compute the convex hull of the true points as the down watershed
   ws_hull = st_convex_hull(st_union(dws_points %>% st_transform(32110)))
   
   cs_dws$geometry = ws_hull
@@ -115,14 +115,14 @@ save(cs_dws, file = modify_path("Data_Verify/RData/cont_sites_downstream10000.RD
 
 nh_map_data = map_data("state", region = "new hampshire")
 
-# Create the NH map plot
+#create the NH map plot
 nh_map_plot = ggplot() +
   geom_polygon(data = nh_map_data, aes(x = long, y = lat, group = group), 
                color = 'black', fill = "transparent") +
   coord_fixed(1.3) + # Adjust aspect ratio if needed
   theme_minimal()
 
-# Add site points and arrows to the map
+#add site points and arrows to the map
 fig_s1 = nh_map_plot +
   geom_point(data = cont_sites, aes(x = lng, y = lat)) +
   geom_sf(data = cs_dws %>% st_transform(4326), alpha = 0.2, fill = "blue", color = NA) + 
