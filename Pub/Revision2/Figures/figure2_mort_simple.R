@@ -168,4 +168,4 @@ mort_f2up = figure2_still_fun(data, "Infant Mortality", TRUE, TRUE, "Infant Mort
 mort_f2up = mort_f2up + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
 
 
-ggsave("Figures Revision/figure2_mort_up_simple.png", mort_f2up, width = 12000, height = 3000, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2_mort_up_simple.png"), mort_f2up, width = 12000, height = 3000, units = "px", limitsize = F)
