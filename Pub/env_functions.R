@@ -13,7 +13,7 @@ modify_path = function(path) {
     return(gsub("Data_Verify", "Data_Verify_Pub", path))
   }
   else{
-    return(path)
+    return(gsub("Data_Verify", "Data", path))
     }
 }
 
