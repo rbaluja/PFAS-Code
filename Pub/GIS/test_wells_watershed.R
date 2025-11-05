@@ -17,7 +17,7 @@ test_watershed = function(i){
   temp_point_path = tempfile(fileext = ".shp")
   st_write(point_sf, temp_point_path, quiet = TRUE)
   
-  # Run snap pour points
+  #snap pour points
   wbt_snap_pour_points(pour_pts = temp_point_path, 
                        flow_accum = modify_path("Data_Verify/GIS/flow_acc.tiff"), 
                        output = modify_path(paste0("Data_Verify/GIS/fs_test/fs_test_pp/pp_site_", i, ".shp")), 
