@@ -442,4 +442,4 @@ data_mort$health_outcome = "lbw"
 
 mort_f2 = figure2_still_fun_pws(data_mort, "Infant Mortality", TRUE, TRUE, "Infant Mortality", FALSE)
 mort_f2 = mort_f2 + ggtitle("Infant Mortality") + theme_void() + theme(plot.title = element_text(hjust = -1.5, size = 70, face = "bold"))
-ggsave("Figures Revision/figure2_mort_pwsfe.png", mort_f2, width = 11000, height = 2000, units = "px", limitsize = F)
+ggsave(modify_path3("Figures/figure2_mort_pwsfe.png"), mort_f2, width = 11000, height = 2000, units = "px", limitsize = F)
